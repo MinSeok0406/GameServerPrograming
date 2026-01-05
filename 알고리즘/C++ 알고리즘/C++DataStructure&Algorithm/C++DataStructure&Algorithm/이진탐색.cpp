@@ -1,0 +1,45 @@
+/*#include <iostream>
+#include <vector>
+#include <list>
+#include <stack>
+#include <queue>
+#include <deque>
+using namespace std;
+
+vector<int> numbers;
+
+void BinarySearch(int N)
+{
+	int left = 0;
+	int right = numbers.size() - 1;
+
+	while (left <= right)
+	{
+		cout << "탐색 범위 : " << left << "~" << right << endl;
+
+		int mid = (left + right) / 2;
+
+		if (N < numbers[mid])
+		{
+			cout << N << " < " << numbers[mid] << endl;
+			right = mid - 1;
+		}
+		else if (N > numbers[mid])
+		{
+			cout << N << " > " << numbers[mid] << endl;
+			left = mid + 1;
+		}
+		else
+		{
+			cout << "찾음!" << endl;
+			break;
+		}
+	}
+}
+
+int main()
+{
+	
+
+	return 0;
+}*/

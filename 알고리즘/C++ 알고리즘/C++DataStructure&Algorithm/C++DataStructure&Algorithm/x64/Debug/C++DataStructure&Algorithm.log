@@ -1,2 +1,41 @@
-﻿  그래프.cpp
-  C++DataStructure&Algorithm.vcxproj -> C:\GamePrograming\알고리즘\C++ 알고리즘\C++DataStructure&Algorithm\x64\Debug\C++DataStructure&Algorithm.exe
+﻿  BFS.c
+  DFS.c
+  동적메모리할당.c
+  동적배열스택.c
+  버블정렬.c
+  삽입정렬.c
+  선택정렬.c
+  우선순위큐.c
+  이중연결리스트.c
+  이진탐색트리.c
+  퀵정렬.c
+  합병정렬.c
+  코드를 생성하고 있습니다...
+  BFS.cpp
+  BinarySearchTree.cpp
+  DFS.cpp
+  Kruskal.cpp
+  Union-Find.cpp
+  그래프.cpp
+  다익스트라.cpp
+  동적계획법.cpp
+  동적계획법_LIS.cpp
+  동적배열.cpp
+  레드블랙트리.cpp
+  병합정렬.cpp
+  스택.cpp
+  연결리스트.cpp
+  우선순위큐.cpp
+  이진탐색.cpp
+  이진탐색트리.cpp
+  퀵정렬.cpp
+  큐.cpp
+  트리.cpp
+  코드를 생성하고 있습니다...
+x64\Debug\BFS.obj : warning LNK4042: 개체가 두 번 이상 지정되었습니다. 나머지는 무시됩니다.
+x64\Debug\DFS.obj : warning LNK4042: 개체가 두 번 이상 지정되었습니다. 나머지는 무시됩니다.
+x64\Debug\우선순위큐.obj : warning LNK4042: 개체가 두 번 이상 지정되었습니다. 나머지는 무시됩니다.
+x64\Debug\이진탐색트리.obj : warning LNK4042: 개체가 두 번 이상 지정되었습니다. 나머지는 무시됩니다.
+x64\Debug\퀵정렬.obj : warning LNK4042: 개체가 두 번 이상 지정되었습니다. 나머지는 무시됩니다.
+MSVCRTD.lib(exe_main.obj) : error LNK2019: main"int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ) 함수에서 참조되는 확인할 수 없는 외부 기호
+C:\GamePrograming\알고리즘\C++ 알고리즘\C++DataStructure&Algorithm\x64\Debug\C++DataStructure&Algorithm.exe : fatal error LNK1120: 1개의 확인할 수 없는 외부 참조입니다.

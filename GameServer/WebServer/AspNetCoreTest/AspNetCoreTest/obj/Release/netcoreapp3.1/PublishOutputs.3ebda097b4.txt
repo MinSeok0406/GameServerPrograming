@@ -1,7 +1,0 @@
-C:\GamePrograming\GameServer\WebServer\AspNetCoreTest\AspNetCoreTest\obj\Release\netcoreapp3.1\PubTmp\Out\AspNetCoreTest.exe
-C:\GamePrograming\GameServer\WebServer\AspNetCoreTest\AspNetCoreTest\obj\Release\netcoreapp3.1\PubTmp\Out\appsettings.Development.json
-C:\GamePrograming\GameServer\WebServer\AspNetCoreTest\AspNetCoreTest\obj\Release\netcoreapp3.1\PubTmp\Out\appsettings.json
-C:\GamePrograming\GameServer\WebServer\AspNetCoreTest\AspNetCoreTest\obj\Release\netcoreapp3.1\PubTmp\Out\AspNetCoreTest.dll
-C:\GamePrograming\GameServer\WebServer\AspNetCoreTest\AspNetCoreTest\obj\Release\netcoreapp3.1\PubTmp\Out\AspNetCoreTest.deps.json
-C:\GamePrograming\GameServer\WebServer\AspNetCoreTest\AspNetCoreTest\obj\Release\netcoreapp3.1\PubTmp\Out\AspNetCoreTest.runtimeconfig.json
-C:\GamePrograming\GameServer\WebServer\AspNetCoreTest\AspNetCoreTest\obj\Release\netcoreapp3.1\PubTmp\Out\AspNetCoreTest.pdb

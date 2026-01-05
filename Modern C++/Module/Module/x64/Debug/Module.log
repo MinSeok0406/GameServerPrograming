@@ -1,6 +1,0 @@
-﻿  모듈 종속성의 소스를 검사하는 중...
-  TCPSocket.cpp
-C:\GamePrograming\Modern C++\Module\Module\TCPSocket.cpp(15,68): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\GamePrograming\Modern C++\Module\Module\TCPSocket.cpp(25,69): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\GamePrograming\Modern C++\Module\Module\TCPSocket.cpp(46,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Module.vcxproj -> C:\GamePrograming\Modern C++\Module\x64\Debug\Module.exe
