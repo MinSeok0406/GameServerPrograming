@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Chapter1 문제풀이">
+      <UniqueIdentifier>{aeff3b1e-efc7-4d19-887f-8f9b768bc019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OOP프로젝트">
+      <UniqueIdentifier>{6799a355-ccd6-4adb-8df5-498768f4abb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter2 문제풀이">
+      <UniqueIdentifier>{988d49d2-f164-4995-945a-eb71c182b9d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter3 문제풀이">
+      <UniqueIdentifier>{da15bbd9-5d82-4495-a6c3-ff8bf0e4ff84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter4 문제풀이">
+      <UniqueIdentifier>{272834d7-0d49-416b-9354-1171135fb7ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter5 문제풀이">
+      <UniqueIdentifier>{39d81a7c-cc5f-4b00-a6fb-240751cf624c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter7 문제풀이">
+      <UniqueIdentifier>{722525b2-d6b3-474e-8b07-3f3a966b4b28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8 문제풀이">
+      <UniqueIdentifier>{54305e7c-9d51-414f-8c94-d633cd9b1f18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter10 문제풀이">
+      <UniqueIdentifier>{895c0ccc-cd29-4483-a2c3-bdce87eac5eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter11 문제풀이">
+      <UniqueIdentifier>{a8081987-d444-4ea8-a42b-5d279a896fe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter13 문제풀이">
+      <UniqueIdentifier>{a65a05db-ea61-4f9e-a87d-36a6ee5b15ff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Chapter1_1.cpp">
+      <Filter>Chapter1 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter1_2.cpp">
+      <Filter>Chapter1 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter1_3.cpp">
+      <Filter>Chapter1 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>OOP프로젝트</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter2_1.cpp">
+      <Filter>Chapter2 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter2_2.cpp">
+      <Filter>Chapter2 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter2_3.cpp">
+      <Filter>Chapter2 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter2_4.cpp">
+      <Filter>Chapter2 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter3_1.cpp">
+      <Filter>Chapter3 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter3_2.cpp">
+      <Filter>Chapter3 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter4_2.cpp">
+      <Filter>Chapter4 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter4_3.cpp">
+      <Filter>Chapter4 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter5_1.cpp">
+      <Filter>Chapter5 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter7_1.cpp">
+      <Filter>Chapter7 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter7_2.cpp">
+      <Filter>Chapter7 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter8_1.cpp">
+      <Filter>Chapter8 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Account.cpp">
+      <Filter>OOP프로젝트</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountHandler.cpp">
+      <Filter>OOP프로젝트</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter10_1.cpp">
+      <Filter>Chapter10 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter10_2.cpp">
+      <Filter>Chapter10 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter10_3.cpp">
+      <Filter>Chapter10 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter11_1.cpp">
+      <Filter>Chapter11 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter11_2.cpp">
+      <Filter>Chapter11 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="String.cpp">
+      <Filter>OOP프로젝트</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter13_1.cpp">
+      <Filter>Chapter13 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter13_2.cpp">
+      <Filter>Chapter13 문제풀이</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundCheckArray.cpp">
+      <Filter>OOP프로젝트</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Account.h">
+      <Filter>OOP프로젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="Main.h">
+      <Filter>OOP프로젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalAccount.h">
+      <Filter>OOP프로젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="HighCreditAccount.h">
+      <Filter>OOP프로젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountHandler.h">
+      <Filter>OOP프로젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>OOP프로젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundCheckArray.h">
+      <Filter>OOP프로젝트</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

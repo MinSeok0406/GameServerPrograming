@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Programming_1.c" />
+    <ClCompile Include="Chapter2_1.c">
+      <Filter>Chapter2</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter2_2.c">
+      <Filter>Chapter2</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter3_1.c">
+      <Filter>Chapter3</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter4_1.c">
+      <Filter>Chapter4</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter4_4.c">
+      <Filter>Chapter4</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter5_1.c">
+      <Filter>Chapter5</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter7_1.c">
+      <Filter>Chapter7</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter7_2.c">
+      <Filter>Chapter7</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter7_3.c">
+      <Filter>Chapter7</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter7_4.c">
+      <Filter>Chapter7</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter8_1.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter8_2.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter8_3.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter9_1.c">
+      <Filter>Chapter9</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter9_2.c">
+      <Filter>Chapter9</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter11_1.c">
+      <Filter>Chapter11</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter11_2.c">
+      <Filter>Chapter11</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter12_1.c">
+      <Filter>Chapter12</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter13_1.c">
+      <Filter>Chapter13</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter14_1.c">
+      <Filter>Chapter14</Filter>
+    </ClCompile>
+    <ClCompile Include="Programming_2.c" />
+    <ClCompile Include="Chapter16_1.c">
+      <Filter>Chapter16</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter17_1.c">
+      <Filter>Chapter17</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter18_1.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="Programming_3.c" />
+    <ClCompile Include="Chapter21_1.c">
+      <Filter>Chapter21</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter21_2.c">
+      <Filter>Chapter21</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter22_1.c">
+      <Filter>Chapter22</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter22_2.c">
+      <Filter>Chapter22</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter23_1.c">
+      <Filter>Chapter23</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter23_2.c">
+      <Filter>Chapter23</Filter>
+    </ClCompile>
+    <ClCompile Include="Chapter25_2.c">
+      <Filter>Chapter25</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Chapter2">
+      <UniqueIdentifier>{fb0739e9-307a-4729-b45f-28928ea9be52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter3">
+      <UniqueIdentifier>{4ab023f4-a48d-4adc-8488-42a8d1fc08aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter4">
+      <UniqueIdentifier>{e021703c-8735-4946-9dd6-d0cfdd886127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter5">
+      <UniqueIdentifier>{f83ba98b-a3f4-45ec-b33d-e3f28f9dc000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter7">
+      <UniqueIdentifier>{3d662757-58bb-4b2f-9338-0b47b36e1309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8">
+      <UniqueIdentifier>{edf7bbc9-bac5-4219-a3fd-8cbea050a660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter9">
+      <UniqueIdentifier>{355087a4-34d1-47ae-b820-475c9ef06f58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter11">
+      <UniqueIdentifier>{c77bbbb0-3038-45ac-b924-73b10c66ff83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter12">
+      <UniqueIdentifier>{fc531083-7c36-4bb0-be1a-86fbd4b56415}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter13">
+      <UniqueIdentifier>{6b8277ad-2840-4265-9e23-79027dd7f9a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter14">
+      <UniqueIdentifier>{b8daa576-185c-4a49-961f-f0dd1a94af0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter16">
+      <UniqueIdentifier>{4b7d3496-b31d-44a3-94b1-6941ca77436b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter17">
+      <UniqueIdentifier>{ba80c446-f76e-4d5c-90b6-2a177b96b956}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter18">
+      <UniqueIdentifier>{e268ba55-ed51-4762-a347-cdbdfd95e3d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter21">
+      <UniqueIdentifier>{81be0f8e-357d-48f1-8894-1daf832faf2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter22">
+      <UniqueIdentifier>{33986a2a-ae6e-4613-80f6-7c8a576f86f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter23">
+      <UniqueIdentifier>{baab57e1-3d91-493a-a5cf-bacc7d6bfb28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter25">
+      <UniqueIdentifier>{3b3425c1-9634-4b6d-a1c7-2b9ad41fc9ac}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
