@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\algorithm.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\algorithm_6C2AE32B0F1EED7E.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\algorithm_6C2AE32B0F1EED7E.ifc.dt.d.json",
+                "algorithm.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.50.35717\\include\\algorithm",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\algorithm",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
