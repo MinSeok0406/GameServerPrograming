@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../ForProfessionalC/ForProfessionalC.vcxproj" Id="5a7d8331-505e-4472-aeb5-6afefc6fec8d" />
+  <Project Path="C_All_In_One.vcxproj" Id="3d029c8f-118a-4334-a97b-6351546a77b4" />
+</Solution>

@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../Command_Prompt_Practice/Command_Prompt_Practice.vcxproj" Id="4001d160-40d5-44ff-b765-a51e834c7a7e" />
+  <Project Path="Brain_Windows System Programming.vcxproj" Id="8401ee80-7803-40f7-be24-e22f4e01d815" />
+</Solution>
