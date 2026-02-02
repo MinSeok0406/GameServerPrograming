@@ -1,95 +1,170 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h>
-#include <tchar.h>
-#include <locale.h>
-#include <windows.h>
-
-#define STR_LEN 256
-#define CMD_TOKEN_NUM 10
-
-TCHAR ERROR_CMD[] = _T("'%s'은(는) 실행할 수 있는 프로그램이 아닙니다. \n");
-
-int CmdProcessing(void);
-TCHAR* StrLower(TCHAR*);
-
-int _tmain(int argc, TCHAR* argv[])
-{
-    _tsetlocale(LC_ALL, L"korean");
-
-    DWORD isExit;
-    while (1)
-    {
-        isExit = CmdProcessing();
-        if (isExit == TRUE)
-        {
-            _fputts(_T("명령어 처리를 종료합니다. \n"), stdout);
-            break;
-        }
-    }
-
-    return 0;
-}
-
-
-TCHAR cmdString[STR_LEN];
-TCHAR cmdTokenList[CMD_TOKEN_NUM][STR_LEN];
-TCHAR seps[] = _T(" ,\t\n");
-
-int CmdProcessing(void)
-{
-    _fputts(_T("Best command prompt>> "), stdout);
-    _getts_s(cmdString, sizeof(cmdString));
-
-    TCHAR* token = _tcstok(cmdString, seps);
-    int tokenNum = 0;
-    while (token != NULL)
-    {
-        _tcscpy(cmdTokenList[tokenNum++], StrLower(token));
-        token = _tcstok(NULL, seps);
-    }
-
-    if (!_tcscmp(cmdTokenList[0], _T("exit")))
-    {
-        return TRUE;
-    }
-    else if (!_tcscmp(cmdTokenList[0], _T("notepad")))
-    {
-        STARTUPINFO si = { 0, };
-        PROCESS_INFORMATION pi;
-        si.cb = sizeof(pi);
-
-        TCHAR command[] = _T("notepad.exe");
-        SetCurrentDirectory(_T("C:\\WINDOWS\\system32"));
-
-        ZeroMemory(&pi, sizeof(pi));
-        CreateProcess(NULL, command, NULL, NULL,
-            TRUE, 0, NULL, NULL, &si, &pi);
-    }
-    else if (!_tcscmp(cmdTokenList[0], _T("추가 되는 명령어 2")))
-    {
-
-    }
-    else
-    {
-        _tprintf(ERROR_CMD, cmdTokenList[0]);
-    }
-
-    return 0;
-}
-
-TCHAR* StrLower(TCHAR* pStr)
-{
-    TCHAR* ret = pStr;
-
-    while (*pStr)
-    {
-        if (_istupper(*pStr))
-        {
-            *pStr = _totlower(*pStr);
-        }
-        pStr++;
-    }
-
-    return ret;
-}
+//#define _CRT_SECURE_NO_WARNINGS
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <tchar.h>
+//#include <locale.h>
+//#include <windows.h>
+//
+//#define STR_LEN 256
+//#define CMD_TOKEN_NUM 10
+//
+//TCHAR ERROR_CMD[] = _T("'%s'은(는) 실행할 수 있는 프로그램이 아닙니다. \n");
+//TCHAR cmdString[STR_LEN];
+//TCHAR cmdTokenList[CMD_TOKEN_NUM][STR_LEN];
+//TCHAR seps[] = _T(" ,\t\n");
+//
+//int CmdReadTokenize(void);
+//int CmdProcessing(int);
+//TCHAR* StrLower(TCHAR*);
+//
+//int _tmain(int argc, TCHAR* argv[])
+//{
+//    _tsetlocale(LC_ALL, L"korean");
+//
+//    if (argc > 2)
+//    {
+//        for (int i = 1; i < argc; i++)
+//        {
+//            _tcscpy(cmdTokenList[i - 1], argv[i]);
+//        }
+//
+//        CmdProcessing(argc - 1);
+//    }
+//
+//    DWORD isExit = NULL;
+//    while (1)
+//    {
+//        int tokenNum = CmdReadTokenize();
+//
+//        if (tokenNum == 0)
+//        {
+//            continue;
+//        }
+//
+//        isExit = CmdProcessing(tokenNum);
+//        if (isExit == TRUE)
+//        {
+//            _fputts(_T("명령어 처리를 종료합니다. \n"), stdout);
+//            break;
+//        }
+//    }
+//
+//    return 0;
+//}
+//
+//int CmdReadTokenize(void)
+//{
+//    TCHAR* token;
+//
+//    _fputts(_T("Best command prompt>> "), stdout);
+//    _getts_s(cmdString, sizeof(cmdString));
+//
+//    token = _tcstok(cmdString, seps);
+//    int tokenNum = 0;
+//
+//    while (token != NULL)
+//    {
+//        _tcscpy(cmdTokenList[tokenNum++], StrLower(token));
+//        token = _tcstok(NULL, seps);
+//    }
+//
+//    return tokenNum;
+//}
+//
+//int CmdProcessing(int tokenNum)
+//{
+//    BOOL isRun;
+//    STARTUPINFO si = {0, };
+//    PROCESS_INFORMATION pi;
+//
+//    TCHAR cmdStringWithOptions[STR_LEN] = {0, };
+//    TCHAR optString[STR_LEN] = {0, };
+//
+//    si.cb = sizeof(si);
+//    if (!_tcscmp(cmdTokenList[0], _T("exit")))
+//    {
+//        return TRUE;
+//    }
+//    else if (!_tcscmp(cmdTokenList[0], _T("notepad")))
+//    {
+//        TCHAR command[] = _T("notepad.exe");
+//        SetCurrentDirectory(_T("C:\\WINDOWS\\system32"));
+//
+//        ZeroMemory(&pi, sizeof(pi));
+//        CreateProcess(NULL, command, NULL, NULL,
+//            TRUE, 0, NULL, NULL, &si, &pi);
+//
+//        CloseHandle(pi.hProcess);
+//        CloseHandle(pi.hThread);
+//    }
+//    else if (!_tcscmp(cmdTokenList[0], _T("start")))
+//    {
+//        if (tokenNum > 1)
+//        {
+//            // cmd 형태로 프로세스를 생성 시에는 /k 혹은 /c 을 붙여야 문자열이 버퍼에 저장된다
+//            _tcscat(optString, _T("/k"));
+//            for (int i = 1; i < tokenNum; i++)
+//            {
+//                _stprintf(optString, _T("%s %s"), optString, cmdTokenList[i]);
+//                _stprintf(cmdStringWithOptions, _T("%s %s"), _T("cmd.exe"), optString);
+//            }
+//        }
+//        else
+//        {
+//            _stprintf(cmdStringWithOptions, _T("%s"), _T("cmd.exe"));
+//        }
+//
+//        isRun = CreateProcess(NULL, cmdStringWithOptions, NULL, NULL,
+//            TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi);
+//
+//        CloseHandle(pi.hProcess);
+//        CloseHandle(pi.hThread);
+//    }
+//    else if (!_tcscmp(cmdTokenList[0], _T("echo")))
+//    {
+//        for (int i = 1; i < tokenNum; i++)
+//        {
+//            _stprintf(optString, _T("%s %s"), optString, cmdTokenList[i]);
+//        }
+//
+//        _tprintf(_T("echo message: %s \n"), optString);
+//    }
+//    else
+//    {
+//        _tcscpy(cmdStringWithOptions, cmdTokenList[0]);
+//
+//        for (int i = 1; i < tokenNum; i++)
+//        {
+//            _stprintf(cmdStringWithOptions, _T("%s %s"), cmdStringWithOptions, cmdTokenList[i]);
+//        }
+//
+//        isRun = CreateProcess(NULL, cmdStringWithOptions, NULL, NULL,
+//            TRUE, 0, NULL, NULL, &si, &pi);
+//
+//        CloseHandle(pi.hProcess);
+//        CloseHandle(pi.hThread);
+//    
+//        if (isRun == FALSE)
+//        {
+//            _tprintf(ERROR_CMD, cmdTokenList[0]);
+//        }
+//    }
+//
+//    return 0;
+//}
+//
+//TCHAR* StrLower(TCHAR* pStr)
+//{
+//    TCHAR* ret = pStr;
+//
+//    while (*pStr)
+//    {
+//        if (_istupper(*pStr))
+//        {
+//            *pStr = _totlower(*pStr);
+//        }
+//        pStr++;
+//    }
+//
+//    return ret;
+//}

@@ -5,10 +5,49 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Practice_Problem">
+      <UniqueIdentifier>{09188cd2-ca70-463d-87d7-fbdd02f03d46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.c">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice01.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice02.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice03.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice04.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice05.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice06.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice07.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice08.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice09.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice10.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice11.c">
+      <Filter>Practice_Problem</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice12.c">
+      <Filter>Practice_Problem</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,6 +1,2 @@
 ﻿  Main.c
-C:\GamePrograming\C 언어\ForProfessionalC\Main.c(19,13): warning C4477: 'scanf_s' : 서식 문자열 '%s'에 'unsigned int' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'size_t'입니다.
-      C:\GamePrograming\C 언어\ForProfessionalC\Main.c(19,13):
-      이 인수는 버퍼 크기로 사용됩니다.
-  
   ForProfessionalC.vcxproj -> C:\GamePrograming\C 언어\C_All_In_One\x64\Debug\ForProfessionalC.exe

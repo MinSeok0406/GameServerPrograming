@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +129,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.c" />
+    <ClCompile Include="Practice01.c" />
+    <ClCompile Include="Practice02.c" />
+    <ClCompile Include="Practice03.c" />
+    <ClCompile Include="Practice04.c" />
+    <ClCompile Include="Practice05.c" />
+    <ClCompile Include="Practice06.c" />
+    <ClCompile Include="Practice07.c" />
+    <ClCompile Include="Practice08.c" />
+    <ClCompile Include="Practice09.c" />
+    <ClCompile Include="Practice10.c" />
+    <ClCompile Include="Practice11.c" />
+    <ClCompile Include="Practice12.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

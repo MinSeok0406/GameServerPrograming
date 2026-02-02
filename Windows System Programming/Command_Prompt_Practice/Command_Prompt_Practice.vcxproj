@@ -129,6 +129,11 @@
   <ItemGroup>
     <ClCompile Include="Calculator.c" />
     <ClCompile Include="CreateProcess.c" />
+    <ClCompile Include="KernelObjProb2.c" />
+    <ClCompile Include="MailSender.c" />
+    <ClCompile Include="Operation2.c" />
+    <ClCompile Include="OperationStateChild.c" />
+    <ClCompile Include="PartAdder.c" />
     <ClCompile Include="Program.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

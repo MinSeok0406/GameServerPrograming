@@ -8,141 +8,95 @@
 #include <format>
 #include <list>
 #include <optional>
+#include <map>
 #include <set>
+#include <iterator>
+#include <WinSock2.h>
+#include <new>
 using namespace std;
 
-class CompanyA
+#pragma comment(lib, "ws2_32.lib")
+
+//-------------------------------------------------------
+
+class NewHandlerHolder
 {
 public:
-    void sendClearText(const string& msg)
+    explicit NewHandlerHolder(new_handler nh) : handler(nh)
     {
         
     }
 
-    void sendEncrypted(const string& msg)
-    {
-        
-    }
+    ~NewHandlerHolder() { set_new_handler(handler); }
+
+private:
+    new_handler handler;
+
+    NewHandlerHolder(const NewHandlerHolder&);
+    NewHandlerHolder& operator=(const NewHandlerHolder&);
 };
 
-class CompanyB
+template<typename T>
+class NewHandlerSupport
 {
 public:
-    void sendClearText(const string& msg)
-    {
 
-    }
 
-    void sendEncrypted(const string& msg)
-    {
+    static std::new_handler set_new_handler(std::new_handler p) noexcept;
+    static void* operator new(size_t size) noexcept;
 
-    }
+private:
+    static std::new_handler currentHandler;
 };
 
-class CompanyZ
+template <typename T>
+std::new_handler NewHandlerSupport<T>::set_new_handler(std::new_handler p) noexcept
 {
-public:
-    void sendEncrypted(const string& msg)
-    {
+    new_handler oldHandler = currentHandler;
+    currentHandler = p;
+    return oldHandler;
+}
 
-    }
-};
-
-class MsgInfo
+template <typename T>
+void* NewHandlerSupport<T>::operator new(std::size_t size) noexcept
 {
-    
-};
+    try
+    {
+        NewHandlerHolder h(std::set_new_handler(currentHandler));
+        return ::operator new(size);
+    }
+    catch (const bad_alloc& e)
+    {
+        // 에러 확인 후 프로그램 종료 혹은 무시하고 진행
+    }
+}
 
-template<typename Company>
-class MsgSender
+template<typename T>
+std::new_handler NewHandlerSupport<T>::currentHandler = 0;
+
+class Widget : public NewHandlerSupport<Widget>
 {
-public:
-    void SendClear(const MsgInfo& info)
-    {
-        string msg;
 
-        Company c;
-        c.sendClearText(msg);
-    }
-
-    void SendSecret(const MsgInfo& info)
-    {
-        string msg;
-
-        Company c;
-        c.sendEncrypted(msg);
-    }
 };
 
-template<>
-class MsgSender<CompanyZ>
+void OutOfMem()
 {
-public:
-    void SendSecret(const MsgInfo& info)
-    {
-        string msg;
-
-    }
-};
-
-// 1번째 방법
-template<typename Company>
-class LoggingMsgSender : public MsgSender<Company>
-{
-public:
-    void SendClearMsg(const MsgInfo& info)
-    {
-        this->SendClear(info);
-    }
-
-    void SendSecretMsg(const MsgInfo& info)
-    {
-        this->SendSecret(info);
-    }
-};
-
-// 2번째 방법
-template<typename Company>
-class LoggingMsgSender2 : public MsgSender<Company>
-{
-public:
-    using MsgSender<Company>::SendClear;
-    using MsgSender<Company>::SendSecret;
-
-    void SendClearMsg(const MsgInfo& info)
-    {
-        SendClear(info);
-    }
-
-    void SendSecretMsg(const MsgInfo& info)
-    {
-        SendSecret(info);
-    }
-};
-
-// 3번째 방법
-template<typename Company>
-class LoggingMsgSender3 : public MsgSender<Company>
-{
-public:
-    void SendClearMsg(const MsgInfo& info)
-    {
-        MsgSender<Company>::SendClear(info);
-    }
-
-    void SendSecretMsg(const MsgInfo& info)
-    {
-        MsgSender<Company>::SendSecret(info);
-    }
-};
+    cerr << "Memory Out" << "\n";
+    std::abort();
+}
 
 int main()
 {
-    LoggingMsgSender<CompanyZ> cz;
+    Widget::set_new_handler(OutOfMem);
+    Widget* p1 = new Widget;
 
-    MsgInfo msg;
-    
-    cz.SendClearMsg(msg);
+    string* ps = new string;
+
+    Widget::set_new_handler(0);
+
+    Widget* p2 = new Widget;
+
+    cout << "문제없음!!" << "\n";
 
     return 0;
 }
