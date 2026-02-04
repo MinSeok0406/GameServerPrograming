@@ -1,0 +1,29 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\xcharconv_ryu_tables.obj",
+            "outputs": [
+                "x64\\Debug\\xcharconv_ryu_tables.h_C3AFADE2B41E888C.ifc.dt.module.json",
+                "x64\\Debug\\xcharconv_ryu_tables.h_C3AFADE2B41E888C.ifc.dt.d.json",
+                "x64\\Debug\\xcharconv_ryu_tables.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.50.35717\\include\\xcharconv_ryu_tables.h",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xcharconv_ryu_tables.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": [
+                {
+                    "logical-name": "cstdint",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdint",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                }
+            ]
+        }
+    ]
+}

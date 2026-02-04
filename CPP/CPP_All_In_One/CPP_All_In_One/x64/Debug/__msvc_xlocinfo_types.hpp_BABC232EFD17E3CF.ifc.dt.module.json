@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.hpp_BABC232EFD17E3CF.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.hpp_BABC232EFD17E3CF.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.hpp.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.50.35717\\include\\__msvc_xlocinfo_types.hpp",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_xlocinfo_types.hpp",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

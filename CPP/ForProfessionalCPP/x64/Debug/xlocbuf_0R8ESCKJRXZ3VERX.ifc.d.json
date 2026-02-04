@@ -1,0 +1,214 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocbuf",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\yvals_core.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\vcruntime.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\sal.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\concurrencysal.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\vadefs.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xkeycheck.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": [
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\streambuf",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\streambuf_I31W7DKVJ0U25808.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xiosbase",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xiosbase_H1TF195VADJZQK5R.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\system_error",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\system_error_MD9MFLBKG8R9BWKZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\atomic",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\atomic_EEKVBMHBLTO8T3N3.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstddef",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cstddef_6236QZOX823W3QXT.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xtr1common",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xtr1common_V401A4PCGT3MNZTV.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdint",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cstdint_C446WCTBPIBONY7Z.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstring",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cstring_MGV710PL4KLOG5B8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xatomic.h",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xatomic.h_K58FEFM7KIEGVFGP.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\type_traits",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\type_traits_3UQOL4Y78BSMFJMY.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xatomic_wait.h",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xatomic_wait.h_ESWPSOTKM4Z0G51V.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdlib",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cstdlib_DKVBWKTGK9WF5ME5.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xthreads.h",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xthreads.h_8TWOFQJP0JOY128I.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\climits",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\climits_YRF0YK6HTT199404.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xtimec.h",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xtimec.h_JU7N6SVZD3OQLNIZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\ctime",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\ctime_IJHU8YQE8UQ3V50I.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_threads_core.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\__msvc_threads_core.hpp_04C0RWFKZCHAU2FD.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cerrno",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cerrno_Q2MGTX6BWUUBI337.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\compare",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\compare_QP0K05PZK3QHW0ME.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\concepts",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\concepts_CVS00U6OJLPKE50K.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\stdexcept",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\stdexcept_2FJML0SEJ45JR9LI.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\exception",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\exception_NBTU1MGQ4NJC723L.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xstring",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xstring_1EZEJY7J9DYYIIN8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iosfwd",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\iosfwd_V3RHBFAYSRYJL1AD.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdio",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cstdio_LBJRP3B39RZOBV72.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cwchar",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cwchar_QR8K3W9XOXECWA11.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xmemory",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xmemory_TW40FCR9DIZF6M2Q.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\limits",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\limits_CNODZ6PMEYTMWK9Q.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cfloat",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cfloat_N3SX3TSVNAC1R53L.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\new",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\new_6V0OWCDNMZBD0416.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\tuple",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\tuple_DWPC2HH0S2RVJOOT.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_iter_core.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\__msvc_iter_core.hpp_P6F3JF9XIFTCNKAZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\utility",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\utility_Z8FHW387UMLX6PJJ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\initializer_list",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\initializer_list_HF11LPB6RUV111NX.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xutility",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xutility_CO0N70I57WBBIJXQ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xpolymorphic_allocator.h",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xpolymorphic_allocator.h_DWTVEEWM652Y0M2F.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_sanitizer_annotate_container.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_C6ILGC392SLFH9CB.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_string_view.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\__msvc_string_view.hpp_GWRMN3MW35P7BD9E.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xcall_once.h",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xcall_once.h_47TWXFCTNDTW06J2.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xerrc.h",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xerrc.h_OE9BAEEWQPMV082Y.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_system_error_abi.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\__msvc_system_error_abi.hpp_RJASEVOHYVTP20L3.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocale",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xlocale_RAPD8HOYCZRC45EK.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\memory",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\memory_GWAAEBPYIE6MLIK8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\typeinfo",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\typeinfo_BD22SMDQFV1YYA9H.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xfacet",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xfacet_108S3K8AKERHAWFJ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocinfo",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\xlocinfo_2QK26654HRUIX0D1.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cctype",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\cctype_RTJOAN0W23954KHG.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\clocale",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\clocale_O04T7H1KGHDPDBE8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_xlocinfo_types.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\__msvc_xlocinfo_types.hpp_2MO9OXNW3V6OF11G.ifc"
+            }
+        ]
+    }
+}

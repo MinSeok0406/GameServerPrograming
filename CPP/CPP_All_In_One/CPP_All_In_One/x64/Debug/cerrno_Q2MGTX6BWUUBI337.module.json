@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\cerrno_Q2MGTX6BWUUBI337.obj",
+            "outputs": [
+                "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
+                "CPP_All_In_One\\x64\\Debug\\cerrno_Q2MGTX6BWUUBI337.module.json",
+                "CPP_All_In_One\\x64\\Debug\\cerrno_Q2MGTX6BWUUBI337.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cerrno",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cerrno",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

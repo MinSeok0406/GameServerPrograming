@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\iostream_8ETX813DWPK7O81M.obj",
+            "outputs": [
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\vc145.pdb",
+                "x64\\Debug\\iostream_8ETX813DWPK7O81M.module.json",
+                "x64\\Debug\\iostream_8ETX813DWPK7O81M.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iostream",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iostream",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

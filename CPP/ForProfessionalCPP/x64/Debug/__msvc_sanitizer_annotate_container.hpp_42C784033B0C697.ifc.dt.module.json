@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\__msvc_sanitizer_annotate_container.obj",
+            "outputs": [
+                "x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_42C784033B0C697.ifc.dt.module.json",
+                "x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_42C784033B0C697.ifc.dt.d.json",
+                "x64\\Debug\\__msvc_sanitizer_annotate_container.hpp.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.50.35717\\include\\__msvc_sanitizer_annotate_container.hpp",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_sanitizer_annotate_container.hpp",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

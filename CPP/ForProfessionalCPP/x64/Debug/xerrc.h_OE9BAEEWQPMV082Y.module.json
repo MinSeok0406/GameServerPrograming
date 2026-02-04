@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\xerrc.h_OE9BAEEWQPMV082Y.obj",
+            "outputs": [
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\vc145.pdb",
+                "x64\\Debug\\xerrc.h_OE9BAEEWQPMV082Y.module.json",
+                "x64\\Debug\\xerrc.h_OE9BAEEWQPMV082Y.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xerrc.h",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xerrc.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\cfloat_N3SX3TSVNAC1R53L.obj",
+            "outputs": [
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\vc145.pdb",
+                "x64\\Debug\\cfloat_N3SX3TSVNAC1R53L.module.json",
+                "x64\\Debug\\cfloat_N3SX3TSVNAC1R53L.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cfloat",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cfloat",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

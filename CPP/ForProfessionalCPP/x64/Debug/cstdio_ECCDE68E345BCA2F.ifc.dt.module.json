@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\cstdio.obj",
+            "outputs": [
+                "x64\\Debug\\cstdio_ECCDE68E345BCA2F.ifc.dt.module.json",
+                "x64\\Debug\\cstdio_ECCDE68E345BCA2F.ifc.dt.d.json",
+                "x64\\Debug\\cstdio.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.50.35717\\include\\cstdio",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdio",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

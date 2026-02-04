@@ -4,9 +4,36 @@
     <Filter Include="Project">
       <UniqueIdentifier>{75a50f6b-ae94-4e6c-b0e0-8d45d7988b74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Employee">
+      <UniqueIdentifier>{151ab8ea-6777-458e-8c66-473f79717db8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Database">
+      <UniqueIdentifier>{532874d4-bc51-4efe-a2cd-d6176a72507b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice">
+      <UniqueIdentifier>{1b6e4e57-e516-42aa-b6d0-f69d497762bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="EmployeeTest.cpp">
+      <Filter>Project</Filter>
+    </ClCompile>
+    <ClCompile Include="Employee.cpp">
+      <Filter>Employee</Filter>
+    </ClCompile>
+    <ClCompile Include="Employee.ixx">
+      <Filter>Employee</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.ixx">
+      <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabaseTest.cpp">
+      <Filter>Project</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
       <Filter>Project</Filter>
     </ClCompile>
   </ItemGroup>

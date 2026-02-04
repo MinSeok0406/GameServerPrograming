@@ -1,0 +1,596 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\gameprograming\\cpp\\cpp_all_in_one\\main.cpp",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winsock2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winpackagefamily.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\windows.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\sdkddkver.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\excpt.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\stdarg.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\windef.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\minwindef.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\specstrings.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\specstrings_strict.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\specstrings_undef.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\driverspecs.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\sdv_driverspecs.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winnt.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\kernelspecs.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\basetsd.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\guiddef.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack4.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack4.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack4.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\apiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\ktmtypes.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winbase.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\apisetcconv.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\minwinbase.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\apiquery2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\processenv.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\fileapifromapp.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\fileapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\debugapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\utilapiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\handleapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\errhandlingapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\fibersapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\namedpipeapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\profileapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\heapapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ioapiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\synchapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\interlockedapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\processthreadsapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\sysinfoapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\memoryapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\enclaveapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\threadpoollegacyapiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\threadpoolapiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\jobapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\jobapi2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\wow64apiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\libloaderapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\securitybaseapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\namespaceapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\systemtopologyapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\processtopologyapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\securityappcontainer.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\realtimeapiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winerror.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\timezoneapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\wingdi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack4.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack4.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winuser.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\tvout.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winnls.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\datetimeapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\stringapiset.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winnls.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\wincon.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\wincontypes.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\consoleapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\consoleapi2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\consoleapi3.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winver.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\verrsrc.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winreg.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\reason.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winnetwk.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\wnnc.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\cderr.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\dde.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ddeml.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\dlgs.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\lzexpand.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\mmsystem.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\mmsyscom.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\mciapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\mmiscapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\mmiscapi2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\playsoundapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\mmeapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\timeapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\joystickapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\nb30.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\rpc.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\rpcdce.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\rpcdcep.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\rpcnsi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\rpcnterr.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\rpcasync.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\shellapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winperf.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winsock.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\wincrypt.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\bcrypt.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ncrypt.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\dpapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winefs.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winscard.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\wtypes.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\rpcndr.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\rpcnsip.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\rpcsal.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\wtypesbase.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\guiddef.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winioctl.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack1.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winsmcrd.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winspool.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\prsht.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ole2.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\objbase.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\combaseapi.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\unknwnbase.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\objidlbase.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\guiddef.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\cguid.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\coml2api.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\objidl.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\unknwn.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\propidlbase.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\oaidl.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\urlmon.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\oleidl.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\servprov.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\msxml.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\propidl.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\oleauto.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\pshpack8.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\poppack.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\commdlg.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\prsht.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\stralign.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winsvc.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\mcx.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\imm.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ime_cmodes.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\ws2def.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\inaddr.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\qos.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": [
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iostream",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\iostream_8ETX813DWPK7O81M.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\istream",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\istream_LY71ZPWH8WYEMZZV.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_ostream.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_ostream.hpp_OS5KRZVL6Z7EX368.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\ios",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\ios_Q475B9P0IFGC7FXS.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocnum",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xlocnum_JB5AQN15G6HW79OB.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cfloat",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cfloat_N3SX3TSVNAC1R53L.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\climits",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\climits_YRF0YK6HTT199404.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cmath",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cmath_KD01FTLKLW1YT87S.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdlib",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstdlib_DKVBWKTGK9WF5ME5.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\type_traits",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\type_traits_3UQOL4Y78BSMFJMY.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstddef",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstddef_6236QZOX823W3QXT.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xtr1common",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xtr1common_V401A4PCGT3MNZTV.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdint",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstdint_C446WCTBPIBONY7Z.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstdio",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstdio_LBJRP3B39RZOBV72.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iterator",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\iterator_PO1M4E3KLTQEFW97.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iosfwd",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\iosfwd_V3RHBFAYSRYJL1AD.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cstring",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstring_MGV710PL4KLOG5B8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cwchar",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cwchar_QR8K3W9XOXECWA11.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xutility",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xutility_CO0N70I57WBBIJXQ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_iter_core.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_iter_core.hpp_P6F3JF9XIFTCNKAZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\utility",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\utility_Z8FHW387UMLX6PJJ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\compare",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\compare_QP0K05PZK3QHW0ME.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\concepts",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\concepts_CVS00U6OJLPKE50K.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\initializer_list",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\initializer_list_HF11LPB6RUV111NX.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\streambuf",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\streambuf_I31W7DKVJ0U25808.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xiosbase",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xiosbase_H1TF195VADJZQK5R.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\system_error",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\system_error_MD9MFLBKG8R9BWKZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\atomic",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\atomic_EEKVBMHBLTO8T3N3.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xatomic.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xatomic.h_K58FEFM7KIEGVFGP.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xatomic_wait.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xatomic_wait.h_ESWPSOTKM4Z0G51V.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xthreads.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xthreads.h_8TWOFQJP0JOY128I.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xtimec.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xtimec.h_JU7N6SVZD3OQLNIZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\ctime",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\ctime_IJHU8YQE8UQ3V50I.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_threads_core.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_threads_core.hpp_04C0RWFKZCHAU2FD.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cerrno",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cerrno_Q2MGTX6BWUUBI337.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\stdexcept",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\stdexcept_2FJML0SEJ45JR9LI.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\exception",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\exception_NBTU1MGQ4NJC723L.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xstring",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xstring_1EZEJY7J9DYYIIN8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xmemory",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xmemory_TW40FCR9DIZF6M2Q.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\limits",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\limits_CNODZ6PMEYTMWK9Q.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\new",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\new_6V0OWCDNMZBD0416.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\tuple",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\tuple_DWPC2HH0S2RVJOOT.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xpolymorphic_allocator.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xpolymorphic_allocator.h_DWTVEEWM652Y0M2F.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_sanitizer_annotate_container.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_C6ILGC392SLFH9CB.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_string_view.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_string_view.hpp_GWRMN3MW35P7BD9E.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xcall_once.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xcall_once.h_47TWXFCTNDTW06J2.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xerrc.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xerrc.h_OE9BAEEWQPMV082Y.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_system_error_abi.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_system_error_abi.hpp_RJASEVOHYVTP20L3.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocale",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xlocale_RAPD8HOYCZRC45EK.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\memory",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\memory_GWAAEBPYIE6MLIK8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\typeinfo",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\typeinfo_BD22SMDQFV1YYA9H.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xfacet",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xfacet_108S3K8AKERHAWFJ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocinfo",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xlocinfo_2QK26654HRUIX0D1.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\cctype",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cctype_RTJOAN0W23954KHG.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\clocale",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\clocale_O04T7H1KGHDPDBE8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_xlocinfo_types.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.hpp_2MO9OXNW3V6OF11G.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\ostream",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\ostream_WFT9YAV7JZ4P93A5.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\array",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\array_L8JT3N86B1XZXKU8.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\vector",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vector_IB4YAIJ0EF8RV5S4.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_bit_utils.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_bit_utils.hpp_O2VHJ4ZO7TFAZGTE.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\string",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\string_6CMZHJ6EFEXBHT0V.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\algorithm",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\algorithm_1YOQY3HP5O23S5BQ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_heap_algorithms.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_heap_algorithms.hpp_Y8UQWXP0AOF7I4TM.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_minmax.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_minmax.hpp_DNXBXL2A0QCG2516.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\mutex",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\mutex_J1S7HOT29WCKQJSF.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\thread",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\thread_8OWN9XTKXJBMJ14T.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\stop_token",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\stop_token_GWH1M0797GK7K6X7.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_chrono.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_chrono.hpp_0X6S89W5UI9I1O9M.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\ratio",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\ratio_5YAXAMMYZH7JXOSR.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\format",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\format_ORKQ5AA624QAE707.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\bit",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\bit_M1OV7UIQ1LJ5473S.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\charconv",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\charconv_TEPNP8DUQ7ESVCEI.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xbit_ops.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xbit_ops.h_SY1H5YL7VHV3SCWC.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xcharconv.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xcharconv.h_06OX3RCPLYS3HTO6.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xcharconv_ryu.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xcharconv_ryu.h_HG5AMRYQA7UJPDP6.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xcharconv_ryu_tables.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xcharconv_ryu_tables.h_GXJFL4WH0K3CEVUF.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xcharconv_tables.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xcharconv_tables.h_3UKLLYYQHXYS9LPX.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\locale",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\locale_5YORQXH1TD4LUGI3.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocbuf",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xlocbuf_0R8ESCKJRXZ3VERX.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocmes",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xlocmes_XAK1K0AQQO57ZJEZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xlocmon",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xlocmon_3FBEWGGWH6KCZR6J.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xloctime",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xloctime_AOTALH6ESCTMHGDG.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xfilesystem_abi.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xfilesystem_abi.h_6TZMT4TW7DEIO18S.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_formatter.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_formatter.hpp_T1N4UEQYF1YQ6R12.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_format_ucd_tables.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_format_ucd_tables.hpp_1AKIGJQGOFWDUBGY.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_print.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_print.hpp_O0J057DU0PGREOYZ.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_ranges_tuple_formatter.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_ranges_tuple_formatter.hpp_4LJ5IH1NTSESPKTT.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\list",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\list_0BFIGZ32KI6PQ572.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\optional",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\optional_F1FN86NXV9TOGN5O.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xsmf_control.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xsmf_control.h_1J8DVFYJS0VU86K6.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\map",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\map_S350J5EQYSCANABI.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xtree",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xtree_MQXF7M6K5IP09B54.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xnode_handle.h",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xnode_handle.h_MA3S3VKIUMMWC91K.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\set",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\set_012E80LCUZ9SRA2R.ifc"
+            }
+        ]
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.hpp_2MO9OXNW3V6OF11G.obj",
+            "outputs": [
+                "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
+                "CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.hpp_2MO9OXNW3V6OF11G.module.json",
+                "CPP_All_In_One\\x64\\Debug\\__msvc_xlocinfo_types.hpp_2MO9OXNW3V6OF11G.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_xlocinfo_types.hpp",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_xlocinfo_types.hpp",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
