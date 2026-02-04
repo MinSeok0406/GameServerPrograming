@@ -8,46 +8,64 @@
     <Filter Include="Practice_Problem">
       <UniqueIdentifier>{09188cd2-ca70-463d-87d7-fbdd02f03d46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Practice_Problem\Section1~12">
+      <UniqueIdentifier>{9a23eb4f-59be-439f-a56b-19950ed89971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice_Problem\Section13~20">
+      <UniqueIdentifier>{7743c4c5-d19d-42cd-a596-e59e96096f3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.c">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="Practice01.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice02.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice03.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice04.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice05.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice06.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice07.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice08.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice09.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice10.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice11.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
     </ClCompile>
     <ClCompile Include="Practice12.c">
-      <Filter>Practice_Problem</Filter>
+      <Filter>Practice_Problem\Section1~12</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice13.c">
+      <Filter>Practice_Problem\Section13~20</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice14.c">
+      <Filter>Practice_Problem\Section13~20</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice15.c">
+      <Filter>Practice_Problem\Section13~20</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice16.c">
+      <Filter>Practice_Problem\Section13~20</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
