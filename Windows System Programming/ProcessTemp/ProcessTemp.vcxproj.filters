@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Chapter8">
+      <UniqueIdentifier>{efc871a3-b7d8-4410-8daf-5807d8b9585f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Brain_Windows System Programming\MailSender2_2.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

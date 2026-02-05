@@ -14,6 +14,9 @@
     <Filter Include="Chapter7">
       <UniqueIdentifier>{6261e323-02a6-48de-a0bc-280da75d94be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter8">
+      <UniqueIdentifier>{6c0ed5ba-e692-4c46-b047-406803748d54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -30,6 +33,9 @@
     </ClCompile>
     <ClCompile Include="AdderManager.c">
       <Filter>Chapter7</Filter>
+    </ClCompile>
+    <ClCompile Include="MailReceiver2.c">
+      <Filter>Chapter8</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

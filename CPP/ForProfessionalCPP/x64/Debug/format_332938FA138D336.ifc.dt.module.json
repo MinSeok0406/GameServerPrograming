@@ -7,7 +7,7 @@
             "outputs": [
                 "x64\\Debug\\format_332938FA138D336.ifc.dt.module.json",
                 "x64\\Debug\\format_332938FA138D336.ifc.dt.d.json",
-                "format.ifc"
+                "x64\\Debug\\format.ifc"
             ],
             "provides": [
                 {

@@ -7,7 +7,7 @@
             "outputs": [
                 "x64\\Debug\\vector_C5817EAC134B1B26.ifc.dt.module.json",
                 "x64\\Debug\\vector_C5817EAC134B1B26.ifc.dt.d.json",
-                "vector.ifc"
+                "x64\\Debug\\vector.ifc"
             ],
             "provides": [
                 {

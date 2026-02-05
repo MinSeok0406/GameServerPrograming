@@ -7,7 +7,7 @@
             "outputs": [
                 "x64\\Debug\\stdexcept_DA5A9BB006D5D713.ifc.dt.module.json",
                 "x64\\Debug\\stdexcept_DA5A9BB006D5D713.ifc.dt.d.json",
-                "stdexcept.ifc"
+                "x64\\Debug\\stdexcept.ifc"
             ],
             "provides": [
                 {

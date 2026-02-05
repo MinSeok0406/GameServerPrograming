@@ -131,6 +131,7 @@
     <ClCompile Include="CreateProcess.c" />
     <ClCompile Include="KernelObjProb2.c" />
     <ClCompile Include="MailSender.c" />
+    <ClCompile Include="MailSender2_1.c" />
     <ClCompile Include="Operation2.c" />
     <ClCompile Include="OperationStateChild.c" />
     <ClCompile Include="PartAdder.c" />

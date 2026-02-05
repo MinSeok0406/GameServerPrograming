@@ -14,6 +14,9 @@
     <Filter Include="Chapter7">
       <UniqueIdentifier>{83fce630-2540-4dc9-99ba-4f726a594268}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter8">
+      <UniqueIdentifier>{8530b379-ecd5-4ec5-906f-a9c68e08680d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreateProcess.c">
@@ -39,6 +42,9 @@
     </ClCompile>
     <ClCompile Include="PartAdder.c">
       <Filter>Chapter7</Filter>
+    </ClCompile>
+    <ClCompile Include="MailSender2_1.c">
+      <Filter>Chapter8</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

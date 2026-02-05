@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="AdderManager.c" />
     <ClCompile Include="MailReceiver.c" />
+    <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
