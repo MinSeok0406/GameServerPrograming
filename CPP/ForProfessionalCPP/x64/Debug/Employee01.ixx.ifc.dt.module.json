@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\Employee01.obj",
+            "outputs": [
+                "x64\\Debug\\Employee01.ixx.ifc.dt.module.json",
+                "x64\\Debug\\Employee01.ixx.ifc.dt.d.json",
+                "x64\\Debug\\Employee01.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Employee01",
+                    "source-path": "c:\\gameprograming\\cpp\\forprofessionalcpp\\employee01.ixx",
+                    "is-interface": true
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

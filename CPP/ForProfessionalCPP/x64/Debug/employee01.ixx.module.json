@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\Employee01.ixx.obj",
+            "outputs": [
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\vc145.pdb",
+                "x64\\Debug\\",
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Debug\\Employee01.ixx.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Employee01",
+                    "source-path": "c:\\gameprograming\\cpp\\forprofessionalcpp\\employee01.ixx",
+                    "is-interface": true
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

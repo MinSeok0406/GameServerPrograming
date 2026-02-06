@@ -2,9 +2,4 @@
   Main.cpp
   Compiling...
   Main.cpp
-C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(45,19): error C2664: 'void *Widget::operator new(size_t,std::ostream &)': 인수 2을(를) 'std::align_val_t'에서 'std::ostream &'(으)로 변환할 수 없습니다.
-      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(25,18):
-      'Widget::operator new' 선언을 참조하십시오.
-      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(45,19):
-      인수 목록 '(unsigned __int64, std::align_val_t)'을(를) 일치시키는 동안
-  
+  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\x64\Debug\CPP_All_In_One.exe

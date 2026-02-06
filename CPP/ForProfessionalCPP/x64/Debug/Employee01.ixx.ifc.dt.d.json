@@ -1,0 +1,10 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\gameprograming\\cpp\\forprofessionalcpp\\employee01.ixx",
+        "ProvidedModule": "Employee01",
+        "Includes": [],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

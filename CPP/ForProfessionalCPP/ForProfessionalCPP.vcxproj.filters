@@ -36,5 +36,11 @@
     <ClCompile Include="UserInterface.cpp">
       <Filter>Project</Filter>
     </ClCompile>
+    <ClCompile Include="Practice01.cpp">
+      <Filter>Practice</Filter>
+    </ClCompile>
+    <ClCompile Include="Employee01.ixx">
+      <Filter>Practice</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

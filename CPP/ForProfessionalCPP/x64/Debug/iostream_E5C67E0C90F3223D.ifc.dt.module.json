@@ -7,7 +7,7 @@
             "outputs": [
                 "x64\\Debug\\iostream_E5C67E0C90F3223D.ifc.dt.module.json",
                 "x64\\Debug\\iostream_E5C67E0C90F3223D.ifc.dt.d.json",
-                "x64\\Debug\\iostream.ifc"
+                "iostream.ifc"
             ],
             "provides": [
                 {
