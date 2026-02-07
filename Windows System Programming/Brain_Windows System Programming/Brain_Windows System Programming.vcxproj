@@ -129,9 +129,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AdderManager.c" />
+    <ClCompile Include="anonymous_pipe.c" />
+    <ClCompile Include="DuplicateHandle.c" />
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
+    <ClCompile Include="namedpipe_server.c" />
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
   </ItemGroup>

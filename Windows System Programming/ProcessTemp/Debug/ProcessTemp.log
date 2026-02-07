@@ -1,4 +1,2 @@
 ﻿  MailSender2_2.c
-C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\MailSender2_2.c(19,20): warning C4477: 'fwscanf' : 서식 문자열 '%d'에 'int *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'HANDLE *'입니다.
-C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\MailSender2_2.c(21,14): warning C4477: 'wprintf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'HANDLE'입니다.
   ProcessTemp.vcxproj -> C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\Debug\ProcessTemp.exe

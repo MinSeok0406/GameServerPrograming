@@ -46,5 +46,11 @@
     <ClCompile Include="MailSender2_1.c">
       <Filter>Chapter8</Filter>
     </ClCompile>
+    <ClCompile Include="DuplicateHandleChildProcess.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="namedpipe_client.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

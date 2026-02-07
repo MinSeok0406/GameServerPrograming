@@ -1,13 +1,4 @@
-﻿  Calculator.c
-  CreateProcess.c
-  KernelObjProb2.c
-  MailSender.c
-  MailSender2_1.c
-  Operation2.c
-C:\GamePrograming\Windows System Programming\Command_Prompt_Practice\MailSender2_1.c(39,14): warning C4477: 'wprintf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'HANDLE'입니다.
-C:\GamePrograming\Windows System Programming\Command_Prompt_Practice\MailSender2_1.c(41,21): warning C4477: 'fwprintf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'HANDLE'입니다.
-  OperationStateChild.c
-  PartAdder.c
-  Program.c
+﻿  DuplicateHandleChildProcess.c
+  namedpipe_client.c
   코드를 생성하고 있습니다...
   Command_Prompt_Practice.vcxproj -> C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\Debug\Command_Prompt_Practice.exe

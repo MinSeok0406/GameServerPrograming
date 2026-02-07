@@ -1,8 +1,2 @@
-﻿  AdderManager.c
-  MailReceiver.c
-  MailReceiver2.c
-  Main.c
-  Operation1.c
-  OperationStateParent.c
-  코드를 생성하고 있습니다...
+﻿  namedpipe_server.c
   Brain_Windows System Programming.vcxproj -> C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\Debug\Brain_Windows System Programming.exe

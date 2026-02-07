@@ -37,5 +37,14 @@
     <ClCompile Include="MailReceiver2.c">
       <Filter>Chapter8</Filter>
     </ClCompile>
+    <ClCompile Include="DuplicateHandle.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="anonymous_pipe.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="namedpipe_server.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
