@@ -52,5 +52,8 @@
     <ClCompile Include="namedpipe_client.c">
       <Filter>Chapter8</Filter>
     </ClCompile>
+    <ClCompile Include="EnvParent.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

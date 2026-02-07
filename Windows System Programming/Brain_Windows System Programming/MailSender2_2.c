@@ -5,7 +5,6 @@
 #include <windows.h>
 #include <tchar.h>
 
-
 int _tmain(int argc, TCHAR* argv[])
 {
     _wsetlocale(LC_ALL, L"korean");
@@ -15,9 +14,10 @@ int _tmain(int argc, TCHAR* argv[])
     DWORD bytesWritten;
 
     // 핸들을 얻는 코드
-    FILE* file = _tfopen(_T("InheritableHandle.txt"), _T("rt"));
-    _ftscanf(file, _T("%p"), &hMailSlot);
-    fclose(file);
+    TCHAR handleStr[64] = { 0 };
+    GetEnvironmentVariable(_T("Handle"), handleStr, _countof(handleStr));
+    _stscanf_s(handleStr, _T("%p"), &hMailSlot);
+
     _tprintf(_T("Inheritable Handle : %p \n"), hMailSlot);
 
     while (1)

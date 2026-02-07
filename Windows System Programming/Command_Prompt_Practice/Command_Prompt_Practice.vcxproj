@@ -130,6 +130,7 @@
     <ClCompile Include="Calculator.c" />
     <ClCompile Include="CreateProcess.c" />
     <ClCompile Include="DuplicateHandleChildProcess.c" />
+    <ClCompile Include="EnvParent.c" />
     <ClCompile Include="KernelObjProb2.c" />
     <ClCompile Include="MailSender.c" />
     <ClCompile Include="MailSender2_1.c" />

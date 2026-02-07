@@ -9,5 +9,8 @@
     <ClCompile Include="..\Brain_Windows System Programming\MailSender2_2.c">
       <Filter>Chapter8</Filter>
     </ClCompile>
+    <ClCompile Include="EnvChild.c">
+      <Filter>Chapter8</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
