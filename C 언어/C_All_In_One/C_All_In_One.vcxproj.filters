@@ -76,5 +76,11 @@
     <ClCompile Include="Practice19.c">
       <Filter>Practice_Problem\Section13~20</Filter>
     </ClCompile>
+    <ClCompile Include="Practice20.c">
+      <Filter>Practice_Problem\Section13~20</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice21.c">
+      <Filter>Practice_Problem\Section13~20</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
