@@ -2,4 +2,13 @@
   Main.cpp
   Compiling...
   Main.cpp
-  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\x64\Debug\CPP_All_In_One.exe
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(24,6): error C3892: 'param': const인 변수에 할당할 수 없습니다.
+      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(24,6):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(37,5):
+          컴파일되는 함수 템플릿 인스턴스화 'void f<const char*>(T)'에 대한 참조를 확인하세요.
+          with
+          [
+              T=const char *
+          ]
+  
