@@ -42,5 +42,8 @@
     <ClCompile Include="Employee01.ixx">
       <Filter>Practice</Filter>
     </ClCompile>
+    <ClCompile Include="Employee01.cpp">
+      <Filter>Practice</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -135,6 +135,7 @@
     <ClCompile Include="DatabaseTest.cpp" />
     <ClCompile Include="Employee.cpp" />
     <ClCompile Include="Employee.ixx" />
+    <ClCompile Include="Employee01.cpp" />
     <ClCompile Include="Employee01.ixx" />
     <ClCompile Include="EmployeeTest.cpp" />
     <ClCompile Include="Practice01.cpp" />
