@@ -1,3 +1,2 @@
-﻿  Program.c
-C:\GamePrograming\Windows System Programming\Command_Prompt_Practice\Program.c(35,11): warning C4047: '초기화 중': 'DWORD'의 간접 참조 수준이 'void *'과(와) 다릅니다.
+﻿  NORMAL_PRIORITY_CLASS.c
   Command_Prompt_Practice.vcxproj -> C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\x64\Debug\Command_Prompt_Practice.exe

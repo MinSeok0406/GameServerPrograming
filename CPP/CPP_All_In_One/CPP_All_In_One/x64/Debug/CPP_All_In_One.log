@@ -2,4 +2,5 @@
   Main.cpp
   Compiling...
   Main.cpp
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(40,1): warning C4172: 지역 변수 또는 임시 : x의 주소를 반환하는 중
   CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\x64\Debug\CPP_All_In_One.exe

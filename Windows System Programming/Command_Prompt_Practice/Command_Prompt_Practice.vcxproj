@@ -135,6 +135,7 @@
     <ClCompile Include="MailSender.c" />
     <ClCompile Include="MailSender2_1.c" />
     <ClCompile Include="namedpipe_client.c" />
+    <ClCompile Include="NORMAL_PRIORITY_CLASS.c" />
     <ClCompile Include="Operation2.c" />
     <ClCompile Include="OperationStateChild.c" />
     <ClCompile Include="PartAdder.c" />

@@ -17,6 +17,9 @@
     <Filter Include="Chapter8">
       <UniqueIdentifier>{6c0ed5ba-e692-4c46-b047-406803748d54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter9">
+      <UniqueIdentifier>{2fe1147a-5369-47a0-b068-fb41957bdd37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -45,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="namedpipe_server.c">
       <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="ABOVE_NORMAL_PRIORITY_CLASS.c">
+      <Filter>Chapter9</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

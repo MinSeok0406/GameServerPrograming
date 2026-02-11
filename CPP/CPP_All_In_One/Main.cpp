@@ -17,29 +17,42 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-template<typename T>
-void f(T param)
+template<typename Container, typename Index>
+decltype(auto) authAndAccess(Container& c, Index i)
 {
-    const char* ptr = "des";
-    param = ptr;
-    param = "HW";
+    return c[i];
 }
 
-template<typename T>
-void ff(T& param)
+class Widget
 {
-    cout << sizeof(param) << "\n";
+public:
+};
+
+decltype(auto) f1()
+{
+    int x = 0;
+    return x;
+}
+
+decltype(auto) f2()
+{
+    int x = 0;
+    return (x);
 }
 
 int main()
 {
-    const char* const cccs = "Hello World";
-    f(cccs);
-    f("Hello World");
+    vector<int> v(100, 0);
 
-    const char name[] = "Hello";
-    cout << sizeof(name) << "\n";
-    ff(name);
+    authAndAccess(v, 10) = 5;
+
+    cout << v[10] << "\n";
+
+    Widget w;
+    const Widget& cw = w;
+
+    auto myWidget1 = cw;
+    decltype(auto) myWidget2 = cw;
 
     return 0;
 }

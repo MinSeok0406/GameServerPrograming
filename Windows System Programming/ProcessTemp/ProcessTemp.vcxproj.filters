@@ -4,6 +4,9 @@
     <Filter Include="Chapter8">
       <UniqueIdentifier>{efc871a3-b7d8-4410-8daf-5807d8b9585f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter9">
+      <UniqueIdentifier>{a5ab06b7-64ed-4434-9688-7a716c7aaa1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Brain_Windows System Programming\MailSender2_2.c">
@@ -11,6 +14,9 @@
     </ClCompile>
     <ClCompile Include="EnvChild.c">
       <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="BELOW_NORMAL_PRIORITY_CLASS.c">
+      <Filter>Chapter9</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -17,6 +17,9 @@
     <Filter Include="Chapter8">
       <UniqueIdentifier>{8530b379-ecd5-4ec5-906f-a9c68e08680d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter9">
+      <UniqueIdentifier>{afdefc4e-0997-4629-b3d6-ced7848cbbc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreateProcess.c">
@@ -54,6 +57,9 @@
     </ClCompile>
     <ClCompile Include="EnvParent.c">
       <Filter>Chapter8</Filter>
+    </ClCompile>
+    <ClCompile Include="NORMAL_PRIORITY_CLASS.c">
+      <Filter>Chapter9</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
