@@ -4,10 +4,21 @@
     <Filter Include="Main">
       <UniqueIdentifier>{0f802c95-aa39-41f9-909b-19c0a7c88ff3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter02">
+      <UniqueIdentifier>{8432a862-b07d-44bb-b4aa-56679fa0c2cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.c">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="StringAvg.c">
+      <Filter>Chapter02</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StringAvg.h">
+      <Filter>Chapter02</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,31 +3,23 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "StringAvg.h"
 
-typedef int bool_t;
-typedef bool_t (*less_than_func_t)(int, int);
-
-bool_t less_than(int a, int b)
-{
-    return a < b ? 1 : 0;
-}
-
-bool_t less_than_modular(int a, int b)
-{
-    return (a % 5) < (b % 5) ? 1 : 0;
-}
 
 int main(int argc, char** argv)
 {
-    less_than_func_t func_ptr = NULL;
+    int array[5];
 
-    func_ptr = &less_than;
-    bool_t result = func_ptr(3, 7);
-    printf("%d\n", result);
+    for (int i = 0; i < 5; i++)
+    {
+        array[i] = i + 4;
+    }
 
-    func_ptr = &less_than_modular;
-    result = func_ptr(3, 7);
-    printf("%d\n", result); 
+    double average = avg(array, 5, NORMAL);
+    printf("The average: %f\n", average);
+
+    average = avg(array, 5, SQUARED);
+    printf("The squared average: %f\n", average);
 
     return 0;
 }
