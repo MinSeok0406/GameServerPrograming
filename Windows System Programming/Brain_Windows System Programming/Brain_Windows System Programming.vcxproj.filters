@@ -52,5 +52,8 @@
     <ClCompile Include="ABOVE_NORMAL_PRIORITY_CLASS.c">
       <Filter>Chapter9</Filter>
     </ClCompile>
+    <ClCompile Include="SortString.c">
+      <Filter>Project</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

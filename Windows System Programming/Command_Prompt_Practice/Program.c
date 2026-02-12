@@ -232,6 +232,31 @@
 //
 //        CloseHandle(hProcessSnap);
 //    }
+//    else if (!_tcscmp(cmdTokenList[0], _T("sort")))
+//    {
+//        if (!_tcscmp(cmdTokenList[1], _T(">")))
+//        {
+//            SECURITY_ATTRIBUTES fileSec = { 0, };
+//            fileSec.nLength = sizeof(SECURITY_ATTRIBUTES);
+//            fileSec.lpSecurityDescriptor = NULL;
+//            fileSec.bInheritHandle = TRUE;
+//
+//            HANDLE hFile = CreateFile(cmdTokenList[2], GENERIC_WRITE, FILE_SHARE_READ,
+//                &fileSec, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+//
+//            si.hStdOutput = hFile;
+//            si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+//            si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+//            si.dwFlags |= STARTF_USESTDHANDLES;
+//
+//            isRun = CreateProcess(NULL, cmdTokenList[0], NULL, NULL, TRUE,
+//                0, NULL, NULL, &si, &pi);
+//
+//            WaitForSingleObject(pi.hProcess, INFINITE);
+//
+//            CloseHandle(hFile);
+//        }
+//    }
 //    else
 //    {
 //        _tcscpy(cmdStringWithOptions, cmdTokenList[0]);

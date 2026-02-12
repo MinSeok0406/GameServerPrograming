@@ -17,42 +17,28 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-template<typename Container, typename Index>
-decltype(auto) authAndAccess(Container& c, Index i)
-{
-    return c[i];
-}
+const int theAnswer = 42;
 
-class Widget
-{
-public:
-};
+auto x = theAnswer;
+auto y = &theAnswer;
 
-decltype(auto) f1()
-{
-    int x = 0;
-    return x;
-}
+template<typename T>
+class Widget;
 
-decltype(auto) f2()
+template<typename T>
+void f(const T& param)
 {
-    int x = 0;
-    return (x);
+    cout << typeid(T).name() << "\n";
+    cout << typeid(param).name() << "\n";
 }
 
 int main()
 {
-    vector<int> v(100, 0);
+    cout << typeid(x).name() << "\n";
+    cout << typeid(y).name() << "\n";
 
-    authAndAccess(v, 10) = 5;
-
-    cout << v[10] << "\n";
-
-    Widget w;
-    const Widget& cw = w;
-
-    auto myWidget1 = cw;
-    decltype(auto) myWidget2 = cw;
+    int a = 0;
+    f(a);
 
     return 0;
 }
