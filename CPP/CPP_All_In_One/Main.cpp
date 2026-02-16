@@ -13,32 +13,35 @@
 #include <iterator>
 #include <WinSock2.h>
 #include <new>
+#include <functional>
 using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-const int theAnswer = 42;
+unordered_map<string, int> mp;
 
-auto x = theAnswer;
-auto y = &theAnswer;
-
-template<typename T>
-class Widget;
-
-template<typename T>
-void f(const T& param)
+template<typename It>
+void dwim(It b, It e)
 {
-    cout << typeid(T).name() << "\n";
-    cout << typeid(param).name() << "\n";
+    for (; b != e; ++b)
+    {
+        typename std::iterator_traits<It>::value_type currValue = *b;
+        auto Value = *b;
+    }
 }
+
+class Widget
+{
+    
+};
+
 
 int main()
 {
-    cout << typeid(x).name() << "\n";
-    cout << typeid(y).name() << "\n";
+    auto dare = [](const unique_ptr<Widget>& p1, const unique_lock<Widget>& p2) { return 0; };
+    auto dare2 = [](const auto& p1, const auto& p2) { return 0; };
 
-    int a = 0;
-    f(a);
+    std::function<bool(const unique_ptr<Widget>, const unique_lock<Widget>&)> func;
 
     return 0;
 }

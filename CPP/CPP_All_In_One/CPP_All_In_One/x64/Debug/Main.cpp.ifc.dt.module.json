@@ -572,6 +572,24 @@
                     "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\set",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "functional",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\functional",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "unordered_map",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\unordered_map",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "xhash",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xhash",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
                 }
             ]
         }
