@@ -23,6 +23,9 @@
     <Filter Include="Chapter12">
       <UniqueIdentifier>{bda1394c-138d-4f82-bc74-bf9fe6b64283}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter13">
+      <UniqueIdentifier>{52791dc1-4e70-4b09-b10b-9364c6a48191}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -75,6 +78,24 @@
     </ClCompile>
     <ClCompile Include="SuspendCount.c">
       <Filter>Chapter12</Filter>
+    </ClCompile>
+    <ClCompile Include="CriticalSection.c">
+      <Filter>Chapter13</Filter>
+    </ClCompile>
+    <ClCompile Include="CriticalSectionSync.c">
+      <Filter>Chapter13</Filter>
+    </ClCompile>
+    <ClCompile Include="CriticalSectionSyncMutex.c">
+      <Filter>Chapter13</Filter>
+    </ClCompile>
+    <ClCompile Include="CriticalSectionSyncSemaphore.c">
+      <Filter>Chapter13</Filter>
+    </ClCompile>
+    <ClCompile Include="NamedMutex.c">
+      <Filter>Chapter13</Filter>
+    </ClCompile>
+    <ClCompile Include="MUTEX_WAIT_ABANDONED.c">
+      <Filter>Chapter13</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

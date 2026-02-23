@@ -1,4 +1,4 @@
-#include <locale.h>
+/*#include <locale.h>
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
@@ -73,4 +73,4 @@ int _tmain(int argc, TCHAR* argv[])
     CloseHandle(hMutex);
 
     return 0;
-}
+}*/

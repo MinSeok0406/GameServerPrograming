@@ -133,10 +133,16 @@
     <ClCompile Include="anonymous_pipe.c" />
     <ClCompile Include="CountThread.c" />
     <ClCompile Include="CountThreadMultiThread.c" />
+    <ClCompile Include="CriticalSection.c" />
+    <ClCompile Include="CriticalSectionSync.c" />
+    <ClCompile Include="CriticalSectionSyncMutex.c" />
+    <ClCompile Include="CriticalSectionSyncSemaphore.c" />
     <ClCompile Include="DuplicateHandle.c" />
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
+    <ClCompile Include="MUTEX_WAIT_ABANDONED.c" />
+    <ClCompile Include="NamedMutex.c" />
     <ClCompile Include="namedpipe_server.c" />
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
