@@ -2,4 +2,142 @@
   Main.cpp
   컴파일하는 중...
   Main.cpp
-  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\x64\Debug\CPP_All_In_One.exe
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(53,27): warning C5055: 연산자 '*': 열거형과 부동 소수점 형식 간에 사용되지 않음
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14): error C2672: 'get': 일치하는 오버로드된 함수가 없습니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\tuple(969,34):
+      'const _Ty &&std::get(const std::tuple<_Rest...> &&) noexcept'일 수 있습니다.
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\tuple(957,28):
+      또는       '_Ty &&std::get(std::tuple<_Rest...> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\tuple(945,33):
+      또는       'const _Ty &std::get(const std::tuple<_Rest...> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\tuple(933,27):
+      또는       '_Ty &std::get(std::tuple<_Rest...> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\__msvc_iter_core.hpp(433,31):
+      또는       'auto std::ranges::get(const std::ranges::subrange<_It,_Se,_Ki> &)'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'auto std::ranges::get(const std::ranges::subrange<_It,_Se,_Ki> &)': 'UserInfo'에서 'const std::ranges::subrange<_It,_Se,_Ki> &'에 대한 템플릿 인수를 추론할 수 없습니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\__msvc_iter_core.hpp(437,31):
+      또는       'auto std::ranges::get(std::ranges::subrange<_It,_Se,_Ki> &&)'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'auto std::ranges::get(std::ranges::subrange<_It,_Se,_Ki> &&)': 'UserInfo'에서 'std::ranges::subrange<_It,_Se,_Ki> &&'에 대한 템플릿 인수를 추론할 수 없습니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(764,35):
+      또는       'const _Ty2 &&std::get(const std::pair<_Ty1,_Ty2> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty2'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(758,35):
+      또는       'const _Ty1 &&std::get(const std::pair<_Ty1,_Ty2> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty1'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(748,70):
+      또는       'const tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &&std::get(const std::pair<_Ty1,_Ty2> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'const tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &&std::get(const std::pair<_Ty1,_Ty2> &&) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(742,29):
+      또는       '_Ty2 &&std::get(std::pair<_Ty1,_Ty2> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty2'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(736,29):
+      또는       '_Ty1 &&std::get(std::pair<_Ty1,_Ty2> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty1'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(726,64):
+      또는       'tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &&std::get(std::pair<_Ty1,_Ty2> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &&std::get(std::pair<_Ty1,_Ty2> &&) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(720,34):
+      또는       'const _Ty2 &std::get(const std::pair<_Ty1,_Ty2> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty2'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(714,34):
+      또는       'const _Ty1 &std::get(const std::pair<_Ty1,_Ty2> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty1'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(704,69):
+      또는       'const tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &std::get(const std::pair<_Ty1,_Ty2> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'const tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &std::get(const std::pair<_Ty1,_Ty2> &) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(698,28):
+      또는       '_Ty2 &std::get(std::pair<_Ty1,_Ty2> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty2'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(692,28):
+      또는       '_Ty1 &std::get(std::pair<_Ty1,_Ty2> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+          'std::get': '_Ty1'의 템플릿 인수가 잘못되었습니다. 형식이 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(682,63):
+      또는       'tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &std::get(std::pair<_Ty1,_Ty2> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'tuple_element<_Idx,std::pair<_Ty1,_Ty2>>::type &std::get(std::pair<_Ty1,_Ty2> &) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(206,34):
+      또는       'const _Ty &&std::get(const std::array<_Ty,_Size> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'const _Ty &&std::get(const std::array<_Ty,_Size> &&) noexcept': 'UserInfo'에서 'const std::array<_Ty,_Size> &&'에 대한 템플릿 인수를 추론할 수 없습니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(203,28):
+      또는       '_Ty &&std::get(std::array<_Ty,_Size> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          '_Ty &&std::get(std::array<_Ty,_Size> &&) noexcept': 'UserInfo'에서 'std::array<_Ty,_Size> &&'에 대한 템플릿 인수를 추론할 수 없습니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(200,33):
+      또는       'const _Ty &std::get(const std::array<_Ty,_Size> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'const _Ty &std::get(const std::array<_Ty,_Size> &) noexcept': 'UserInfo'에서 'const std::array<_Ty,_Size> &'에 대한 템플릿 인수를 추론할 수 없습니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(197,27):
+      또는       '_Ty &std::get(std::array<_Ty,_Size> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          '_Ty &std::get(std::array<_Ty,_Size> &) noexcept': 'UserInfo'에서 'std::array<_Ty,_Size> &'에 대한 템플릿 인수를 추론할 수 없습니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(194,72):
+      또는       'const tuple_element<_Index,std::tuple<_Rest...>>::type &&std::get(const std::tuple<_Rest...> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'const tuple_element<_Index,std::tuple<_Rest...>>::type &&std::get(const std::tuple<_Rest...> &&) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(191,66):
+      또는       'tuple_element<_Index,std::tuple<_Rest...>>::type &&std::get(std::tuple<_Rest...> &&) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'tuple_element<_Index,std::tuple<_Rest...>>::type &&std::get(std::tuple<_Rest...> &&) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(188,71):
+      또는       'const tuple_element<_Index,std::tuple<_Rest...>>::type &std::get(const std::tuple<_Rest...> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'const tuple_element<_Index,std::tuple<_Rest...>>::type &std::get(const std::tuple<_Rest...> &) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+      c:\program files\microsoft visual studio\18\community\vc\tools\msvc\14.50.35717\include\utility(185,65):
+      또는       'tuple_element<_Index,std::tuple<_Rest...>>::type &std::get(std::tuple<_Rest...> &) noexcept'
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,14):
+          'tuple_element<_Index,std::tuple<_Rest...>>::type &std::get(std::tuple<_Rest...> &) noexcept'에 대한 명시적 템플릿 인수가 잘못되었습니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+              'specialization': 'main::UserInfoFields'에서 'size_t'(으)로 변환할 수 없습니다.
+                  C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(72,34):
+                  변환하려면 명시적 캐스트(static_cast, C 스타일 캐스트 또는 괄호가 있는 함수 스타일 캐스트)가 필요합니다.
+  

@@ -131,6 +131,8 @@
     <ClCompile Include="ABOVE_NORMAL_PRIORITY_CLASS.c" />
     <ClCompile Include="AdderManager.c" />
     <ClCompile Include="anonymous_pipe.c" />
+    <ClCompile Include="CountThread.c" />
+    <ClCompile Include="CountThreadMultiThread.c" />
     <ClCompile Include="DuplicateHandle.c" />
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
@@ -139,6 +141,10 @@
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
     <ClCompile Include="SortString.c" />
+    <ClCompile Include="strtok.c" />
+    <ClCompile Include="SuspendCount.c" />
+    <ClCompile Include="ThreadAdderOne.c" />
+    <ClCompile Include="ThreadAdderTwo.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

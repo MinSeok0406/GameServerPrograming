@@ -14,34 +14,62 @@
 #include <WinSock2.h>
 #include <new>
 #include <functional>
+#include <type_traits>
 using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-unordered_map<string, int> mp;
+using UserInfo = tuple<string, string, size_t>;
 
-template<typename It>
-void dwim(It b, It e)
+template<typename E>
+constexpr auto toUType(E enumerator) noexcept
 {
-    for (; b != e; ++b)
-    {
-        typename std::iterator_traits<It>::value_type currValue = *b;
-        auto Value = *b;
-    }
+    return static_cast<underlying_type_t<E>>(enumerator);
 }
 
-class Widget
+enum Color
 {
-    
+    red = 1,
+    yellow = 2,
 };
 
+//auto red = 1;
+
+enum class Color2
+{
+    black = 1,
+    blue = 2,
+};
+
+auto black = 2;
+
+Color2 c = Color2::black;
+
+enum Test : __int32;
+enum class Status : long long;
 
 int main()
 {
-    auto dare = [](const unique_ptr<Widget>& p1, const unique_lock<Widget>& p2) { return 0; };
-    auto dare2 = [](const auto& p1, const auto& p2) { return 0; };
+    double d = Color::red * 1.5;
+    //double d2 = Color2::black * 1.5;
+    double d2 = static_cast<double>(Color2::black) * 1.5;
 
-    std::function<bool(const unique_ptr<Widget>, const unique_lock<Widget>&)> func;
+    Status s;
+    Test t;
+
+    cout << d << "\n";
+    cout << d2 << "\n";
+
+    enum class UserInfoFields
+    {
+        uiName,
+        uiEmail,
+        uiReputation
+    };
+
+    UserInfo uInfo;
+
+    auto val = get<toUType(UserInfoFields::uiEmail)>(uInfo);
 
     return 0;
 }

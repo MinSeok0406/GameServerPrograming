@@ -3,17 +3,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+int* Test()
+{
+    int nData = 10;
+    return &nData;
+}
+
+int* Test2()
+{
+    int a = 5;
+    return NULL;
+}
 
 int main(void)
 {
-    char szBuffer[12] = {"HelloWorld"};
-    char* pszData = NULL;
+    int* pData = NULL;
+    pData = Test();
+    Test2();
 
-    pszData = (char*)malloc(sizeof(char) * 12);
-    memcpy(pszData, szBuffer, sizeof(szBuffer));
-    puts(pszData);
+    printf("%d \n", *pData);
 
-    free(pszData);
-    
     return 0;
 }

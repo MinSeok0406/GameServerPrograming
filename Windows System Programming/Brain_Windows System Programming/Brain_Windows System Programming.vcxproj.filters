@@ -20,6 +20,9 @@
     <Filter Include="Chapter9">
       <UniqueIdentifier>{2fe1147a-5369-47a0-b068-fb41957bdd37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter12">
+      <UniqueIdentifier>{bda1394c-138d-4f82-bc74-bf9fe6b64283}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -54,6 +57,24 @@
     </ClCompile>
     <ClCompile Include="SortString.c">
       <Filter>Project</Filter>
+    </ClCompile>
+    <ClCompile Include="CountThread.c">
+      <Filter>Chapter12</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadAdderOne.c">
+      <Filter>Chapter12</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadAdderTwo.c">
+      <Filter>Chapter12</Filter>
+    </ClCompile>
+    <ClCompile Include="strtok.c">
+      <Filter>Chapter12</Filter>
+    </ClCompile>
+    <ClCompile Include="CountThreadMultiThread.c">
+      <Filter>Chapter12</Filter>
+    </ClCompile>
+    <ClCompile Include="SuspendCount.c">
+      <Filter>Chapter12</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
