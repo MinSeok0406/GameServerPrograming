@@ -141,12 +141,17 @@
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
+    <ClCompile Include="ManualResetTimer.c" />
     <ClCompile Include="MUTEX_WAIT_ABANDONED.c" />
     <ClCompile Include="NamedMutex.c" />
     <ClCompile Include="namedpipe_server.c" />
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
+    <ClCompile Include="PeriodicTimer.c" />
     <ClCompile Include="SortString.c" />
+    <ClCompile Include="StringEvent.c" />
+    <ClCompile Include="StringEvent2.c" />
+    <ClCompile Include="StringEvent3.c" />
     <ClCompile Include="strtok.c" />
     <ClCompile Include="SuspendCount.c" />
     <ClCompile Include="ThreadAdderOne.c" />

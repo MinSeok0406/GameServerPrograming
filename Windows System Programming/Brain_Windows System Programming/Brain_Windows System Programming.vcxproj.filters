@@ -26,6 +26,9 @@
     <Filter Include="Chapter13">
       <UniqueIdentifier>{52791dc1-4e70-4b09-b10b-9364c6a48191}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter14">
+      <UniqueIdentifier>{da646c4f-06fc-4bf2-bec2-f7e30f547ce1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -96,6 +99,21 @@
     </ClCompile>
     <ClCompile Include="MUTEX_WAIT_ABANDONED.c">
       <Filter>Chapter13</Filter>
+    </ClCompile>
+    <ClCompile Include="StringEvent.c">
+      <Filter>Chapter14</Filter>
+    </ClCompile>
+    <ClCompile Include="StringEvent2.c">
+      <Filter>Chapter14</Filter>
+    </ClCompile>
+    <ClCompile Include="StringEvent3.c">
+      <Filter>Chapter14</Filter>
+    </ClCompile>
+    <ClCompile Include="ManualResetTimer.c">
+      <Filter>Chapter14</Filter>
+    </ClCompile>
+    <ClCompile Include="PeriodicTimer.c">
+      <Filter>Chapter14</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

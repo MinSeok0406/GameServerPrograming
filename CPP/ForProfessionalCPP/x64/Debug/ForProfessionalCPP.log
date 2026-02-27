@@ -1,8 +1,27 @@
 ﻿  모듈 종속성의 소스를 검사하는 중...
+  Employee.ixx
+  Database.ixx
   Employee01.ixx
+  vector
+  stdexcept
+  iostream
+  string
+  format
   컴파일하는 중...
+  vector
+  string
+  stdexcept
+  iostream
+  format
   Employee01.ixx
+  Employee.ixx
+  Database.ixx
+  Database.cpp
+  DatabaseTest.cpp
+  Employee.cpp
   Employee01.cpp
+  EmployeeTest.cpp
   Practice01.cpp
+  UserInterface.cpp
   코드를 생성하고 있습니다...
   ForProfessionalCPP.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\x64\Debug\ForProfessionalCPP.exe

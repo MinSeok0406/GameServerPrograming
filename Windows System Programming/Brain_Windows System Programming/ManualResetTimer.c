@@ -1,10 +1,12 @@
-#include <locale.h>
+/*#include <locale.h>
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
 #include <process.h>
 #include <tchar.h>
 #include <time.h>
+
+#define _WIN32_WINNT 0x0400
 
 int _tmain(int argc, TCHAR* argv[])
 {
@@ -24,14 +26,11 @@ int _tmain(int argc, TCHAR* argv[])
 
     _tprintf(_T("Waiting for 10 seconds....\n"));
 
-    SetWaitableTimer(hTimer, &liDueTime, 5000, NULL, NULL, FALSE);
+    SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, FALSE);
 
-    while (1)
-    {
-        WaitForSingleObject(hTimer, INFINITE);
-        _tprintf(_T("Timer was signaled.\n"));
-        MessageBeep(MB_ICONEXCLAMATION);
-    }
+    WaitForSingleObject(hTimer, INFINITE);
+    _tprintf(_T("Timer was signaled.\n"));
+    MessageBeep(MB_ICONEXCLAMATION);
 
     return 0;
-}
+}*/

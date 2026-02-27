@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <array>
 #include <vector>
 #include <string>
@@ -19,57 +19,35 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-using UserInfo = tuple<string, string, size_t>;
+typedef vector<int>::iterator IterT;
+typedef vector<int>::const_iterator ConstIterT;
 
-template<typename E>
-constexpr auto toUType(E enumerator) noexcept
+vector<int> values;
+
+vector<int> v;
+
+template<typename C, typename V>
+void findAndInsert(C& container, const V& targetVal, const V& insertVal)
 {
-    return static_cast<underlying_type_t<E>>(enumerator);
+    using std::cbegin;
+    using std::cend;
+
+    auto it = std::find(cbegin(container), cend(container), targetVal);
+    container.insert(it, insertVal);
 }
-
-enum Color
-{
-    red = 1,
-    yellow = 2,
-};
-
-//auto red = 1;
-
-enum class Color2
-{
-    black = 1,
-    blue = 2,
-};
-
-auto black = 2;
-
-Color2 c = Color2::black;
-
-enum Test : __int32;
-enum class Status : long long;
 
 int main()
 {
-    double d = Color::red * 1.5;
-    //double d2 = Color2::black * 1.5;
-    double d2 = static_cast<double>(Color2::black) * 1.5;
+    ConstIterT ci = find(static_cast<ConstIterT>(values.begin()), static_cast<ConstIterT>(values.end()), 1983);
 
-    Status s;
-    Test t;
+    //values.insert(static_cast<IterT>(ci), 1998);
 
-    cout << d << "\n";
-    cout << d2 << "\n";
+    auto ci2 = find(v.cbegin(), v.cend(), 1983);
+    v.insert(ci2, 1988);
 
-    enum class UserInfoFields
-    {
-        uiName,
-        uiEmail,
-        uiReputation
-    };
-
-    UserInfo uInfo;
-
-    auto val = get<toUType(UserInfoFields::uiEmail)>(uInfo);
+    vector<int> v2;
+    findAndInsert(v2, 10, 30);
+    findAndInsert(v2, 20, 40);
 
     return 0;
 }
