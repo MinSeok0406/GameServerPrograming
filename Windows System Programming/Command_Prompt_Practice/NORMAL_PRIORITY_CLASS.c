@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+/*#define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,4 +28,4 @@ int _tmain(int argc, TCHAR* argv[])
     }
 
     return 0;
-}
+}*/

@@ -5,5 +5,7 @@
   </Configurations>
   <Project Path="../Command_Prompt_Practice/Command_Prompt_Practice.vcxproj" Id="4001d160-40d5-44ff-b765-a51e834c7a7e" />
   <Project Path="../ProcessTemp/ProcessTemp.vcxproj" Id="0832db3d-17bb-44c1-8bd1-c935946d3f5e" />
+  <Project Path="../sort/sort.vcxproj" Id="3b6aa189-9412-43fb-b548-160d0ffb6c33" />
+  <Project Path="../type/type.vcxproj" Id="02c170e7-f57b-49f4-ae17-928d8565aaa6" />
   <Project Path="Brain_Windows System Programming.vcxproj" Id="8401ee80-7803-40f7-be24-e22f4e01d815" />
 </Solution>

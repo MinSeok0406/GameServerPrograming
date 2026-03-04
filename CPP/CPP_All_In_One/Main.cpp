@@ -19,35 +19,80 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-typedef vector<int>::iterator IterT;
-typedef vector<int>::const_iterator ConstIterT;
-
-vector<int> values;
-
-vector<int> v;
-
-template<typename C, typename V>
-void findAndInsert(C& container, const V& targetVal, const V& insertVal)
+class Polynomial
 {
-    using std::cbegin;
-    using std::cend;
+public:
+    using RootsType = vector<double>;
 
-    auto it = std::find(cbegin(container), cend(container), targetVal);
-    container.insert(it, insertVal);
-}
+    RootsType roots() const
+    {
+        lock_guard<mutex> g(m);
+
+        if (!rootsAreValid)
+        {
+            // TODO
+            rootsAreValid = true;
+        }
+
+        return rootVals;
+    }
+
+private:
+    mutable mutex m;
+    mutable bool rootsAreValid { false };
+    mutable RootsType rootVals {};
+};
+
+class Point
+{
+public:
+    double distanceFromOrigin() const noexcept
+    {
+        callCount.fetch_add(1);
+
+        return hypot(x, y);
+    }
+
+private:
+    mutable atomic<unsigned> callCount { 0 };
+    double x, y;
+};
+
+class Widget
+{
+public:
+    int magicValue() const
+    {
+        if (cacheValue)
+        {
+            return cachedValue;
+        }
+
+        auto val1 = GetValue1();
+        auto val2 = GetValue2();
+        cachedValue = val1 + val2;
+        cacheValue = true;
+        return cachedValue;
+    }
+
+    int GetValue1() const
+    {
+        return 1;
+    }
+
+    int GetValue2() const
+    {
+        return 1;
+    }
+
+private:
+    mutable atomic<bool> cacheValue { false };
+    mutable atomic<int> cachedValue;
+};
 
 int main()
 {
-    ConstIterT ci = find(static_cast<ConstIterT>(values.begin()), static_cast<ConstIterT>(values.end()), 1983);
-
-    //values.insert(static_cast<IterT>(ci), 1998);
-
-    auto ci2 = find(v.cbegin(), v.cend(), 1983);
-    v.insert(ci2, 1988);
-
-    vector<int> v2;
-    findAndInsert(v2, 10, 30);
-    findAndInsert(v2, 20, 40);
+    
 
     return 0;
 }

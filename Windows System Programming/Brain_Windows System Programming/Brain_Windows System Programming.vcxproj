@@ -148,7 +148,6 @@
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
     <ClCompile Include="PeriodicTimer.c" />
-    <ClCompile Include="SortString.c" />
     <ClCompile Include="StringEvent.c" />
     <ClCompile Include="StringEvent2.c" />
     <ClCompile Include="StringEvent3.c" />
@@ -156,6 +155,7 @@
     <ClCompile Include="SuspendCount.c" />
     <ClCompile Include="ThreadAdderOne.c" />
     <ClCompile Include="ThreadAdderTwo.c" />
+    <ClCompile Include="ThreadPooling.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

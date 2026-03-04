@@ -8,9 +8,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Project">
-      <UniqueIdentifier>{79610c67-72a2-47d4-9ad7-3f90d45b5d59}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Chapter7">
       <UniqueIdentifier>{6261e323-02a6-48de-a0bc-280da75d94be}</UniqueIdentifier>
     </Filter>
@@ -28,6 +25,9 @@
     </Filter>
     <Filter Include="Chapter14">
       <UniqueIdentifier>{da646c4f-06fc-4bf2-bec2-f7e30f547ce1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter15">
+      <UniqueIdentifier>{df7c25f8-509a-4c65-ac58-ae861769ab6a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,9 +60,6 @@
     </ClCompile>
     <ClCompile Include="ABOVE_NORMAL_PRIORITY_CLASS.c">
       <Filter>Chapter9</Filter>
-    </ClCompile>
-    <ClCompile Include="SortString.c">
-      <Filter>Project</Filter>
     </ClCompile>
     <ClCompile Include="CountThread.c">
       <Filter>Chapter12</Filter>
@@ -114,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="PeriodicTimer.c">
       <Filter>Chapter14</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPooling.c">
+      <Filter>Chapter15</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
