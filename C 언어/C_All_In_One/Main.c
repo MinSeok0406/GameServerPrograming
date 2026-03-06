@@ -5,22 +5,24 @@
 #include <string.h>
 #include <time.h>
 
-typedef union _IP_ADDR
-{
-    int nAddress;
-    short awData[2];
-    unsigned char addr[4];
-} IP_ADDR;
 
 int main(void)
 {
-    IP_ADDR Data = { 0 };
-    Data.nAddress = 0x41424344;
+    FILE* fp = NULL;
+    char* pszData = "01234567890123456789012345678901";
 
-    printf("%c%c%c%c\n", Data.addr[0], Data.addr[1], Data.addr[2], Data.addr[3]);
+    fopen_s(&fp, "Test.dat", "wb");
+    if (fp == NULL)
+    {
+        return 0;
+    }
 
-    printf("%X, %d\n", Data.awData[0], Data.awData[0]);
-    printf("%X, %d\n", Data.awData[1], Data.awData[1]);
+    fwrite(pszData, 32, 1, fp);
+
+    fseek(fp, 5, SEEK_SET);
+    fwrite("Hello", 5, 1, fp);
+
+    fclose(fp);
 
     return 0;
 }

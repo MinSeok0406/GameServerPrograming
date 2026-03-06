@@ -19,80 +19,66 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-class Polynomial
+enum class Type
+{
+    STOCK,
+    BOND,
+    REALESTATE,
+};
+
+class Investment
 {
 public:
-    using RootsType = vector<double>;
+    virtual ~Investment() {}
+};
 
-    RootsType roots() const
-    {
-        lock_guard<mutex> g(m);
+class Stock : public Investment
+{
+    
+};
 
-        if (!rootsAreValid)
+class Bond : public Investment
+{
+
+};
+
+class RealEstate : public Investment
+{
+    
+};
+
+Type t;
+
+template<typename... Ts>
+auto makeInvestment(Ts&&... params)
+{
+    auto delInvmt = [](Investment* pInvestment)
         {
             // TODO
-            rootsAreValid = true;
-        }
+            delete pInvestment;
+        };
 
-        return rootVals;
-    }
+    unique_ptr<Investment, decltype(delInvmt)> pInv(nullptr, delInvmt);
 
-private:
-    mutable mutex m;
-    mutable bool rootsAreValid { false };
-    mutable RootsType rootVals {};
-};
-
-class Point
-{
-public:
-    double distanceFromOrigin() const noexcept
+    if (t == Type::STOCK)
     {
-        callCount.fetch_add(1);
-
-        return hypot(x, y);
+        pInv.reset(new Stock(std::forward<Ts>(params)...));
     }
-
-private:
-    mutable atomic<unsigned> callCount { 0 };
-    double x, y;
-};
-
-class Widget
-{
-public:
-    int magicValue() const
+    else if (t == Type::BOND)
     {
-        if (cacheValue)
-        {
-            return cachedValue;
-        }
-
-        auto val1 = GetValue1();
-        auto val2 = GetValue2();
-        cachedValue = val1 + val2;
-        cacheValue = true;
-        return cachedValue;
+        pInv.reset(new Bond(std::forward<Ts>(params)...));
     }
-
-    int GetValue1() const
+    else if (t == Type::REALESTATE)
     {
-        return 1;
+        pInv.reset(new RealEstate(std::forward<Ts>(params)...));
     }
 
-    int GetValue2() const
-    {
-        return 1;
-    }
-
-private:
-    mutable atomic<bool> cacheValue { false };
-    mutable atomic<int> cachedValue;
-};
+    return pInv;
+}
 
 int main()
 {
     
-
+ 
     return 0;
 }
