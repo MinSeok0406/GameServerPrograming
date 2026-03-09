@@ -138,6 +138,7 @@
     <ClCompile Include="CriticalSectionSyncMutex.c" />
     <ClCompile Include="CriticalSectionSyncSemaphore.c" />
     <ClCompile Include="DuplicateHandle.c" />
+    <ClCompile Include="exception_finally.c" />
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
@@ -148,14 +149,21 @@
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
     <ClCompile Include="PeriodicTimer.c" />
+    <ClCompile Include="SEH_Calculator_One.c" />
+    <ClCompile Include="SEH_Calculator_Three.c" />
+    <ClCompile Include="SEH_Calculator_Two.c" />
+    <ClCompile Include="SEH_FlowView.c" />
     <ClCompile Include="StringEvent.c" />
     <ClCompile Include="StringEvent2.c" />
     <ClCompile Include="StringEvent3.c" />
     <ClCompile Include="strtok.c" />
     <ClCompile Include="SuspendCount.c" />
+    <ClCompile Include="TerminationHandlerEx1.c" />
+    <ClCompile Include="TerminationHandlerEx2.c" />
     <ClCompile Include="ThreadAdderOne.c" />
     <ClCompile Include="ThreadAdderTwo.c" />
     <ClCompile Include="ThreadPooling.c" />
+    <ClCompile Include="__try__finally.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

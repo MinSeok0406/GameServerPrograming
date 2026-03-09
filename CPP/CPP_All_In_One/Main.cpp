@@ -19,66 +19,67 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-enum class Type
-{
-    STOCK,
-    BOND,
-    REALESTATE,
-};
-
-class Investment
+class Widget : public enable_shared_from_this<Widget>
 {
 public:
-    virtual ~Investment() {}
-};
+    template<typename... Ts>
+    static std::shared_ptr<Widget> create(Ts&&... params);
 
-class Stock : public Investment
-{
-    
-};
+    void process();
 
-class Bond : public Investment
-{
+private:
 
 };
 
-class RealEstate : public Investment
+vector<std::shared_ptr<Widget>> processedWidget;
+
+void Widget::process()
 {
-    
-};
+    // TODO
 
-Type t;
-
-template<typename... Ts>
-auto makeInvestment(Ts&&... params)
-{
-    auto delInvmt = [](Investment* pInvestment)
-        {
-            // TODO
-            delete pInvestment;
-        };
-
-    unique_ptr<Investment, decltype(delInvmt)> pInv(nullptr, delInvmt);
-
-    if (t == Type::STOCK)
-    {
-        pInv.reset(new Stock(std::forward<Ts>(params)...));
-    }
-    else if (t == Type::BOND)
-    {
-        pInv.reset(new Bond(std::forward<Ts>(params)...));
-    }
-    else if (t == Type::REALESTATE)
-    {
-        pInv.reset(new RealEstate(std::forward<Ts>(params)...));
-    }
-
-    return pInv;
+    processedWidget.emplace_back(shared_from_this());
 }
+
+
 
 int main()
 {
-    
+    auto delItem = [](Widget* pw)
+        {
+            // TODO
+            delete pw;
+        };
+
+    auto delItem2 = [](Widget* pw)
+        {
+            // TODO
+            delete pw;
+        };
+
+    std::unique_ptr<Widget, decltype(delItem)> upw(new Widget, delItem);
+    std::unique_ptr<Widget, decltype(delItem2)> upw2(new Widget, delItem2);
+
+    std::shared_ptr<Widget> spw(new Widget, delItem);
+    std::shared_ptr<Widget> spw2(new Widget, delItem2);
+
+    Widget* w = new Widget;
+    auto sptr = make_shared<Widget>();
+    auto ssptr = std::move(sptr);
+
+    cout << sizeof(w) << "\n";
+    cout << sizeof(sptr) << "\n";
+    cout << sizeof(ssptr) << "\n";
+    cout << sizeof(spw) << "\n";
+    cout << sizeof(upw) << "\n";
+
+    //vector<std::unique_ptr<Widget, decltype(delItem)>> vuptr {upw, upw2};
+
+    vector<std::shared_ptr<Widget>> vsptr {spw, spw2};
+
+    // 미정의 행동
+    /*Widget* w2 = new Widget;
+    std::shared_ptr<Widget> sptr2(w2);
+    std::shared_ptr<Widget> ssptr2(w2);*/
  
     return 0;
 }

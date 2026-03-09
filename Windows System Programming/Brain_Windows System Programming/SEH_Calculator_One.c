@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+/*#define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <stdio.h>
 #include <string.h>
@@ -18,10 +18,6 @@ enum
 
 DWORD ShowMenu();
 BOOL Calculator(void);
-void Divide(int, int);
-void Multiple(int, int);
-void Add(int, int);
-void Min(int, int);
 
 int _tmain(int argc, TCHAR* argv[])
 {
@@ -33,7 +29,7 @@ int _tmain(int argc, TCHAR* argv[])
     {
         state = Calculator();
     } while (state == TRUE);
-    
+
 
     return 0;
 }
@@ -58,7 +54,7 @@ BOOL Calculator(void)
 {
     DWORD sel;
     int num1, num2, result;
-    
+
     sel = ShowMenu();
     if (sel == EXIT)
     {
@@ -70,53 +66,30 @@ BOOL Calculator(void)
 
     __try
     {
-        __try
+        switch (sel)
         {
-            switch (sel)
-            {
-            case DIV:
-                Divide(num1, num2);
-                break;
-            case MUL:
-                Multiple(num1, num2);
-                break;
-            case ADD:
-                Add(num1, num2);
-                break;
-            case MIN:
-                Min(num1, num2);
-                break;
-            }
-        }
-        __finally
-        {
-            _tprintf(_T("End operation \n\n"));
+        case DIV:
+            result = num1 / num2;
+            _tprintf(_T("%d / %d = %d \n\n"), num1, num2, result);
+            break;
+        case MUL:
+            result = num1 * num2;
+            _tprintf(_T("%d * %d = %d \n\n"), num1, num2, result);
+            break;
+        case ADD:
+            result = num1 + num2;
+            _tprintf(_T("%d + %d = %d \n\n"), num1, num2, result);
+            break;
+        case MIN:
+            result = num1 - num2;
+            _tprintf(_T("%d - %d = %d \n\n"), num1, num2, result);
+            break;
         }
     }
-    __except(EXCEPTION_EXECUTE_HANDLER)
+    __except (EXCEPTION_EXECUTE_HANDLER)
     {
         _tprintf(_T("Wrong number inserted. Try again \n\n"));
     }
 
     return TRUE;
-}
-
-void Divide(int a, int b)
-{
-    _tprintf(_T("%d / %d = %d \n\n"), a, b, a / b);
-}
-
-void Multiple(int a, int b)
-{
-    _tprintf(_T("%d * %d = %d \n\n"), a, b, a * b);
-}
-
-void Add(int a, int b)
-{
-    _tprintf(_T("%d + %d = %d \n\n"), a, b, a + b);
-}
-
-void Min(int a, int b)
-{
-    _tprintf(_T("%d - %d = %d \n\n"), a, b, a - b);
-}
+}*/

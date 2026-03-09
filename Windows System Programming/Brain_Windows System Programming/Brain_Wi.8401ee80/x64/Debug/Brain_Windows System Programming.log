@@ -1,1 +1,5 @@
-﻿  Brain_Windows System Programming.vcxproj -> C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\x64\Debug\Brain_Windows System Programming.exe
+﻿  Main.c
+C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\Main.c(60,21): warning C4101: 'result' :참조되지 않은 지역 변수입니다.
+  SEH_Calculator_Two.c
+  코드를 생성하고 있습니다...
+  Brain_Windows System Programming.vcxproj -> C:\GamePrograming\Windows System Programming\Brain_Windows System Programming\x64\Debug\Brain_Windows System Programming.exe
