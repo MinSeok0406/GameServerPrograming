@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+/*#define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,7 +34,7 @@ void SoftwareException(void)
     {
         RaiseException(STATUS_DEFAULT_USER_DEFINED_EXPT, 0, 3, (ULONG_PTR*)exptString);
     }
-    __except(FilterFunction(GetExceptionInformation()))
+    __except (FilterFunction(GetExceptionInformation()))
     {
         DWORD exptType = GetExceptionCode();
         _tprintf(_T("Recv: exception code: 0x%x \n"), exptType);
@@ -61,4 +61,4 @@ DWORD FilterFunction(LPEXCEPTION_POINTERS exptPtr)
     }
 
     return EXCEPTION_EXECUTE_HANDLER;
-}
+}*/

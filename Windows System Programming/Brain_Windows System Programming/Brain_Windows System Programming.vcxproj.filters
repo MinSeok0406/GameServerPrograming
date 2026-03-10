@@ -142,5 +142,23 @@
     <ClCompile Include="SEH_Calculator_Three.c">
       <Filter>Chapter17</Filter>
     </ClCompile>
+    <ClCompile Include="GetExceptionCode.c">
+      <Filter>Chapter17</Filter>
+    </ClCompile>
+    <ClCompile Include="SEH_Calculator_ContinueExecution.c">
+      <Filter>Chapter17</Filter>
+    </ClCompile>
+    <ClCompile Include="SEH_Calculator_ContinueSearch.c">
+      <Filter>Chapter17</Filter>
+    </ClCompile>
+    <ClCompile Include="RaiseException.c">
+      <Filter>Chapter17</Filter>
+    </ClCompile>
+    <ClCompile Include="EXCEPTION_NONCONTINUABLE.c">
+      <Filter>Chapter17</Filter>
+    </ClCompile>
+    <ClCompile Include="RaiseExceptionParam.c">
+      <Filter>Chapter17</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

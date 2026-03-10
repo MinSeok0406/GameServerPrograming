@@ -19,67 +19,64 @@ using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-class Widget : public enable_shared_from_this<Widget>
+class Widget
 {
-public:
-    template<typename... Ts>
-    static std::shared_ptr<Widget> create(Ts&&... params);
-
-    void process();
-
-private:
-
+    
 };
 
-vector<std::shared_ptr<Widget>> processedWidget;
-
-void Widget::process()
+class WidgetID
 {
-    // TODO
+    
+};
 
-    processedWidget.emplace_back(shared_from_this());
+unique_ptr<const Widget> loadWidget(WidgetID id);
+
+shared_ptr<const Widget> fastLoadWidget(WidgetID id)
+{
+    static unordered_map<WidgetID, weak_ptr<const Widget>> cache;
+
+    auto objPtr = cache[id].lock();
+
+    if (!objPtr)
+    {
+        objPtr = loadWidget(id);
+        cache[id] = objPtr;
+    }
+
+    return objPtr;
 }
-
 
 
 int main()
 {
-    auto delItem = [](Widget* pw)
-        {
-            // TODO
-            delete pw;
-        };
+    auto spw = make_shared<Widget>();
 
-    auto delItem2 = [](Widget* pw)
-        {
-            // TODO
-            delete pw;
-        };
+    weak_ptr<Widget> wpw(spw);
 
-    std::unique_ptr<Widget, decltype(delItem)> upw(new Widget, delItem);
-    std::unique_ptr<Widget, decltype(delItem2)> upw2(new Widget, delItem2);
+    if (wpw.expired())
+    {
+        cout << "만료 O" << "\n";
+    }
+    else
+    {
+        cout << "만료 X" << "\n";
+    }
 
-    std::shared_ptr<Widget> spw(new Widget, delItem);
-    std::shared_ptr<Widget> spw2(new Widget, delItem2);
+    auto spw2 = wpw.lock();
+    shared_ptr<Widget> spw3(wpw);
 
-    Widget* w = new Widget;
-    auto sptr = make_shared<Widget>();
-    auto ssptr = std::move(sptr);
+    spw = nullptr;
 
-    cout << sizeof(w) << "\n";
-    cout << sizeof(sptr) << "\n";
-    cout << sizeof(ssptr) << "\n";
-    cout << sizeof(spw) << "\n";
-    cout << sizeof(upw) << "\n";
+    //shared_ptr<Widget> spw4(wpw);
 
-    //vector<std::unique_ptr<Widget, decltype(delItem)>> vuptr {upw, upw2};
-
-    vector<std::shared_ptr<Widget>> vsptr {spw, spw2};
-
-    // 미정의 행동
-    /*Widget* w2 = new Widget;
-    std::shared_ptr<Widget> sptr2(w2);
-    std::shared_ptr<Widget> ssptr2(w2);*/
+    if (wpw.expired())
+    {
+        cout << "만료 O" << "\n";
+    }
+    else
+    {
+        cout << "만료 X" << "\n";
+    }
  
     return 0;
 }

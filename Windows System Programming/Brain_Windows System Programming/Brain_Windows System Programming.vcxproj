@@ -139,6 +139,8 @@
     <ClCompile Include="CriticalSectionSyncSemaphore.c" />
     <ClCompile Include="DuplicateHandle.c" />
     <ClCompile Include="exception_finally.c" />
+    <ClCompile Include="EXCEPTION_NONCONTINUABLE.c" />
+    <ClCompile Include="GetExceptionCode.c" />
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
@@ -149,6 +151,10 @@
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
     <ClCompile Include="PeriodicTimer.c" />
+    <ClCompile Include="RaiseException.c" />
+    <ClCompile Include="RaiseExceptionParam.c" />
+    <ClCompile Include="SEH_Calculator_ContinueExecution.c" />
+    <ClCompile Include="SEH_Calculator_ContinueSearch.c" />
     <ClCompile Include="SEH_Calculator_One.c" />
     <ClCompile Include="SEH_Calculator_Three.c" />
     <ClCompile Include="SEH_Calculator_Two.c" />
