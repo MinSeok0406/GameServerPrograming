@@ -24,59 +24,32 @@ class Widget
     
 };
 
-class WidgetID
+int computePriority()
 {
-    
-};
-
-unique_ptr<const Widget> loadWidget(WidgetID id);
-
-shared_ptr<const Widget> fastLoadWidget(WidgetID id)
-{
-    static unordered_map<WidgetID, weak_ptr<const Widget>> cache;
-
-    auto objPtr = cache[id].lock();
-
-    if (!objPtr)
-    {
-        objPtr = loadWidget(id);
-        cache[id] = objPtr;
-    }
-
-    return objPtr;
+    // TODO
+    return 0;
 }
 
+void processWidget(shared_ptr<Widget> spw, int priority)
+{
+    
+}
 
 int main()
 {
-    auto spw = make_shared<Widget>();
+    auto uptr(make_unique<Widget>());
+    unique_ptr<Widget> uptr2(new Widget);
 
-    weak_ptr<Widget> wpw(spw);
+    auto sptr(make_shared<Widget>());
+    shared_ptr<Widget> sptr2(new Widget);
 
-    if (wpw.expired())
-    {
-        cout << "만료 O" << "\n";
-    }
-    else
-    {
-        cout << "만료 X" << "\n";
-    }
+    processWidget(shared_ptr<Widget>(new Widget), computePriority());
+    processWidget(make_shared<Widget>(), computePriority());
 
-    auto spw2 = wpw.lock();
-    shared_ptr<Widget> spw3(wpw);
-
-    spw = nullptr;
-
-    //shared_ptr<Widget> spw4(wpw);
-
-    if (wpw.expired())
-    {
-        cout << "만료 O" << "\n";
-    }
-    else
-    {
-        cout << "만료 X" << "\n";
-    }
+    auto sptr3 = make_shared<vector<int>>(10, 20);
+    
+    auto initList = {10, 20};
+    auto sptr4 = make_shared<vector<int>>(initList);
  
     return 0;
 }

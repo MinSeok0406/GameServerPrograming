@@ -32,6 +32,9 @@
     <Filter Include="Chapter17">
       <UniqueIdentifier>{6d518f78-23a1-44c4-bf9e-7a3a878a9f72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter18">
+      <UniqueIdentifier>{35814d21-e84b-460e-aca0-10829cb35375}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -159,6 +162,24 @@
     </ClCompile>
     <ClCompile Include="RaiseExceptionParam.c">
       <Filter>Chapter17</Filter>
+    </ClCompile>
+    <ClCompile Include="UNICODE_BASE_FILE_IO.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="UNICODE_BASE_FILE_READ.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="FileTimeInformation.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="GetFileSize.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="Set_Get_FileAttributes.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="GetFileInfomationByHandle.c">
+      <Filter>Chapter18</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

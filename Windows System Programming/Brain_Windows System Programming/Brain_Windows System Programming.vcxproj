@@ -140,7 +140,10 @@
     <ClCompile Include="DuplicateHandle.c" />
     <ClCompile Include="exception_finally.c" />
     <ClCompile Include="EXCEPTION_NONCONTINUABLE.c" />
+    <ClCompile Include="FileTimeInformation.c" />
     <ClCompile Include="GetExceptionCode.c" />
+    <ClCompile Include="GetFileInfomationByHandle.c" />
+    <ClCompile Include="GetFileSize.c" />
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
@@ -159,6 +162,7 @@
     <ClCompile Include="SEH_Calculator_Three.c" />
     <ClCompile Include="SEH_Calculator_Two.c" />
     <ClCompile Include="SEH_FlowView.c" />
+    <ClCompile Include="Set_Get_FileAttributes.c" />
     <ClCompile Include="StringEvent.c" />
     <ClCompile Include="StringEvent2.c" />
     <ClCompile Include="StringEvent3.c" />
@@ -169,6 +173,8 @@
     <ClCompile Include="ThreadAdderOne.c" />
     <ClCompile Include="ThreadAdderTwo.c" />
     <ClCompile Include="ThreadPooling.c" />
+    <ClCompile Include="UNICODE_BASE_FILE_IO.c" />
+    <ClCompile Include="UNICODE_BASE_FILE_READ.c" />
     <ClCompile Include="__try__finally.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
