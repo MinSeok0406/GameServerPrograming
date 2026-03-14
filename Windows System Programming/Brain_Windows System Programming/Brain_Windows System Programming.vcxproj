@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -133,10 +133,12 @@
     <ClCompile Include="anonymous_pipe.c" />
     <ClCompile Include="CountThread.c" />
     <ClCompile Include="CountThreadMultiThread.c" />
+    <ClCompile Include="CreateDeleteDirectory.c" />
     <ClCompile Include="CriticalSection.c" />
     <ClCompile Include="CriticalSectionSync.c" />
     <ClCompile Include="CriticalSectionSyncMutex.c" />
     <ClCompile Include="CriticalSectionSyncSemaphore.c" />
+    <ClCompile Include="CurrentDirectory.c" />
     <ClCompile Include="DuplicateHandle.c" />
     <ClCompile Include="exception_finally.c" />
     <ClCompile Include="EXCEPTION_NONCONTINUABLE.c" />
@@ -144,6 +146,7 @@
     <ClCompile Include="GetExceptionCode.c" />
     <ClCompile Include="GetFileInfomationByHandle.c" />
     <ClCompile Include="GetFileSize.c" />
+    <ClCompile Include="ListDirectoryFileList.c" />
     <ClCompile Include="MailReceiver.c" />
     <ClCompile Include="MailReceiver2.c" />
     <ClCompile Include="Main.c" />
@@ -156,18 +159,22 @@
     <ClCompile Include="PeriodicTimer.c" />
     <ClCompile Include="RaiseException.c" />
     <ClCompile Include="RaiseExceptionParam.c" />
+    <ClCompile Include="SearchPath.c" />
     <ClCompile Include="SEH_Calculator_ContinueExecution.c" />
     <ClCompile Include="SEH_Calculator_ContinueSearch.c" />
     <ClCompile Include="SEH_Calculator_One.c" />
     <ClCompile Include="SEH_Calculator_Three.c" />
     <ClCompile Include="SEH_Calculator_Two.c" />
     <ClCompile Include="SEH_FlowView.c" />
+    <ClCompile Include="SetFilePointer_32BIT_VERSION.c" />
+    <ClCompile Include="SetFilePointer_64BIT_VERSION.c" />
     <ClCompile Include="Set_Get_FileAttributes.c" />
     <ClCompile Include="StringEvent.c" />
     <ClCompile Include="StringEvent2.c" />
     <ClCompile Include="StringEvent3.c" />
     <ClCompile Include="strtok.c" />
     <ClCompile Include="SuspendCount.c" />
+    <ClCompile Include="System_Windows_Dir.c" />
     <ClCompile Include="TerminationHandlerEx1.c" />
     <ClCompile Include="TerminationHandlerEx2.c" />
     <ClCompile Include="ThreadAdderOne.c" />

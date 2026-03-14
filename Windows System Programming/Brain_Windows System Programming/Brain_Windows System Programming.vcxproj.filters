@@ -181,5 +181,26 @@
     <ClCompile Include="GetFileInfomationByHandle.c">
       <Filter>Chapter18</Filter>
     </ClCompile>
+    <ClCompile Include="SetFilePointer_32BIT_VERSION.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="SetFilePointer_64BIT_VERSION.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateDeleteDirectory.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="CurrentDirectory.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="System_Windows_Dir.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="SearchPath.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="ListDirectoryFileList.c">
+      <Filter>Chapter18</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

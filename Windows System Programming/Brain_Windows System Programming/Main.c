@@ -7,23 +7,37 @@
 #include <tchar.h>
 #include <time.h>
 
-#define STRING_LEN 100
 
-void ShowAttributes(DWORD attrib);
-void ShowFileTime(FILETIME t);
 
 int _tmain(int argc, TCHAR* argv[])
 {
     _tsetlocale(LC_ALL, L"korean");
 
-    TCHAR fileName[] = _T("data.txt");
-    TCHAR fileFullPathName[STRING_LEN];
-    LPTSTR filePtr;
+    WIN32_FIND_DATA FindFileData;
+    HANDLE hFind = INVALID_HANDLE_VALUE;
 
-    GetFullPathName(fileName, STRING_LEN, fileFullPathName, &filePtr);
+    TCHAR DirSpec[MAX_PATH];
 
-    _tprintf(_T("%s \n"), fileFullPathName);
-    _tprintf(_T("%s \n"), filePtr);
+    _tprintf(_T("Insert target directory: "));
+    _tscanf(_T("%s"), DirSpec);
+    _tcsncat(DirSpec, _T("\\*"), 3);
+
+    hFind = FindFirstFile(DirSpec, &FindFileData);
+
+    if (hFind == INVALID_HANDLE_VALUE)
+    {
+        _tprintf(_T("Invalid file handle \n"));
+        return -1;
+    }
+    else
+    {
+        _tprintf(_T("First file name is %s\n"), FindFileData.cFileName);
+        while (FindNextFile(hFind, &FindFileData) != 0)
+        {
+            _tprintf(_T("Next file name is %s\n"), FindFileData.cFileName);
+        }
+        FindClose(hFind);
+    }
 
     return 0;
 }
