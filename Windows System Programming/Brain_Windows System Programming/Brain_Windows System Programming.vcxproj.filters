@@ -35,6 +35,9 @@
     <Filter Include="Chapter18">
       <UniqueIdentifier>{35814d21-e84b-460e-aca0-10829cb35375}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter19">
+      <UniqueIdentifier>{8704156f-dc86-4021-a611-d61f397a2789}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -201,6 +204,18 @@
     </ClCompile>
     <ClCompile Include="ListDirectoryFileList.c">
       <Filter>Chapter18</Filter>
+    </ClCompile>
+    <ClCompile Include="namedpipe_asynch_server.c">
+      <Filter>Chapter19</Filter>
+    </ClCompile>
+    <ClCompile Include="completion_routine_file.c">
+      <Filter>Chapter19</Filter>
+    </ClCompile>
+    <ClCompile Include="nonBlocking_fileIO.c">
+      <Filter>Chapter19</Filter>
+    </ClCompile>
+    <ClCompile Include="CompletionRoutinePeriodicTimer.c">
+      <Filter>Chapter19</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

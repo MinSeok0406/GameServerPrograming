@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\string.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\string.h_F8F90FE5CA8D8616.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\string.h_F8F90FE5CA8D8616.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\string.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\string.h",
+                    "source-path": "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\string.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

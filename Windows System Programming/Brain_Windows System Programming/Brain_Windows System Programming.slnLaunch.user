@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "새 프로필",
+    "Projects": [
+      {
+        "Path": "Brain_Windows System Programming.vcxproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\Command_Prompt_Practice\\Command_Prompt_Practice.vcxproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

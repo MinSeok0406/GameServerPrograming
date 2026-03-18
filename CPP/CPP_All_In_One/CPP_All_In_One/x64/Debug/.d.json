@@ -211,7 +211,8 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ime_cmodes.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\ws2def.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\inaddr.h",
-            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\qos.h"
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\qos.h",
+            "c:\\gameprograming\\cpp\\cpp_all_in_one\\temp.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": [
@@ -602,6 +603,26 @@
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xhash",
                 "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xhash_EYAO65LAE9F25DBS.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\chrono",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\chrono_A0EO8NALN395S59Q.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\forward_list",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\forward_list_P5LC9I72XWGKHPIE.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iomanip",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\iomanip_4PQVQBWLZX1KV9YE.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\sstream",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\sstream_Z23N6YY8ZSZCVSLL.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_tzdb.hpp",
+                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_tzdb.hpp_CRFTDK91KFBRY0W8.ifc"
             }
         ]
     }

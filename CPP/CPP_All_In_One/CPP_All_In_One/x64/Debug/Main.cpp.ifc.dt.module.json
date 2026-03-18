@@ -590,6 +590,36 @@
                     "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\xhash",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "chrono",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\chrono",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "__msvc_tzdb.hpp",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\__msvc_tzdb.hpp",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "forward_list",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\forward_list",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "iomanip",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iomanip",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "sstream",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\sstream",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
                 }
             ]
         }

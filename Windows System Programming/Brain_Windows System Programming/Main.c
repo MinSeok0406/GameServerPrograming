@@ -1,3 +1,4 @@
+#define _WIN32_WINNT0x0400
 #define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <stdio.h>
@@ -7,37 +8,26 @@
 #include <tchar.h>
 #include <time.h>
 
-
+VOID CALLBACK APCProc(ULONG_PTR);
 
 int _tmain(int argc, TCHAR* argv[])
 {
     _tsetlocale(LC_ALL, L"korean");
 
-    WIN32_FIND_DATA FindFileData;
-    HANDLE hFind = INVALID_HANDLE_VALUE;
+    HANDLE hThread = GetCurrentThread();
+    
+    QueueUserAPC(APCProc, hThread, (ULONG_PTR)1);
+    QueueUserAPC(APCProc, hThread, (ULONG_PTR)2);
+    QueueUserAPC(APCProc, hThread, (ULONG_PTR)3);
+    QueueUserAPC(APCProc, hThread, (ULONG_PTR)4);
+    QueueUserAPC(APCProc, hThread, (ULONG_PTR)5);
 
-    TCHAR DirSpec[MAX_PATH];
-
-    _tprintf(_T("Insert target directory: "));
-    _tscanf(_T("%s"), DirSpec);
-    _tcsncat(DirSpec, _T("\\*"), 3);
-
-    hFind = FindFirstFile(DirSpec, &FindFileData);
-
-    if (hFind == INVALID_HANDLE_VALUE)
-    {
-        _tprintf(_T("Invalid file handle \n"));
-        return -1;
-    }
-    else
-    {
-        _tprintf(_T("First file name is %s\n"), FindFileData.cFileName);
-        while (FindNextFile(hFind, &FindFileData) != 0)
-        {
-            _tprintf(_T("Next file name is %s\n"), FindFileData.cFileName);
-        }
-        FindClose(hFind);
-    }
-
+    Sleep(5000);
+    SleepEx(INFINITE, TRUE);
     return 0;
+}
+
+VOID CALLBACK APCProc(ULONG_PTR dwParam)
+{
+    _tprintf(_T("Asynchronous procedure call num %llu \n"), dwParam);
 }

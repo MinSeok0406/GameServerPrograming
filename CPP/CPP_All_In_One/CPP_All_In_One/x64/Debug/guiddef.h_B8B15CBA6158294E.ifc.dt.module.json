@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\guiddef.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\guiddef.h_B8B15CBA6158294E.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\guiddef.h_B8B15CBA6158294E.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\guiddef.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared\\guiddef.h",
+                    "source-path": "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\guiddef.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

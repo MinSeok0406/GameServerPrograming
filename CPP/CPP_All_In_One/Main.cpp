@@ -15,41 +15,45 @@
 #include <new>
 #include <functional>
 #include <type_traits>
+#include <chrono>
+#include "Temp.h"
 using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
 
-class Widget
+class Test
 {
     
 };
 
-int computePriority()
-{
-    // TODO
-    return 0;
-}
-
-void processWidget(shared_ptr<Widget> spw, int priority)
+template<typename T>
+void f(T&& param)
 {
     
 }
+
+template<typename T>
+void f(vector<T>&& param)
+{
+
+}
+
+auto timeFuncInvocation = [](auto&& func, auto&&... params)
+    {
+        // TODO
+        std::forward<decltype(func)>(func)(std::forward<decltype(params)>(params)(params));
+        // TODO
+    };
 
 int main()
 {
-    auto uptr(make_unique<Widget>());
-    unique_ptr<Widget> uptr2(new Widget);
+    Test t;
 
-    auto sptr(make_shared<Widget>());
-    shared_ptr<Widget> sptr2(new Widget);
+    f(t);           // 왼값 참조
+    f(std::move(t));    // 오른값 참조
 
-    processWidget(shared_ptr<Widget>(new Widget), computePriority());
-    processWidget(make_shared<Widget>(), computePriority());
+    vector<int> v;
+    f(v);
 
-    auto sptr3 = make_shared<vector<int>>(10, 20);
-    
-    auto initList = {10, 20};
-    auto sptr4 = make_shared<vector<int>>(initList);
- 
     return 0;
 }

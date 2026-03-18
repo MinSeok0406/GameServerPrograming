@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -131,6 +131,8 @@
     <ClCompile Include="ABOVE_NORMAL_PRIORITY_CLASS.c" />
     <ClCompile Include="AdderManager.c" />
     <ClCompile Include="anonymous_pipe.c" />
+    <ClCompile Include="CompletionRoutinePeriodicTimer.c" />
+    <ClCompile Include="completion_routine_file.c" />
     <ClCompile Include="CountThread.c" />
     <ClCompile Include="CountThreadMultiThread.c" />
     <ClCompile Include="CreateDeleteDirectory.c" />
@@ -153,7 +155,9 @@
     <ClCompile Include="ManualResetTimer.c" />
     <ClCompile Include="MUTEX_WAIT_ABANDONED.c" />
     <ClCompile Include="NamedMutex.c" />
+    <ClCompile Include="namedpipe_asynch_server.c" />
     <ClCompile Include="namedpipe_server.c" />
+    <ClCompile Include="nonBlocking_fileIO.c" />
     <ClCompile Include="Operation1.c" />
     <ClCompile Include="OperationStateParent.c" />
     <ClCompile Include="PeriodicTimer.c" />
