@@ -47,5 +47,5 @@ VOID WINAPI FileIOCompletionRoutine(DWORD errorCode, DWORD numOfBytesTransfered,
     _tprintf(_T("************** File Write result ******************\n"));
     _tprintf(_T("Error code: %u \n"), errorCode);
     _tprintf(_T("Transfered bytes len: %u \n"), numOfBytesTransfered);
-    _tprintf(_T("the other info: %llu \n"), (UINT_PTR)overlapped->hEvent);
+    _tprintf(_T("the other info: %u \n"), (UINT_PTR)overlapped->hEvent);
 }*/

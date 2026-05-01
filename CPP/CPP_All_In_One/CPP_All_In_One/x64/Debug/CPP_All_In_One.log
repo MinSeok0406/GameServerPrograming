@@ -2,4 +2,7 @@
   Main.cpp
   컴파일하는 중...
   Main.cpp
-  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\x64\Debug\CPP_All_In_One.exe
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(37,17): error C2440: '초기화 중': 'const char [11]'에서 'short []'(으)로 변환할 수 없습니다.
+      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(37,17):
+      이 변환이 가능한 컨텍스트가 없습니다.
+  

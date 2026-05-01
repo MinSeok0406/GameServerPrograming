@@ -1,0 +1,23 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\gameprograming\\cpp\\forprofessionalcpp\\employee01.ixx",
+        "ProvidedModule": "Employee01",
+        "Includes": [],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": [
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iostream",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\Release\\iostream_8ETX813DWPK7O81M.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\format",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\Release\\format_ORKQ5AA624QAE707.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\string",
+                "BMI": "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\Release\\string_6CMZHJ6EFEXBHT0V.ifc"
+            }
+        ]
+    }
+}

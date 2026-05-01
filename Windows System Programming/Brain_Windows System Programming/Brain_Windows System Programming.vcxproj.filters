@@ -38,6 +38,12 @@
     <Filter Include="Chapter19">
       <UniqueIdentifier>{8704156f-dc86-4021-a611-d61f397a2789}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter20">
+      <UniqueIdentifier>{8e6d676c-85cf-4db3-a559-27f1410b44e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter5">
+      <UniqueIdentifier>{2247a9d1-bcfe-4ac8-a19d-f497fd2ec3ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Operation1.c">
@@ -216,6 +222,21 @@
     </ClCompile>
     <ClCompile Include="CompletionRoutinePeriodicTimer.c">
       <Filter>Chapter19</Filter>
+    </ClCompile>
+    <ClCompile Include="APCQueue.c">
+      <Filter>Chapter19</Filter>
+    </ClCompile>
+    <ClCompile Include="SYSTEM_INFO.c">
+      <Filter>Chapter20</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicArray.c">
+      <Filter>Chapter20</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicHeap.c">
+      <Filter>Chapter20</Filter>
+    </ClCompile>
+    <ClCompile Include="AdderProcess.c">
+      <Filter>Chapter5</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

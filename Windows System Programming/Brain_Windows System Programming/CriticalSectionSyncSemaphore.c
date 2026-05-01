@@ -9,7 +9,7 @@
 #define NUM_OF_CUSTOMER 50
 #define RANGE_MIN 10
 #define RANGE_MAX (30 - RANGE_MIN)
-#define TABLE_CNT 10
+#define TABLE_CNT 3
 
 HANDLE hSemaphore;
 DWORD randTimeArr[50];
@@ -21,7 +21,7 @@ void TakeMeal(DWORD time)
 
     _tprintf(_T("Customer %d having launch~ \n"), GetCurrentThreadId());
 
-    Sleep(1000 * time);
+    Sleep(100 * time);
 
     ReleaseSemaphore(hSemaphore, 1, NULL);
     _tprintf(_T("Out Customer %d~  \n\n"), GetCurrentThreadId());

@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <memory>
 
 class Widget
@@ -17,4 +17,4 @@ private:
     struct Impl;
     //Impl* pImpl;
     std::unique_ptr<Impl> pImpl;
-};
+};*/

@@ -1,0 +1,30 @@
+﻿  모듈 종속성의 소스를 검사하는 중...
+  Employee01.ixx
+  Employee.ixx
+  Database.ixx
+  string
+  vector
+  iostream
+  format
+  stdexcept
+  컴파일하는 중...
+  iostream
+  format
+  stdexcept
+  string
+  vector
+  Employee01.ixx
+  Employee.ixx
+  Database.ixx
+  Database.cpp
+  DatabaseTest.cpp
+  Employee.cpp
+  Employee01.cpp
+  EmployeeTest.cpp
+  Practice01.cpp
+  UserInterface.cpp
+  코드를 생성하고 있습니다.
+  Previous IPDB was built with incompatible compiler, fall back to full compilation.
+  All 834 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  코드를 생성했습니다.
+  ForProfessionalCPP.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\Release\ForProfessionalCPP.exe

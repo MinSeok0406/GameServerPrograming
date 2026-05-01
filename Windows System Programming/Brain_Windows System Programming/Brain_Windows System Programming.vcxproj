@@ -92,6 +92,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,7 +131,9 @@
   <ItemGroup>
     <ClCompile Include="ABOVE_NORMAL_PRIORITY_CLASS.c" />
     <ClCompile Include="AdderManager.c" />
+    <ClCompile Include="AdderProcess.c" />
     <ClCompile Include="anonymous_pipe.c" />
+    <ClCompile Include="APCQueue.c" />
     <ClCompile Include="CompletionRoutinePeriodicTimer.c" />
     <ClCompile Include="completion_routine_file.c" />
     <ClCompile Include="CountThread.c" />
@@ -142,6 +145,8 @@
     <ClCompile Include="CriticalSectionSyncSemaphore.c" />
     <ClCompile Include="CurrentDirectory.c" />
     <ClCompile Include="DuplicateHandle.c" />
+    <ClCompile Include="DynamicArray.c" />
+    <ClCompile Include="DynamicHeap.c" />
     <ClCompile Include="exception_finally.c" />
     <ClCompile Include="EXCEPTION_NONCONTINUABLE.c" />
     <ClCompile Include="FileTimeInformation.c" />
@@ -178,6 +183,7 @@
     <ClCompile Include="StringEvent3.c" />
     <ClCompile Include="strtok.c" />
     <ClCompile Include="SuspendCount.c" />
+    <ClCompile Include="SYSTEM_INFO.c" />
     <ClCompile Include="System_Windows_Dir.c" />
     <ClCompile Include="TerminationHandlerEx1.c" />
     <ClCompile Include="TerminationHandlerEx2.c" />

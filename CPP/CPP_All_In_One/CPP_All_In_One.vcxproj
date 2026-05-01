@@ -92,6 +92,8 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,8 +132,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="addshlsub.cpp" />
+    <ClCompile Include="DFS_BFS_FindRoute.cpp" />
+    <ClCompile Include="DFS_Test.cpp" />
+    <ClCompile Include="HashTable.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="make_rand.cpp" />
+    <ClCompile Include="Practice01_1.cpp" />
+    <ClCompile Include="Practice01_2.cpp" />
+    <ClCompile Include="Practice01_3.cpp" />
+    <ClCompile Include="RandomSystem.cpp" />
     <ClCompile Include="Temp.cpp" />
+    <ClCompile Include="TimingGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Temp.h" />

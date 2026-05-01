@@ -1,7 +1,9 @@
-#include "Temp.h"
+/*#include "Temp.h"
 #include <string>
 #include <vector>
 using namespace std;
+
+int g_int = 3;
 
 struct Widget::Impl
 {
@@ -42,4 +44,4 @@ Widget& Widget::operator=(const Widget& rhs)
 }
 
 Widget::Widget(Widget&& rhs) = default;
-Widget& Widget::operator=(Widget&& rhs) = default;
+Widget& Widget::operator=(Widget&& rhs) = default;*/

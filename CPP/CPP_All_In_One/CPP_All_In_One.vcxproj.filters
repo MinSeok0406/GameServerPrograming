@@ -5,6 +5,27 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Practice01">
+      <UniqueIdentifier>{af830604-5d98-4b4c-9b15-0423709fab99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice02">
+      <UniqueIdentifier>{4bfa1cf5-a038-48ef-b030-0874285d72fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice03">
+      <UniqueIdentifier>{0f2429d5-8541-4ded-8f8b-75fb87e26da1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice04">
+      <UniqueIdentifier>{3b6ca9f7-6792-4612-8033-3bf3f8757f23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice05">
+      <UniqueIdentifier>{05bf61cf-e13c-41a4-a5af-313448f23a84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice06">
+      <UniqueIdentifier>{883860c3-e610-4118-8d99-e304543bb3c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Practice07">
+      <UniqueIdentifier>{64403f96-2eb3-4d68-9ffa-99b4572481a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -12,6 +33,36 @@
     </ClCompile>
     <ClCompile Include="Temp.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice01_1.cpp">
+      <Filter>Practice01</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice01_2.cpp">
+      <Filter>Practice01</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice01_3.cpp">
+      <Filter>Practice01</Filter>
+    </ClCompile>
+    <ClCompile Include="make_rand.cpp">
+      <Filter>Practice02</Filter>
+    </ClCompile>
+    <ClCompile Include="DFS_Test.cpp">
+      <Filter>Practice03</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomSystem.cpp">
+      <Filter>Practice04</Filter>
+    </ClCompile>
+    <ClCompile Include="TimingGame.cpp">
+      <Filter>Practice05</Filter>
+    </ClCompile>
+    <ClCompile Include="DFS_BFS_FindRoute.cpp">
+      <Filter>Practice07</Filter>
+    </ClCompile>
+    <ClCompile Include="HashTable.cpp">
+      <Filter>Practice07</Filter>
+    </ClCompile>
+    <ClCompile Include="addshlsub.cpp">
+      <Filter>Practice07</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

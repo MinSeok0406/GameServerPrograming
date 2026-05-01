@@ -1,18 +1,18 @@
 ﻿  모듈 종속성의 소스를 검사하는 중...
+  Employee.ixx
   Database.ixx
   Employee01.ixx
-  Employee.ixx
+  stdexcept
   format
   vector
   string
   iostream
-  stdexcept
   컴파일하는 중...
-  vector
-  stdexcept
+  format
   string
   iostream
-  format
+  vector
+  stdexcept
   Employee.ixx
   Employee01.ixx
   Database.ixx

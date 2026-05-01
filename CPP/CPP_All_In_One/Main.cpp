@@ -1,59 +1,43 @@
 ﻿#include <iostream>
-#include <array>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <mutex>
-#include <cmath>
-#include <format>
-#include <list>
-#include <optional>
-#include <map>
-#include <set>
-#include <iterator>
-#include <WinSock2.h>
-#include <new>
-#include <functional>
-#include <type_traits>
+#include <tchar.h>
+#include <queue>
+#include <stack>
+#include <fcntl.h>
+#include <io.h>
+#include <conio.h>
 #include <chrono>
-#include "Temp.h"
+#include <WinSock2.h>
 using namespace std;
 
-#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "Winmm.lib")
 
-class Test
-{
-    
-};
+int a;
+int b;
 
-template<typename T>
-void f(T&& param)
+void Test2(int x)
 {
-    
+    x++;
+    _getch();
 }
 
-template<typename T>
-void f(vector<T>&& param)
+void Test()
 {
+    a++;
+    b++;
 
-}
-
-auto timeFuncInvocation = [](auto&& func, auto&&... params)
+    if (b == 1)
     {
-        // TODO
-        std::forward<decltype(func)>(func)(std::forward<decltype(params)>(params)(params));
-        // TODO
-    };
+        int x = 0;
+        x++;
+        Test2(x);
+    }
+}
 
 int main()
 {
-    Test t;
+    timeBeginPeriod(1);
 
-    f(t);           // 왼값 참조
-    f(std::move(t));    // 오른값 참조
-
-    vector<int> v;
-    f(v);
+    Test();
 
     return 0;
 }
