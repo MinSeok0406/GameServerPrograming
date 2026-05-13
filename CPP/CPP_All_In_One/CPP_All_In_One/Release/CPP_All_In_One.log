@@ -1,7 +1,15 @@
-﻿  addshlsub.cpp
-  Main.cpp
-  코드를 생성하고 있습니다.
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 3 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  코드를 생성했습니다.
-  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\Release\CPP_All_In_One.exe
+﻿  Main.cpp
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(48,13): error C2660: 'WidgetStuff::Widget<int>::swap': 함수는 2개의 인수를 사용하지 않습니다.
+      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(44,14):
+      'WidgetStuff::Widget<int>::swap' 선언을 참조하십시오.
+      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(48,13):
+      인수 목록 '(WidgetStuff::WidgetImpl *, WidgetStuff::WidgetImpl *)'을(를) 일치시키는 동안
+      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(48,13):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(68,17):
+          컴파일되는 클래스 템플릿 인스턴스화 'WidgetStuff::Widget<int>'에 대한 참조를 확인하세요.
+          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(44,14):
+          클래스 템플릿 멤버 함수 'void WidgetStuff::Widget<int>::swap(WidgetStuff::Widget<int> &)'을(를) 컴파일하는 중입니다.
+              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(58,15):
+              'WidgetStuff::swap'에서 'WidgetStuff::Widget<int>::swap'에 대한 첫 번째 참조를 확인하세요.
+  

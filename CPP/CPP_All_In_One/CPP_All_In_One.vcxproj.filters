@@ -26,6 +26,9 @@
     <Filter Include="Practice07">
       <UniqueIdentifier>{64403f96-2eb3-4d68-9ffa-99b4572481a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Practice08">
+      <UniqueIdentifier>{bc5b6d6b-e782-4224-9cdd-8e0781620162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -63,6 +66,9 @@
     </ClCompile>
     <ClCompile Include="addshlsub.cpp">
       <Filter>Practice07</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSynthesis.cpp">
+      <Filter>Practice08</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
