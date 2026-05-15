@@ -14,61 +14,42 @@ using namespace std;
 
 extern "C" const IMAGE_DOS_HEADER __ImageBase;
 
+using ll = long long;
 
-
-namespace WidgetStuff
-{
-    class WidgetImpl
-    {
-    public:
-
-
-    private:
-        int a, b, c;
-        std::vector<double> v;
-    };
-
-    template<typename T>
-    class Widget
-    {
-    public:
-        Widget() {}
-        Widget(const Widget& rhs) {}
-
-        Widget& operator=(const Widget& rhs)
-        {
-            *pImpl = *(rhs.pImpl);
-            return *this;
-        }
-
-        void swap(Widget<T>& other)
-        {
-            using std::swap;
-
-            swap(pImpl, other.pImpl);
-        }
-
-    private:
-        WidgetImpl* pImpl;
-    };
-
-    template<typename T>
-    void swap(Widget<T>& a, Widget<T>& b)
-    {
-        a.swap(b);
-    }
-}
+string s;
+ll g_maxValue = -1e9;
+ll g_minValue = 1e9;
 
 int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
 
-    using namespace WidgetStuff;
+    s.push_back('5');
+    s.push_back('2');
+    s.push_back('3');
+    s.push_back('1');
+    s.push_back('-1');
+    s.push_back('-4');
+    s.push_back('-7');
 
-    Widget<int> w;
-    Widget<int> w2;
+    ll value = 0;
+    for (auto i = 0; i < s.size(); ++i)
+    {
+        if (s[i] == '-')
+        {
+            i++;
+            value = static_cast<ll>(s[i] - '0');
+            value *= -1;
+        }
+        else
+        {
+            value = static_cast<ll>(s[i] - '0');
+        }
 
-    swap(w, w2);
+        g_maxValue = max(value, g_maxValue);
+        g_minValue = min(value, g_minValue);
+    }
+    
 
     return 0;
 }

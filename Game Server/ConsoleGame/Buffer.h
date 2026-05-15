@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // 버퍼의 내용을 화면으로 찍어주는 함수
 void Buffer_Flip(void);

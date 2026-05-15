@@ -7,6 +7,9 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{2fa148f7-1512-479d-abef-d175664dcaf5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Update">
+      <UniqueIdentifier>{c7680591-5a8a-4cb6-a3ce-b3a2a1b5dbf6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">
@@ -18,6 +21,9 @@
     <ClCompile Include="Buffer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="UpdateScene.cpp">
+      <Filter>Update</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h">
@@ -25,6 +31,9 @@
     </ClInclude>
     <ClInclude Include="Buffer.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateScene.h">
+      <Filter>Update</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

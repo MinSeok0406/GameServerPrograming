@@ -131,10 +131,12 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="UpdateScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="UpdateScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

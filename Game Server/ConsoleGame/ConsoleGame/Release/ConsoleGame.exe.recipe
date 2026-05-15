@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GameServerPrograming\Game Server\ConsoleGame\Release\ConsoleGame.exe</FullPath>
+      <FullPath>C:\GamePrograming\Game Server\ConsoleGame\Release\ConsoleGame.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

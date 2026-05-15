@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define dfSCREEN_WIDTH	81
 #define dfSCREEN_HEIGHT	24

@@ -1,15 +1,28 @@
 ﻿  Main.cpp
-C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(48,13): error C2660: 'WidgetStuff::Widget<int>::swap': 함수는 2개의 인수를 사용하지 않습니다.
-      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(44,14):
-      'WidgetStuff::Widget<int>::swap' 선언을 참조하십시오.
-      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(48,13):
-      인수 목록 '(WidgetStuff::WidgetImpl *, WidgetStuff::WidgetImpl *)'을(를) 일치시키는 동안
-      C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(48,13):
-      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
-          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(68,17):
-          컴파일되는 클래스 템플릿 인스턴스화 'WidgetStuff::Widget<int>'에 대한 참조를 확인하세요.
-          C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(44,14):
-          클래스 템플릿 멤버 함수 'void WidgetStuff::Widget<int>::swap(WidgetStuff::Widget<int> &)'을(를) 컴파일하는 중입니다.
-              C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(58,15):
-              'WidgetStuff::swap'에서 'WidgetStuff::Widget<int>::swap'에 대한 첫 번째 참조를 확인하세요.
-  
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(20,15): warning C4244: '초기화 중': 'double'에서 'll'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(21,15): warning C4244: '초기화 중': 'double'에서 'll'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(31,17): warning C4305: '인수': 'int'에서 'const _Elem'(으)로 잘립니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(31,17): warning C4305:         with
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(31,17): warning C4305:         [
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(31,17): warning C4305:             _Elem=char
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(31,17): warning C4305:         ]
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(31,17): warning C4309: '인수': 상수 값이 잘립니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(32,17): warning C4305: '인수': 'int'에서 'const _Elem'(으)로 잘립니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(32,17): warning C4305:         with
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(32,17): warning C4305:         [
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(32,17): warning C4305:             _Elem=char
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(32,17): warning C4305:         ]
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(32,17): warning C4309: '인수': 상수 값이 잘립니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(33,17): warning C4305: '인수': 'int'에서 'const _Elem'(으)로 잘립니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(33,17): warning C4305:         with
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(33,17): warning C4305:         [
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(33,17): warning C4305:             _Elem=char
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(33,17): warning C4305:         ]
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(33,17): warning C4309: '인수': 상수 값이 잘립니다.
+C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(36,24): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  코드를 생성하고 있습니다.
+  1 of 65 functions ( 1.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\Release\CPP_All_In_One.exe
