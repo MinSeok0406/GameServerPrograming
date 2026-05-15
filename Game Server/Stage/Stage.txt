@@ -1,1 +1,6 @@
 10
+../Stage/stage1.txt
+../Stage/stage2.txt
+../Stage/stage3.txt
+../Stage/stage4.txt
+../Stage/stage5.txt

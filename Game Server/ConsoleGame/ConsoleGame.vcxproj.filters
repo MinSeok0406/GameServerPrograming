@@ -10,6 +10,9 @@
     <Filter Include="Update">
       <UniqueIdentifier>{c7680591-5a8a-4cb6-a3ce-b3a2a1b5dbf6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{fdd32f96-1571-483d-a766-0220a82825e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">
@@ -24,6 +27,12 @@
     <ClCompile Include="UpdateScene.cpp">
       <Filter>Update</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h">
@@ -34,6 +43,12 @@
     </ClInclude>
     <ClInclude Include="UpdateScene.h">
       <Filter>Update</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

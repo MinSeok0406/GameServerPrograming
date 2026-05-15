@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <Windows.h>
 #include "Console.h"
 #include "Buffer.h"
 #include "UpdateScene.h"
@@ -6,13 +7,16 @@ using namespace std;
 
 #define LENGTH 1024
 
-SCENE g_scene = SCENE::TITLE;
-int g_state;
+#pragma comment(lib, "Winmm.lib")
 
-char g_stageBuffer[LENGTH];
+SCENE g_scene = SCENE::TITLE;
+int g_stage;
+
+extern char g_stageBuffer[LENGTH];
 
 int main()
 {
+    timeBeginPeriod(1);
     cs_Initial();
 
     FILE* fp;

@@ -10,7 +10,8 @@ enum class SCENE
 };
 
 extern SCENE g_scene;
-extern int g_state;
+extern int g_stage;
+extern int tick;
 
 // 타이틀 로직 업데이트
 void UpdateTitle();
