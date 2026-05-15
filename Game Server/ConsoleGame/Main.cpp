@@ -4,12 +4,20 @@
 #include "UpdateScene.h"
 using namespace std;
 
+#define LENGTH 1024
+
 SCENE g_scene = SCENE::TITLE;
 int g_state;
+
+char g_stageBuffer[LENGTH];
 
 int main()
 {
     cs_Initial();
+
+    FILE* fp;
+    fopen_s(&fp, "../Stage/Stage.txt", "rb");
+    fread(g_stageBuffer, sizeof(char), LENGTH, fp);
 
     while (1)
     {
@@ -32,6 +40,8 @@ int main()
             break;
         }
     }
+
+    fclose(fp);
 
     return 0;
 }
