@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 struct Enemy
 {
@@ -8,4 +8,6 @@ struct Enemy
 };
 
 void EnemyInit();
-void Movement();
+void EnemyMovement();
+void EnemyAttack();
+bool EnemyDie();

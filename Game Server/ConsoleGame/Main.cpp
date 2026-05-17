@@ -18,6 +18,7 @@ int main()
 {
     timeBeginPeriod(1);
     cs_Initial();
+    srand((unsigned int)time(nullptr));
 
     FILE* fp;
     fopen_s(&fp, "../Stage/Stage.txt", "rb");

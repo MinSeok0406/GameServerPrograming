@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 struct Player
 {
@@ -9,6 +9,6 @@ struct Player
 };
 
 void PlayerInit();
-void MoveMent();
-void Attack();
-bool Die();
+void PlayerMoveMent();
+void PlayerAttack();
+bool PlayerDie();

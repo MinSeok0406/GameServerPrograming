@@ -11,7 +11,9 @@ enum class SCENE
 
 extern SCENE g_scene;
 extern int g_stage;
-extern int tick;
+
+// 프레임 표시
+void FPS();
 
 // 타이틀 로직 업데이트
 void UpdateTitle();
