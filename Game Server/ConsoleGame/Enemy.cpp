@@ -34,8 +34,6 @@ void EnemyInit()
 
 void EnemyMovement()
 {
-    // 텍스트 파일에서 패턴을 가져와서 몬스터 움직임
-
     int t = timeGetTime() - tempTick;
     if (t > 0 && t < 2000)
     {
@@ -53,6 +51,7 @@ void EnemyMovement()
     
     if (isMove)
     {
+        // 텍스트 파일에서 패턴 가져오기
         for (int i = 0; i < (int)enemies.size(); ++i)
         {
             if (enemies[i].live)
@@ -64,6 +63,7 @@ void EnemyMovement()
     }
     else
     {
+        // 텍스트 파일에서 패턴 가져오기
         for (int i = 0; i < (int)enemies.size(); ++i)
         {
             if (enemies[i].live)
@@ -81,6 +81,7 @@ void EnemyAttack()
     int randValue = rand() % 100 + 1;
     
     // 적 총알 생성
+    // 텍스트 파일에서 공격 확률 가져오기
     if (randValue > 80)
     {
         int enemyIndex = randValue % enemyCnt;

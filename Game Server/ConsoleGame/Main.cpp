@@ -5,8 +5,6 @@
 #include "UpdateScene.h"
 using namespace std;
 
-#define LENGTH 1024
-
 #pragma comment(lib, "Winmm.lib")
 
 SCENE g_scene = SCENE::TITLE;

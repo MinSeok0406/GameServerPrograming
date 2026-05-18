@@ -6,9 +6,6 @@
 #include "Player.h"
 #include "Enemy.h"
 
-#define MAXSTAGE 5
-#define LENGTH 1024
-
 char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
 char g_stageBuffer[LENGTH];
 
