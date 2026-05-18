@@ -84,6 +84,8 @@ void UpdateGame()
     // 10fps 게임으로 만든다.
     while (1)
     {
+        FPS();
+
         // 게임 클리어
         if (EnemyDie())
         {
@@ -110,8 +112,6 @@ void UpdateGame()
         PlayerAttack();
 
         Buffer_Flip();
-
-        FPS();
 
         int useTime = (int)(timeGetTime() - tick);
         if (useTime > 0 && useTime < 100)

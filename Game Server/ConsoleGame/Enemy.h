@@ -3,6 +3,7 @@
 struct Enemy
 {
 	bool live;
+	char sprite;
 	int x;
 	int y;
 };

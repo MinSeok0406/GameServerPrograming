@@ -21,15 +21,15 @@ int enemyCnt = 0;
 void EnemyInit()
 {
     // 텍스트 파일에서 값들을 가져와서 몬스터 배치
-    enemies.push_back({ true, 20, 2});
-    enemies.push_back({ true, 25, 2});
-    enemies.push_back({ true, 30, 2});
-    enemies.push_back({ true, 35, 2});
-    enemies.push_back({ true, 20, 5});
-    enemies.push_back({ true, 25, 5});
-    enemies.push_back({ true, 30, 5});
-    enemies.push_back({ true, 35, 5});
-    enemyCnt = 8;
+    enemies.push_back({ true, '@', 20, 2});
+    enemies.push_back({ true, '@', 25, 2});
+    enemies.push_back({ true, '@', 30, 2});
+    enemies.push_back({ true, '@', 35, 2});
+    enemies.push_back({ true, '@', 20, 5});
+    enemies.push_back({ true, '@', 25, 5});
+    enemies.push_back({ true, '@', 30, 5});
+    enemies.push_back({ true, '@', 35, 5});
+    enemyCnt = enemies.size();
 }
 
 void EnemyMovement()
@@ -56,7 +56,7 @@ void EnemyMovement()
         {
             if (enemies[i].live)
             {
-                Sprite_Draw(enemies[i].x, enemies[i].y, '@');
+                Sprite_Draw(enemies[i].x, enemies[i].y, enemies[i].sprite);
                 enemies[i].x += 1;
             }
         }
@@ -68,7 +68,7 @@ void EnemyMovement()
         {
             if (enemies[i].live)
             {
-                Sprite_Draw(enemies[i].x, enemies[i].y, '@');
+                Sprite_Draw(enemies[i].x, enemies[i].y, enemies[i].sprite);
                 enemies[i].x -= 1;
             }
         }
