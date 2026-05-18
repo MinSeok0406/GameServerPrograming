@@ -1,13 +1,16 @@
 ﻿#include <iostream>
+#include <string>
 #include <Windows.h>
 #include "Console.h"
 #include "Buffer.h"
 #include "UpdateScene.h"
 #include "Player.h"
 #include "Enemy.h"
+using namespace std;
 
-char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
-char g_stageBuffer[LENGTH];
+extern char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
+extern char g_stageBuffer[LENGTH];
+extern string str;
 
 int tick;
 int t = timeGetTime();
@@ -28,7 +31,6 @@ void FPS()
 void UpdateTitle()
 {
     Buffer_Clear();
-    // 텍스트 파일 만들기
     Sprite_Draw(20, 0, 'G');
     Sprite_Draw(22, 0, 'A');
     Sprite_Draw(24, 0, 'M');
@@ -39,7 +41,6 @@ void UpdateTitle()
     Sprite_Draw(36, 0, 'D');
     Sprite_Draw(38, 0, 'Y');
 
-    // 텍스트 파일 만들기
     Sprite_Draw(18, 2, 'P');
     Sprite_Draw(20, 2, 'R');
     Sprite_Draw(22, 2, 'E');
@@ -62,8 +63,10 @@ void UpdateTitle()
 
 void UpdateLoad()
 {
+    int maxStage = stoi(str);
+
     // 개발자가 만든 스테이지를 초과한다면...
-    if (g_stage > 1)
+    if (g_stage > maxStage)
     {
         g_scene = SCENE::CLEAR;
         return;
@@ -73,6 +76,7 @@ void UpdateLoad()
     // fopen_s, fread, fwrite 함수로 파일 정보 가져오기
 
     g_scene = SCENE::GAME;
+    return;
 }
 
 void UpdateGame()
@@ -120,12 +124,13 @@ void UpdateGame()
         }
         tick += 100;
     }
+
+    return;
 }
 
 void UpdateClear()
 {
     Buffer_Clear();
-    // 텍스트 파일 만들기
     Sprite_Draw(20, 0, 'G');
     Sprite_Draw(22, 0, 'A');
     Sprite_Draw(24, 0, 'M');
@@ -152,13 +157,13 @@ void UpdateClear()
     {
         g_scene = SCENE::TITLE;
         cs_ClearScreen();
+        return;
     }
 }
 
 void UpdateOver()
 {
     Buffer_Clear();
-    // 텍스트 파일 만들기
     Sprite_Draw(20, 0, 'G');
     Sprite_Draw(22, 0, 'A');
     Sprite_Draw(24, 0, 'M');
@@ -168,7 +173,6 @@ void UpdateOver()
     Sprite_Draw(34, 0, 'E');
     Sprite_Draw(36, 0, 'R');
 
-    // 텍스트 파일 만들기
     Sprite_Draw(18, 2, 'P');
     Sprite_Draw(20, 2, 'R');
     Sprite_Draw(22, 2, 'E');
@@ -185,5 +189,6 @@ void UpdateOver()
     {
         g_scene = SCENE::GAME;
         cs_ClearScreen();
+        return;
     }
 }

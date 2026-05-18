@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #define LENGTH 1024
-#define MAXSTAGE 5
 
 enum class SCENE
 {

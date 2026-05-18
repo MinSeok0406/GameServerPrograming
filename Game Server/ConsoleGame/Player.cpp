@@ -7,16 +7,15 @@
 #include "Buffer.h"
 using namespace std;
 
-extern Player* p;
-extern vector<pair<int, int>> Playerbullet;
+Player* p;
+vector<pair<int, int>> Playerbullet;
 
-vector<Enemy> enemies;
-vector<pair<int, int>> Enemybullet;
-bool isMove = true;
+extern vector<Enemy> enemies;
+extern vector<pair<int, int>> Enemybullet;
+extern bool isMove;
 
 void PlayerInit()
 {
-	// 텍스트 파일 데이터 불러오기
 	p = new Player{ true, 100, 40, 20 };
 }
 

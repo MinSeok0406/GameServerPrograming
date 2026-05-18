@@ -4,19 +4,23 @@
 #include <time.h>
 #include "Enemy.h"
 #include "Player.h"
+#include "UpdateScene.h"
 #include "Buffer.h"
 #include "Console.h"
 using namespace std;
 
-extern vector<Enemy> enemies;
-extern vector<pair<int, int>> Enemybullet;
-extern bool isMove;
-
-Player* p;
-vector<pair<int, int>> Playerbullet;
+vector<Enemy> enemies;
+vector<pair<int, int>> Enemybullet;
+bool isMove = true;
 
 int tempTick = timeGetTime();
 int enemyCnt = 0;
+
+extern Player* p;
+extern vector<pair<int, int>> Playerbullet;
+
+extern char g_stageBuffer[LENGTH];
+extern char g_enemyBuffer[LENGTH];
 
 void EnemyInit()
 {

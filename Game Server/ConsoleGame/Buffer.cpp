@@ -2,7 +2,7 @@
 #include "Buffer.h"
 #include "Console.h"
 
-extern char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
+char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
 
 void Buffer_Flip(void)
 {
