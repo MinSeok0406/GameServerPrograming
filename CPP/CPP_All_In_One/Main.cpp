@@ -22,7 +22,30 @@ int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
     
-    
+    SHELLEXECUTEINFO sei = { sizeof(SHELLEXECUTEINFO) };
+
+    sei.lpVerb = _T("runas");
+
+    sei.lpFile = _T("cmd.exe");
+
+    sei.nShow = SW_SHOWNORMAL;
+
+    if (!ShellExecuteEx(&sei))
+    {
+        DWORD dwStatus = GetLastError();
+
+        if (dwStatus == ERROR_CANCELLED)
+        {
+
+        }
+        else
+        {
+            if (dwStatus == ERROR_FILE_NOT_FOUND)
+            {
+
+            }
+        }
+    }
 
     return 0;
 }

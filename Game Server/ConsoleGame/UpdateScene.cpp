@@ -74,6 +74,26 @@ void UpdateLoad()
 
     // 스테이지에 맞는 정보 읽기
     // fopen_s, fread, fwrite 함수로 파일 정보 가져오기
+    string str;
+    char buffer[256];
+    int cnt = 0;
+    while (g_stageBuffer[cnt] != '\r')
+    {
+        str += g_stageBuffer[cnt];
+        cnt++;
+    }
+
+    FILE* fp;
+    fopen_s(&fp, str.c_str(), "rb");
+
+    fseek(fp, 0, SEEK_END);
+    long fileSize = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    auto readBytes = fread(buffer, sizeof(char), fileSize, fp);
+    buffer[readBytes] = '\0';
+
+    fclose(fp);
 
     g_scene = SCENE::GAME;
     return;
