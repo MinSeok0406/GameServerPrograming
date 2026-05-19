@@ -1,5 +1,5 @@
-1 ../Enemy/Enemy1.txt
-2 ../Enemy/Enemy2.txt
-3 ../Enemy/Enemy3.txt
-4 ../Enemy/Enemy4.txt
-5 ../Enemy/Enemy5.txt
+../Enemy/Enemy1.txt
+../Enemy/Enemy2.txt
+../Enemy/Enemy3.txt
+../Enemy/Enemy4.txt
+../Enemy/Enemy5.txt

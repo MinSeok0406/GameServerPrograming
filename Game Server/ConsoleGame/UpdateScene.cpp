@@ -12,9 +12,11 @@ extern char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
 extern char g_stageBuffer[LENGTH];
 extern string str;
 
+char buffer[256];
 int tick;
 int t = timeGetTime();
 int g_fpsCnt;
+int g_stageBufferOffset = 0;
 
 void FPS()
 {
@@ -73,18 +75,36 @@ void UpdateLoad()
     }
 
     // 스테이지에 맞는 정보 읽기
-    // fopen_s, fread, fwrite 함수로 파일 정보 가져오기
-    string str;
-    char buffer[256];
-    int cnt = 0;
-    while (g_stageBuffer[cnt] != '\r')
+    string arr;
+    while (g_stageBuffer[g_stageBufferOffset] != '\0')
     {
-        str += g_stageBuffer[cnt];
-        cnt++;
+        if (g_stageBuffer[g_stageBufferOffset] == '\0')
+        {
+            break;
+        }
+
+        char c = g_stageBuffer[g_stageBufferOffset];
+        g_stageBufferOffset++;
+
+        if (c == '\r')
+        {
+            if (g_stageBuffer[g_stageBufferOffset] == '\n')
+            {
+                g_stageBufferOffset++;
+            }
+            break;
+        }
+        arr += c;
     }
 
     FILE* fp;
-    fopen_s(&fp, str.c_str(), "rb");
+    fopen_s(&fp, arr.c_str(), "rb");
+
+    if (fp == nullptr)
+    {
+        g_scene = SCENE::CLEAR;
+        return;
+    }
 
     fseek(fp, 0, SEEK_END);
     long fileSize = ftell(fp);
@@ -176,6 +196,7 @@ void UpdateClear()
     if (GetAsyncKeyState(VK_SPACE))
     {
         g_scene = SCENE::TITLE;
+        g_stageBufferOffset = 0;
         cs_ClearScreen();
         return;
     }

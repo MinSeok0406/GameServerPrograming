@@ -14,6 +14,9 @@ int g_stage;
 
 char g_stageBuffer[LENGTH];
 char g_enemyBuffer[LENGTH];
+char enemyInfo[256][6];
+int g_enemyBufferOffset = 0;
+int enemyTypeCnt = 0;
 
 int main()
 {
@@ -57,6 +60,49 @@ int main()
     g_enemyBuffer[readBytes] = '\0';
 
     fclose(efp);
+
+    //--------------------------------
+
+    cnt = 0;
+    while (g_enemyBuffer[g_enemyBufferOffset] != '\0')
+    {
+        string arr;
+        while (true)
+        {
+            if (g_enemyBuffer[g_enemyBufferOffset] == '\0')
+            {
+                break;
+            }
+
+            char c = g_enemyBuffer[g_enemyBufferOffset];
+            g_enemyBufferOffset++;
+
+            if (c == '\r')
+            {
+                if (g_enemyBuffer[g_enemyBufferOffset] == '\n')
+                {
+                    g_enemyBufferOffset++;
+                    break;
+                }
+            }
+            arr += c;
+        }
+
+        FILE* fp;
+        fopen_s(&fp, arr.c_str(), "rb");
+
+        fseek(fp, 0, SEEK_END);
+        long fileSize = ftell(fp);
+        fseek(fp, 0, SEEK_SET);
+
+        auto readBytes = fread(enemyInfo[cnt], sizeof(char), fileSize, fp);
+        enemyInfo[cnt][readBytes] = '\0';
+
+        fclose(fp);
+
+        cnt++;
+        enemyTypeCnt++;
+    }
 
     while (1)
     {

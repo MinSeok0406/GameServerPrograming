@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <Windows.h>
 #include <vector>
-#include <time.h>
 #include "Enemy.h"
 #include "Player.h"
 #include "UpdateScene.h"
@@ -21,59 +20,96 @@ extern vector<pair<int, int>> Playerbullet;
 
 extern char g_stageBuffer[LENGTH];
 extern char g_enemyBuffer[LENGTH];
+extern char buffer[256];
+extern char enemyInfo[256][6];
+extern int enemyTypeCnt;
 
 void EnemyInit()
 {
-    // 텍스트 파일에서 값들을 가져와서 몬스터 배치
-    enemies.push_back({ true, '@', 20, 2});
-    enemies.push_back({ true, '@', 25, 2});
-    enemies.push_back({ true, '@', 30, 2});
-    enemies.push_back({ true, '@', 35, 2});
-    enemies.push_back({ true, '@', 20, 5});
-    enemies.push_back({ true, '@', 25, 5});
-    enemies.push_back({ true, '@', 30, 5});
-    enemies.push_back({ true, '@', 35, 5});
+    isMove = true;
+
+    // Stage에 나오는 스프라이트 좌표 수집
+    int x = 0;
+    int y = 0;
+    int cnt = 0;
+    while (buffer[cnt] != '\0')
+    {
+        char c = buffer[cnt];
+
+        if (c == '\r' || c == '\n')
+        {
+            if (c == '\r')
+            {
+                cnt += 2;
+            }
+            x = 0;
+            y++;
+            continue;
+        }
+
+        if (c == '@' || c == 'a' || c == 'Q' || c == 'W' || c == 'V')
+        {
+            enemies.push_back({ true, c, x, y, 0, 0 });
+        }
+
+        x++;
+        cnt++;
+    }
+
+    // Enemy 이동 패턴 값 설정
+    char sprite;
+    int moveX;
+    int moveY;
+
+    for (auto i = 0; i < enemyTypeCnt; ++i)
+    {
+        sscanf_s(enemyInfo[i], " %c %d %d", &sprite, 1, &moveX, &moveY);
+
+        for (auto& enemy : enemies)
+        {
+            if (enemy.sprite == sprite)
+            {
+                enemy.moveX = moveX;
+                enemy.moveY = moveY;
+            }
+        }
+    }
+    
     enemyCnt = enemies.size();
 }
 
 void EnemyMovement()
 {
     int t = timeGetTime() - tempTick;
-    if (t > 0 && t < 2000)
+    if (t > 0 && t < 1000)
     {
         isMove = true;
     }
-    else if (t >= 2000 && t < 4000)
+    else if (t >= 1000 && t < 2000)
     {
         isMove = false;
     }
     else
     {
         isMove = true;
-        tempTick += 4000;
+        tempTick += 2000;
     }
-    
-    if (isMove)
+
+    for (int i = 0; i < (int)enemies.size(); ++i)
     {
-        // 텍스트 파일에서 패턴 가져오기
-        for (int i = 0; i < (int)enemies.size(); ++i)
+        if (enemies[i].live)
         {
-            if (enemies[i].live)
+            Sprite_Draw(enemies[i].x, enemies[i].y, enemies[i].sprite);
+
+            if (isMove)
             {
-                Sprite_Draw(enemies[i].x, enemies[i].y, enemies[i].sprite);
-                enemies[i].x += 1;
+                enemies[i].x += enemies[i].moveX;
+                enemies[i].y += enemies[i].moveY;
             }
-        }
-    }
-    else
-    {
-        // 텍스트 파일에서 패턴 가져오기
-        for (int i = 0; i < (int)enemies.size(); ++i)
-        {
-            if (enemies[i].live)
+            else
             {
-                Sprite_Draw(enemies[i].x, enemies[i].y, enemies[i].sprite);
-                enemies[i].x -= 1;
+                enemies[i].x -= enemies[i].moveX;
+                enemies[i].y -= enemies[i].moveY;
             }
         }
     }
@@ -85,7 +121,6 @@ void EnemyAttack()
     int randValue = rand() % 100 + 1;
     
     // 적 총알 생성
-    // 텍스트 파일에서 공격 확률 가져오기
     if (randValue > 80)
     {
         int enemyIndex = randValue % enemyCnt;
