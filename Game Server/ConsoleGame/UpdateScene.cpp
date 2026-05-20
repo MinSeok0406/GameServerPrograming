@@ -48,14 +48,12 @@ void UpdateTitle()
     Sprite_Draw(22, 2, 'E');
     Sprite_Draw(24, 2, 'E');
     Sprite_Draw(26, 2, 'S');
-    Sprite_Draw(30, 2, 'S');
-    Sprite_Draw(32, 2, 'P');
-    Sprite_Draw(34, 2, 'A');
-    Sprite_Draw(36, 2, 'C');
-    Sprite_Draw(38, 2, 'E');
+    Sprite_Draw(30, 2, 'T');
+    Sprite_Draw(32, 2, 'A');
+    Sprite_Draw(34, 2, 'B');
     Buffer_Flip();
 
-    if (GetAsyncKeyState(VK_SPACE))
+    if (GetAsyncKeyState(VK_TAB))
     {
         g_stage = 1;
         g_scene = SCENE::LOAD;
@@ -100,6 +98,7 @@ void UpdateLoad()
     FILE* fp;
     fopen_s(&fp, arr.c_str(), "rb");
 
+    // 작성된 스테이지 텍스트 파일이 없다면...
     if (fp == nullptr)
     {
         g_scene = SCENE::CLEAR;
@@ -181,19 +180,27 @@ void UpdateClear()
     Sprite_Draw(36, 0, 'A');
     Sprite_Draw(38, 0, 'R');
 
-    Sprite_Draw(18, 2, 'P');
-    Sprite_Draw(20, 2, 'R');
-    Sprite_Draw(22, 2, 'E');
-    Sprite_Draw(24, 2, 'E');
-    Sprite_Draw(26, 2, 'S');
-    Sprite_Draw(30, 2, 'S');
-    Sprite_Draw(32, 2, 'P');
-    Sprite_Draw(34, 2, 'A');
-    Sprite_Draw(36, 2, 'C');
-    Sprite_Draw(38, 2, 'E');
+    Sprite_Draw(20, 2, 'G');
+    Sprite_Draw(22, 2, 'O');
+    Sprite_Draw(26, 2, 'T');
+    Sprite_Draw(28, 2, 'I');
+    Sprite_Draw(30, 2, 'T');
+    Sprite_Draw(32, 2, 'L');
+    Sprite_Draw(34, 2, 'E');
+    Sprite_Draw(36, 2, '?');
+    Sprite_Draw(38, 2, '?');
+
+    Sprite_Draw(18, 4, 'P');
+    Sprite_Draw(20, 4, 'R');
+    Sprite_Draw(22, 4, 'E');
+    Sprite_Draw(24, 4, 'E');
+    Sprite_Draw(26, 4, 'S');
+    Sprite_Draw(30, 4, 'T');
+    Sprite_Draw(32, 4, 'A');
+    Sprite_Draw(34, 4, 'B');
     Buffer_Flip();
 
-    if (GetAsyncKeyState(VK_SPACE))
+    if (GetAsyncKeyState(VK_TAB))
     {
         g_scene = SCENE::TITLE;
         g_stageBufferOffset = 0;
@@ -219,14 +226,12 @@ void UpdateOver()
     Sprite_Draw(22, 2, 'E');
     Sprite_Draw(24, 2, 'E');
     Sprite_Draw(26, 2, 'S');
-    Sprite_Draw(30, 2, 'S');
-    Sprite_Draw(32, 2, 'P');
-    Sprite_Draw(34, 2, 'A');
-    Sprite_Draw(36, 2, 'C');
-    Sprite_Draw(38, 2, 'E');
+    Sprite_Draw(30, 2, 'T');
+    Sprite_Draw(32, 2, 'A');
+    Sprite_Draw(34, 2, 'B');
     Buffer_Flip();
 
-    if (GetAsyncKeyState(VK_SPACE))
+    if (GetAsyncKeyState(VK_TAB))
     {
         g_scene = SCENE::GAME;
         cs_ClearScreen();
