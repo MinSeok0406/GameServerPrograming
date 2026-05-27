@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GameServerPrograming\Game Server\MemoryPool\Release\MemoryPool.exe</FullPath>
+      <FullPath>C:\GamePrograming\Game Server\MemoryPool\Release\MemoryPool.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
