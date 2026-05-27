@@ -1,35 +1,51 @@
 ﻿#include "AllocInfo.h"
+#include <vector>
+using namespace std;
 
-MemoryPool g_memorypool;
+vector<AllocInfo> allocinfo;
 
-MemoryPool::MemoryPool() : _allocinfo({nullptr, 0, "", 0, false})
+void* operator new(size_t size, const char* fileName = 0x00, int line = 0x00)
 {
+	void* ptr = malloc(size);
+	AllocInfo info;
+	info.ptr = ptr;
+	info.size = size;
+	strcpy_s(info.fileName, fileName);
+	info.line = line;
+	info.array = false;
 
+	allocinfo.push_back(info);
+
+	return ptr;
 }
 
-MemoryPool::~MemoryPool()
+void* operator new[](size_t size, const char* fileName = 0x00, int line = 0x00)
 {
+	void* ptr = malloc(size);
+	AllocInfo info;
+	info.ptr = ptr;
+	info.size = size;
+	strcpy_s(info.fileName, fileName);
+	info.line = line;
+	info.array = true;
 
+	allocinfo.push_back(info);
+
+	return ptr;
 }
 
-void* MemoryPool::operator new(size_t size, char* fileName = 0x00, int line = 0)
+void operator delete(void* ptr)
 {
 
 
-	return nullptr;
+
+	free(ptr);
 }
 
-void* MemoryPool::operator new[](size_t size, char* fileName = 0x00, int line = 0)
+void operator delete[](void* ptr)
 {
 
 
-	return nullptr;
-}
 
-void MemoryPool::operator delete(void* ptr, char* fileName, int line)
-{
-}
-
-void MemoryPool::operator delete[](void* ptr, char* fileName, int line)
-{
+	free(ptr);
 }

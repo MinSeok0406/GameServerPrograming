@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 struct AllocInfo
 {
 	void* ptr;
@@ -8,18 +9,8 @@ struct AllocInfo
 	bool array;
 };
 
-class MemoryPool
-{
-public:
-	MemoryPool();
-	~MemoryPool();
+void* operator new(size_t size, const char* fileName, int line);
+void* operator new[](size_t size, const char* fileName, int line);
 
-	void* operator new(size_t size, char* fileName, int line);
-	void* operator new[](size_t size, char* fileName, int line);
-
-	void operator delete(void* ptr, char* fileName, int line);
-	void operator delete[](void* ptr, char* fileName, int line);
-
-private:
-	AllocInfo _allocinfo;
-};
+void operator delete(void* ptr);
+void operator delete[](void* ptr);
