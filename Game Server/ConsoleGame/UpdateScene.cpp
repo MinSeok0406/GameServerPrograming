@@ -24,7 +24,8 @@ void FPS()
 
     if (timeGetTime() - t > 1000)
     {
-        printf("FPS : %d", g_fpsCnt);
+        printf("FPS : %d\n", g_fpsCnt);
+        printf("Move : ← ↑ → ↓ \t Attack : SPACE");
         g_fpsCnt = 0;
         t += 1000;
     }

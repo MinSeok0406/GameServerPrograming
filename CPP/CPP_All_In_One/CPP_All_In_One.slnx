@@ -4,5 +4,6 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="../ForProfessionalCPP/ForProfessionalCPP.vcxproj" Id="00622d5d-3c85-4dd2-8005-346c98b0600d" />
+  <Project Path="../TestProcess/TestProcess.vcxproj" Id="82ed6569-199c-4aa8-95b3-86eafb2eafd0" />
   <Project Path="CPP_All_In_One.vcxproj" Id="0cf0f0bf-8359-44cc-adcb-054b790b93e6" />
 </Solution>

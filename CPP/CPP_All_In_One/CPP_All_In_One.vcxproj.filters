@@ -75,5 +75,11 @@
     <ClInclude Include="Temp.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Date.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Address.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,10 +1,2 @@
 ﻿  Main.cpp
-  make_rand.cpp
-  Practice01_1.cpp
-  Practice01_2.cpp
-  Practice01_3.cpp
-  Temp.cpp
-  코드를 생성하고 있습니다...
-C:\GamePrograming\CPP\CPP_All_In_One\Practice01_2.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\GamePrograming\CPP\CPP_All_In_One\Practice01_3.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\Debug\CPP_All_In_One.exe
+  CPP_All_In_One.vcxproj -> C:\GameServerPrograming\CPP\CPP_All_In_One\Debug\CPP_All_In_One.exe

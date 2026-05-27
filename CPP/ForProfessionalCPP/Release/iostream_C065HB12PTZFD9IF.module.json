@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Release\\iostream_C065HB12PTZFD9IF.obj",
+            "outputs": [
+                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\Release\\vc145.pdb",
+                "Release\\iostream_C065HB12PTZFD9IF.module.json",
+                "Release\\iostream_C065HB12PTZFD9IF.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,20 +1,21 @@
-/*#pragma once
+#pragma once
+#include <string>
 #include <memory>
 
-class Widget
+class PersonImpl;
+
+class Date;
+class Address;
+
+class Person
 {
 public:
-    Widget();
-    ~Widget();
+	Person(const std::string& name, const Date& birthday, const Address& addr);
 
-    Widget(const Widget& rhs);
-    Widget& operator=(const Widget& rhs);
-
-    Widget(Widget&& rhs);
-    Widget& operator=(Widget&& rhs);
+	std::string name() const;
+	const Date birthDate() const;
+	const Address address() const;
 
 private:
-    struct Impl;
-    //Impl* pImpl;
-    std::unique_ptr<Impl> pImpl;
-};*/
+	std::shared_ptr<PersonImpl> pImpl;
+};

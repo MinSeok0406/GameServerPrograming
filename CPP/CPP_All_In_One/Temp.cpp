@@ -1,47 +1,23 @@
-/*#include "Temp.h"
-#include <string>
-#include <vector>
+#include "Temp.h"
+#include "Address.h"
 using namespace std;
 
-int g_int = 3;
-
-struct Widget::Impl
-{
-    string name;
-    vector<double> data;
-};
-
-Widget::Widget() : pImpl(make_unique<Impl>())
+Person::Person(const std::string& name, const Date& birthday, const Address& addr)
+	: pImpl(new PersonImpl(name, birthday, addr))
 {
 }
 
-Widget::~Widget() = default;
-
-Widget::Widget(const Widget& rhs) : pImpl(nullptr)
+std::string Person::name() const
 {
-    if (rhs.pImpl)
-    {
-        pImpl = make_unique<Impl>(*rhs.pImpl);
-    }
+	return pImpl->getName();
 }
 
-Widget& Widget::operator=(const Widget& rhs)
+const Date Person::birthDate() const
 {
-    if (!rhs.pImpl)
-    {
-        pImpl.reset();
-    }
-    else if (!pImpl)
-    {
-        pImpl = make_unique<Impl>(*rhs.pImpl);
-    }
-    else
-    {
-        *pImpl = *rhs.pImpl;
-    }
-
-    return *this;
+	return pImpl->getDate();
 }
 
-Widget::Widget(Widget&& rhs) = default;
-Widget& Widget::operator=(Widget&& rhs) = default;*/
+const Address Person::address() const
+{
+	return pImpl->getAddress();
+}

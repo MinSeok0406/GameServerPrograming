@@ -5,14 +5,14 @@
         {
             "primary-output": "Release\\Database.ixx.obj",
             "outputs": [
-                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\Release\\vc145.pdb",
+                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\Release\\vc145.pdb",
                 "Release\\",
-                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\Release\\Database.ixx.ifc"
+                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\Release\\Database.ixx.ifc"
             ],
             "provides": [
                 {
                     "logical-name": "Database",
-                    "source-path": "c:\\gameprograming\\cpp\\forprofessionalcpp\\database.ixx",
+                    "source-path": "c:\\gameserverprograming\\cpp\\forprofessionalcpp\\database.ixx",
                     "is-interface": true
                 }
             ],
@@ -22,19 +22,19 @@
                 },
                 {
                     "logical-name": "string",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\string",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
                 },
                 {
                     "logical-name": "vector",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\vector",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
                 },
                 {
                     "logical-name": "stdexcept",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\stdexcept",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stdexcept",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
                 }

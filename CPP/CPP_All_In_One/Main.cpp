@@ -8,44 +8,70 @@
 #include <chrono>
 #include <strsafe.h>
 #include <WinSock2.h>
+#include <chrono>
+#include "Temp.h"
 using namespace std;
+using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-extern "C" const IMAGE_DOS_HEADER __ImageBase;
+#ifdef UNICODE
+#define tcout std::wcout
+#define tcin std::wcin
+#define tcerr std::wcerr
+#define tclog std::wclog
+#else
+#define tcout std::cout
+#define tcin std::cin
+#define tcerr std::cerr
+#define tclog std::clog
+#endif
 
-using ll = long long;
+#ifdef _UNICODE
+#define tcout std::wcout
+#define tcin std::wcin
+#define tcerr std::wcerr
+#define tclog std::wclog
+#else
+#define tcout std::cout
+#define tcin std::cin
+#define tcerr std::cerr
+#define tclog std::clog
+#endif
 
-
+#define SLOT_NAME   _T("\\\\.\\mailslot\\mailbox")
 
 int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
+    system("chcp 65001");
     
-    SHELLEXECUTEINFO sei = { sizeof(SHELLEXECUTEINFO) };
+    HANDLE hMailSlot;
+    TCHAR messageBox[50];
+    DWORD bytesRead;
 
-    sei.lpVerb = _T("runas");
+    hMailSlot = CreateMailslot(SLOT_NAME, 0, MAILSLOT_WAIT_FOREVER, NULL);
 
-    sei.lpFile = _T("cmd.exe");
-
-    sei.nShow = SW_SHOWNORMAL;
-
-    if (!ShellExecuteEx(&sei))
+    _fputts(_T("Message!!\n"), stdout);
+    while (true)
     {
-        DWORD dwStatus = GetLastError();
-
-        if (dwStatus == ERROR_CANCELLED)
+        if (!ReadFile(hMailSlot, messageBox, sizeof(TCHAR) * 50, &bytesRead, NULL))
         {
-
+            _fputts(_T("Unable to read!"), stdout);
+            CloseHandle(hMailSlot);
+            return 1;
         }
-        else
+
+        if (!_tcsncmp(messageBox, _T("exit"), 4))
         {
-            if (dwStatus == ERROR_FILE_NOT_FOUND)
-            {
-
-            }
+            _fputts(_T("Good Bye"), stdout);
+            break;
         }
+
+        messageBox[bytesRead / sizeof(TCHAR)] = 0;
+        _fputts(messageBox, stdout);
     }
 
+    CloseHandle(hMailSlot);
     return 0;
 }
