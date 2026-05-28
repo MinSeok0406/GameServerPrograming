@@ -8,13 +8,25 @@
 using namespace std;
 using ll = long long;
 
+class Widget
+{
+public:
+	Widget() {}
+	~Widget() {}
+
+private:
+	int _a;
+	int _b;
+	int _c;
+	char _d;
+	short _e;
+};
+
 int main()
 {
-	int* ptr = new int;
+	Widget* w = new Widget;
 
-
-	delete ptr;
-
+	delete[] w;
 
 	return 0;
 }

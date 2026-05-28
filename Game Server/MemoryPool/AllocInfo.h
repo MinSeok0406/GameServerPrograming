@@ -1,10 +1,9 @@
 ﻿#pragma once
-#include <iostream>
-#include <time.h>
-#include <vector>
-#include <string>
+extern char fileLog[256][256];
 
-extern std::vector<std::string> fileLog;
+// 64비트 환경에서 로그에 찍을 때,
+// 주소 8바이트로 변경해야됨
+// int -> long long || __int64
 
 struct AllocInfo
 {
@@ -18,58 +17,16 @@ struct AllocInfo
 class MemoryPool
 {
 public:
-	MemoryPool()
-	{
+	MemoryPool();
+	~MemoryPool();
 
-	}
-
-	~MemoryPool()
-	{
-		// 로그 파일 작성
-		std::string str = fileTitle();
-
-		for (const auto& i : allocInfo)
-		{
-			if (i.ptr != nullptr)
-			{
-				// LEAK 로그 작성
-				std::string arr;
-				arr += "LEAK ";
-				arr += "[";
-				arr += std::to_string((int)&i.ptr);
-				arr += "] ";
-				arr += "[";
-				arr += std::to_string(i.size);
-				arr += "] ";
-				arr += i.fileName;
-				arr += " : ";
-				arr += std::to_string(i.line);
-
-				fileLog.push_back(arr);
-			}
-		}
-
-		FILE* fp;
-		fopen_s(&fp, str.c_str(), "wb");
-		for (const auto& i : fileLog)
-		{
-			char* buffer = nullptr;
-			memcpy_s(buffer, sizeof(buffer), i.c_str(), sizeof(i.c_str()));
-			auto size = strlen(buffer);
-
-			fwrite(buffer, sizeof(char), size, fp);
-		}
-
-		fclose(fp);
-	}
-
-	std::string fileTitle();
+	void fileTitle();
 
 	void AddAlloc(void* ptr, size_t size, const char* fileName, int line, bool array);
 	bool RemoveAlloc(void* ptr, bool array);
 
 public:
-	std::vector<AllocInfo> allocInfo;
+	AllocInfo allocInfo[256];
 };
 
 extern MemoryPool memoryPool;
