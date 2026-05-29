@@ -31,6 +31,7 @@ public:
 
 extern MemoryPool memoryPool;
 
+
 void* operator new(size_t size, const char* fileName, int line);
 void* operator new[](size_t size, const char* fileName, int line);
 

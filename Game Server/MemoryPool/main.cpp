@@ -8,11 +8,13 @@
 using namespace std;
 using ll = long long;
 
+#pragma comment(lib, "winmm.lib")
+
 class Widget
 {
 public:
-	Widget() {}
-	~Widget() {}
+	Widget() { cout << "Widget" << "\n"; }
+	~Widget() { cout << "~Widget" << "\n"; }
 
 private:
 	int _a;
@@ -24,9 +26,11 @@ private:
 
 int main()
 {
-	Widget* w = new Widget;
+	timeBeginPeriod(1);
 
-	delete[] w;
+	Widget* w = new Widget[4];
+
+	delete w;
 
 	return 0;
 }

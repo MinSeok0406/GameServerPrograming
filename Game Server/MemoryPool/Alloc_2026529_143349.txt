@@ -1,0 +1,2 @@
+NOALLOC [33810020]
+LEAK [33810016] [68] C:\GameServerPrograming\Game Server\MemoryPool\main.cpp : 27
