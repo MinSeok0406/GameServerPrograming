@@ -39,39 +39,77 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-#define SLOT_NAME   _T("\\\\.\\mailslot\\mailbox")
+#define BUF_SIZE 1024
+int CommToClient(HANDLE);
 
 int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");
     
-    HANDLE hMailSlot;
-    TCHAR messageBox[50];
-    DWORD bytesRead;
-
-    hMailSlot = CreateMailslot(SLOT_NAME, 0, MAILSLOT_WAIT_FOREVER, NULL);
-
-    _fputts(_T("Message!!\n"), stdout);
-    while (true)
+    LPCTSTR pipeName = _T("\\\\.\\pipe\\simple_pipe");
+    HANDLE hPipe;
+    while (1)
     {
-        if (!ReadFile(hMailSlot, messageBox, sizeof(TCHAR) * 50, &bytesRead, NULL))
+        hPipe = CreateNamedPipe(pipeName, PIPE_ACCESS_DUPLEX,
+            PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
+            PIPE_UNLIMITED_INSTANCES, BUF_SIZE, BUF_SIZE, 20000, NULL);
+
+        if (hPipe == INVALID_HANDLE_VALUE)
         {
-            _fputts(_T("Unable to read!"), stdout);
-            CloseHandle(hMailSlot);
-            return 1;
+            return -1;
         }
 
-        if (!_tcsncmp(messageBox, _T("exit"), 4))
-        {
-            _fputts(_T("Good Bye"), stdout);
-            break;
-        }
+        BOOL isSuccess = 0;
+        isSuccess = ConnectNamedPipe(hPipe, NULL) ? TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 
-        messageBox[bytesRead / sizeof(TCHAR)] = 0;
-        _fputts(messageBox, stdout);
+        if (isSuccess)
+        {
+            CommToClient(hPipe);
+        }
+        else
+        {
+            CloseHandle(hPipe);
+        }
+    }
+    
+    return 1;
+}
+
+int CommToClient(HANDLE hPipe)
+{
+    TCHAR fileName[MAX_PATH];
+    TCHAR dataBuf[BUF_SIZE];
+
+    BOOL isSuccess;
+    DWORD fileNameSize;
+    isSuccess = ReadFile(hPipe, fileName, MAX_PATH * sizeof(TCHAR), &fileNameSize, NULL);
+
+    FILE* filePtr;
+    _tfopen_s(&filePtr, fileName, _T("r, ccs=UTF-8"));
+    if (filePtr == nullptr)
+    {
+        return -1;
     }
 
-    CloseHandle(hMailSlot);
-    return 0;
+    DWORD bytesWritten = 0;
+    DWORD bytesRead = 0;
+
+    while (!feof(filePtr))
+    {
+        bytesRead = fread(dataBuf, 1, BUF_SIZE, filePtr);
+
+        WriteFile(hPipe, dataBuf, bytesRead, &bytesWritten, NULL);
+
+        if (bytesRead != bytesWritten)
+        {
+            break;
+        }
+    }
+
+    FlushFileBuffers(hPipe);
+    DisconnectNamedPipe(hPipe);
+    CloseHandle(hPipe);
+
+    return 1;
 }

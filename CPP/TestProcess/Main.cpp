@@ -37,41 +37,70 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-#define SLOT_NAME   _T("\\\\.\\mailslot\\mailbox")
+#define BUF_SIZE 1024
 
 int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    
+    HANDLE hPipe;
+    TCHAR readDataBuf[BUF_SIZE + 1];
+    LPCTSTR pipeName = _T("\\\\.\\pipe\\simple_pipe");
 
-    HANDLE hMailSlot;
-    TCHAR message[50];
-    DWORD bytesWritten;
-
-    hMailSlot = CreateFile(SLOT_NAME, GENERIC_WRITE, FILE_SHARE_READ,
-        NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    while (true)
+    while (1)
     {
-        _fputts(_T("MY CMD>"), stdout);
-        _fgetts(message, sizeof(message) / sizeof(TCHAR), stdin);
+        hPipe = CreateFile(pipeName, GENERIC_READ | GENERIC_WRITE,
+            0, NULL, OPEN_EXISTING, 0, NULL);
 
-        if (!WriteFile(hMailSlot, message, _tcslen(message) * sizeof(TCHAR), &bytesWritten, NULL))
+        if (hPipe != INVALID_HANDLE_VALUE)
         {
-            _fputts(_T("Unable to Write!"), stdout);
-            CloseHandle(hMailSlot);
-            return 1;
-        }
-
-        if (!_tcscmp(message, _T("exit")))
-        {
-            _fputts(_T("Good Bye"), stdout);
             break;
         }
+
+        if (GetLastError() != ERROR_PIPE_BUSY)
+        {
+            return 0;
+        }
+
+        if (!WaitNamedPipe(pipeName, 20000))
+        {
+            return 0;
+        }
     }
+
+    DWORD pipeMode = PIPE_READMODE_MESSAGE | PIPE_WAIT;
+    BOOL isSuccess = SetNamedPipeHandleState(hPipe, &pipeMode, NULL, NULL);
+
+    if (!isSuccess)
+    {
+        return 0;
+    }
+
+    LPCTSTR fileName = _T("news.txt");
+    DWORD bytesWritten = 0;
+
+    isSuccess = WriteFile(hPipe, fileName, (_tcslen(fileName) + 1), &bytesWritten, NULL);
+    if (!isSuccess)
+    {
+        return 0;
+    }
+
+    DWORD bytesRead = 0;
+    while (1)
+    {
+        isSuccess = ReadFile(hPipe, readDataBuf, BUF_SIZE * sizeof(TCHAR), &bytesRead, NULL);
+
+        if (!isSuccess && (GetLastError() != ERROR_MORE_DATA))
+        {
+            break;
+        }
+
+        readDataBuf[bytesRead] = 0;
+        tcout << readDataBuf << "\n";
+    }
+
+    CloseHandle(hPipe);
     
-    CloseHandle(hMailSlot);
     return 0;
 }
