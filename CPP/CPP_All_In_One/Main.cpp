@@ -1,4 +1,4 @@
-﻿#include <iostream>
+﻿/*#include <iostream>
 #include <tchar.h>
 #include <queue>
 #include <stack>
@@ -57,6 +57,7 @@ int _tmain(int argc, TCHAR* argv[])
 
         if (hPipe == INVALID_HANDLE_VALUE)
         {
+            tcout << "CreatePipe failed" << "\n";
             return -1;
         }
 
@@ -85,10 +86,17 @@ int CommToClient(HANDLE hPipe)
     DWORD fileNameSize;
     isSuccess = ReadFile(hPipe, fileName, MAX_PATH * sizeof(TCHAR), &fileNameSize, NULL);
 
+    if (!isSuccess || fileNameSize == 0)
+    {
+        tcout << "Pipe read message error" << "\n";
+        return -1;
+    }
+
     FILE* filePtr;
     _tfopen_s(&filePtr, fileName, _T("r, ccs=UTF-8"));
     if (filePtr == nullptr)
     {
+        tcout << "File open fault" << "\n";
         return -1;
     }
 
@@ -103,6 +111,7 @@ int CommToClient(HANDLE hPipe)
 
         if (bytesRead != bytesWritten)
         {
+            tcout << "exit" << "\n";
             break;
         }
     }
@@ -112,4 +121,4 @@ int CommToClient(HANDLE hPipe)
     CloseHandle(hPipe);
 
     return 1;
-}
+}*/

@@ -60,11 +60,13 @@ int _tmain(int argc, TCHAR* argv[])
 
         if (GetLastError() != ERROR_PIPE_BUSY)
         {
+            tcout << "Could not open pipe" << "\n";
             return 0;
         }
 
         if (!WaitNamedPipe(pipeName, 20000))
         {
+            tcout << "Could not open pipe" << "\n";
             return 0;
         }
     }
@@ -74,15 +76,17 @@ int _tmain(int argc, TCHAR* argv[])
 
     if (!isSuccess)
     {
+        tcout << "SetNamedPipeHandleState failed" << "\n";
         return 0;
     }
 
     LPCTSTR fileName = _T("news.txt");
     DWORD bytesWritten = 0;
 
-    isSuccess = WriteFile(hPipe, fileName, (_tcslen(fileName) + 1), &bytesWritten, NULL);
+    isSuccess = WriteFile(hPipe, fileName, (_tcslen(fileName) + 1) * sizeof(TCHAR), &bytesWritten, NULL);
     if (!isSuccess)
     {
+        tcout << "WriteFile failed" << "\n";
         return 0;
     }
 

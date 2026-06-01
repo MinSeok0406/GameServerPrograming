@@ -1,35 +1,46 @@
 ﻿#include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
 #include <Windows.h>
 using namespace std;
 
 #pragma comment(lib, "winmm.lib")
 
-class AAA
+class Widget
 {
 public:
-	AAA() {}
-	~AAA() { }
+	Widget() { cout << "Widget" << "\n"; }
+	~Widget() { cout << "~Widget" << "\n"; }
 
-	void someFunc() {};
+private:
+
 };
 
-class BBB : public AAA
+void Test() noexcept(false)
 {
-public:
-	BBB() {}
-	~BBB() {}
+	throw 1;
+}
 
-	void someFunc2() {}
-};
+void Test2()
+{
+	vector<Widget> v(10);
+
+	Test();
+}
 
 int main()
 {
 	timeBeginPeriod(1);
 
-	
-	
-	
+	try
+	{
+		Test2();
+	}
+	catch (int e)
+	{
+
+	}
 
 	return 0;
 }

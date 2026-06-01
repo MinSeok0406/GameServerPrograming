@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addshlsub.cpp" />
+    <ClCompile Include="ClassStarPrint.cpp" />
     <ClCompile Include="DFS_BFS_FindRoute.cpp" />
     <ClCompile Include="DFS_Test.cpp" />
     <ClCompile Include="FileSynthesis.cpp" />
@@ -144,12 +145,14 @@
     <ClCompile Include="Practice01_2.cpp" />
     <ClCompile Include="Practice01_3.cpp" />
     <ClCompile Include="RandomSystem.cpp" />
+    <ClCompile Include="StartPrint.cpp" />
     <ClCompile Include="Temp.cpp" />
     <ClCompile Include="TimingGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Address.h" />
     <ClInclude Include="Date.h" />
+    <ClInclude Include="StartPrint.h" />
     <ClInclude Include="Temp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
