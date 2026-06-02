@@ -1,4 +1,4 @@
-﻿/*#include <iostream>
+﻿#include <iostream>
 #include <tchar.h>
 #include <queue>
 #include <stack>
@@ -121,4 +121,4 @@ int CommToClient(HANDLE hPipe)
     CloseHandle(hPipe);
 
     return 1;
-}*/
+}

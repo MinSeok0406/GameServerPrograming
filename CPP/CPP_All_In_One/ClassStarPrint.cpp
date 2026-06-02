@@ -1,4 +1,4 @@
-﻿#include <iostream>
+﻿/*#include <iostream>
 #include <tchar.h>
 #include <WinSock2.h>
 #include <conio.h>
@@ -56,6 +56,28 @@ void KeyProcess()
                     g_ibo[i] = new ThreeStar(i);
                     break;
                 }
+
+                break;
+            }
+            else if (g_ibo[i]->_release == true)
+            {
+                switch (key)
+                {
+                case 1:
+                    delete g_ibo[i];
+                    g_ibo[i] = new OneStar(i);
+                    break;
+                case 2:
+                    delete g_ibo[i];
+                    g_ibo[i] = new TwoStar(i);
+                    break;
+                case 3:
+                    delete g_ibo[i];
+                    g_ibo[i] = new ThreeStar(i);
+                    break;
+                }
+
+                break;
             }
         }
     }
@@ -65,6 +87,11 @@ void Update()
 {
     for (auto i = 0; i < 20; ++i)
     {
+        if (g_ibo[i] == nullptr)
+        {
+            continue;
+        }
+
         g_ibo[i]->Update();
     }
 }
@@ -73,6 +100,11 @@ void Render()
 {
     for (auto i = 0; i < 20; ++i)
     {
+        if (g_ibo[i] == nullptr)
+        {
+            continue;
+        }
+
         g_ibo[i]->Render();
 
         cout << "\n";
@@ -96,4 +128,4 @@ int _tmain(int argc, TCHAR* argv[])
     }
 
     return 0;
-}
+}*/

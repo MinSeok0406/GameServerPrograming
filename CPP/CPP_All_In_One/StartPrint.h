@@ -15,7 +15,7 @@ public:
     virtual void Update() = 0;
     virtual void Render() = 0;
 
-protected:
+public:
     int _x;
     int _y;
     bool _release;

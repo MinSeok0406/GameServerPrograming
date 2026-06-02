@@ -6,11 +6,6 @@ using namespace std;
 
 void OneStar::Update()
 {
-	if (this->_release == true)
-	{
-		return;
-	}
-
 	this->_x += 1;
 
 	if (this->_x >= 74)
@@ -23,8 +18,6 @@ void OneStar::Render()
 {
 	if (this->_release == true)
 	{
-		this->_x = 0;
-		delete this;
 		return;
 	}
 
@@ -36,13 +29,10 @@ void OneStar::Render()
 	cout << "*";
 }
 
+//-----------------------------------
+
 void TwoStar::Update()
 {
-	if (this->_release == true)
-	{
-		return;
-	}
-
 	this->_x += 2;
 
 	if (this->_x >= 73)
@@ -55,8 +45,6 @@ void TwoStar::Render()
 {
 	if (this->_release == true)
 	{
-		this->_x = 0;
-		delete this;
 		return;
 	}
 
@@ -68,13 +56,10 @@ void TwoStar::Render()
 	cout << "**";
 }
 
+//-----------------------------------
+
 void ThreeStar::Update()
 {
-	if (this->_release == true)
-	{
-		return;
-	}
-
 	this->_x += 3;
 
 	if (this->_x >= 72)
@@ -87,8 +72,6 @@ void ThreeStar::Render()
 {
 	if (this->_release == true)
 	{
-		this->_x = 0;
-		delete this;
 		return;
 	}
 
