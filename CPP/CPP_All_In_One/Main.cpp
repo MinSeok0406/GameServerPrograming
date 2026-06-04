@@ -1,14 +1,7 @@
 ﻿#include <iostream>
 #include <tchar.h>
-#include <queue>
-#include <stack>
-#include <fcntl.h>
-#include <io.h>
-#include <conio.h>
-#include <chrono>
-#include <strsafe.h>
-#include <WinSock2.h>
-#include <chrono>
+#include <process.h>
+#include <Windows.h>
 #include "Temp.h"
 using namespace std;
 using ll = long long;
@@ -39,86 +32,52 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-#define BUF_SIZE 1024
-int CommToClient(HANDLE);
+static int total = 0;
+
+unsigned int WINAPI ThreadProc(LPVOID lpParam)
+{
+    DWORD* nPtr = (DWORD*)lpParam;
+
+    DWORD numOne = *nPtr;
+    DWORD numTwo = *(nPtr + 1);
+
+    for (DWORD i = numOne; i <= numTwo; ++i)
+    {
+        total += i;
+    }
+
+    return total;
+}
 
 int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");
     
-    LPCTSTR pipeName = _T("\\\\.\\pipe\\simple_pipe");
-    HANDLE hPipe;
-    while (1)
-    {
-        hPipe = CreateNamedPipe(pipeName, PIPE_ACCESS_DUPLEX,
-            PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
-            PIPE_UNLIMITED_INSTANCES, BUF_SIZE, BUF_SIZE, 20000, NULL);
+    DWORD dwThreadID[3];
+    HANDLE hThread[3];
 
-        if (hPipe == INVALID_HANDLE_VALUE)
+    DWORD paramThread[] = { 1, 3, 4, 7, 8, 10 };
+
+    for (auto i = 0; i < 3; i++)
+    {
+        hThread[i] = (HANDLE)_beginthreadex(NULL, 0, ThreadProc, (LPVOID)(&paramThread[i * 2]), 0, (unsigned*)&dwThreadID[i]);
+
+        if (hThread[i] == NULL)
         {
-            tcout << "CreatePipe failed" << "\n";
+            tcout << "Thread creation fault!" << "\n";
             return -1;
         }
+    }
 
-        BOOL isSuccess = 0;
-        isSuccess = ConnectNamedPipe(hPipe, NULL) ? TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
+    WaitForMultipleObjects(3, hThread, TRUE, INFINITE);
 
-        if (isSuccess)
-        {
-            CommToClient(hPipe);
-        }
-        else
-        {
-            CloseHandle(hPipe);
-        }
+    tcout << "total (1 ~ 10): " << total << "\n";
+
+    for (auto i = 0; i < 3; i++)
+    {
+        CloseHandle(hThread[i]);
     }
     
-    return 1;
-}
-
-int CommToClient(HANDLE hPipe)
-{
-    TCHAR fileName[MAX_PATH];
-    TCHAR dataBuf[BUF_SIZE];
-
-    BOOL isSuccess;
-    DWORD fileNameSize;
-    isSuccess = ReadFile(hPipe, fileName, MAX_PATH * sizeof(TCHAR), &fileNameSize, NULL);
-
-    if (!isSuccess || fileNameSize == 0)
-    {
-        tcout << "Pipe read message error" << "\n";
-        return -1;
-    }
-
-    FILE* filePtr;
-    _tfopen_s(&filePtr, fileName, _T("r, ccs=UTF-8"));
-    if (filePtr == nullptr)
-    {
-        tcout << "File open fault" << "\n";
-        return -1;
-    }
-
-    DWORD bytesWritten = 0;
-    DWORD bytesRead = 0;
-
-    while (!feof(filePtr))
-    {
-        bytesRead = fread(dataBuf, 1, BUF_SIZE, filePtr);
-
-        WriteFile(hPipe, dataBuf, bytesRead, &bytesWritten, NULL);
-
-        if (bytesRead != bytesWritten)
-        {
-            tcout << "exit" << "\n";
-            break;
-        }
-    }
-
-    FlushFileBuffers(hPipe);
-    DisconnectNamedPipe(hPipe);
-    CloseHandle(hPipe);
-
-    return 1;
+    return 0;
 }
