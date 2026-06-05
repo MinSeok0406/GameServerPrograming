@@ -32,21 +32,31 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-static int total = 0;
+TCHAR str[100];
+HANDLE hEvent;
+HANDLE hMutex;
 
-unsigned int WINAPI ThreadProc(LPVOID lpParam)
+unsigned int WINAPI outputThreadFunction(LPVOID lpParam)
 {
-    DWORD* nPtr = (DWORD*)lpParam;
+    WaitForSingleObject(hEvent, INFINITE);
+    WaitForSingleObject(hMutex, INFINITE);
 
-    DWORD numOne = *nPtr;
-    DWORD numTwo = *(nPtr + 1);
+    tcout << "Output string : " << str << "\n";
 
-    for (DWORD i = numOne; i <= numTwo; ++i)
-    {
-        total += i;
-    }
+    ReleaseMutex(hMutex);
 
-    return total;
+    return 0;
+}
+
+unsigned int WINAPI countThreadFunction(LPVOID lpParam)
+{
+    WaitForSingleObject(hEvent, INFINITE);
+    WaitForSingleObject(hMutex, INFINITE);
+
+    tcout << "output string length : " << _tcslen(str) - 1 << "\n";
+
+    ReleaseMutex(hMutex);
+    return 0;
 }
 
 int _tmain(int argc, TCHAR* argv[])
@@ -54,30 +64,25 @@ int _tmain(int argc, TCHAR* argv[])
     timeBeginPeriod(1);
     system("chcp 65001");
     
-    DWORD dwThreadID[3];
-    HANDLE hThread[3];
+    HANDLE hThread[2];
+    DWORD dwThreadID[2];
 
-    DWORD paramThread[] = { 1, 3, 4, 7, 8, 10 };
+    hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    hMutex = CreateMutex(NULL, FALSE, NULL);
 
-    for (auto i = 0; i < 3; i++)
-    {
-        hThread[i] = (HANDLE)_beginthreadex(NULL, 0, ThreadProc, (LPVOID)(&paramThread[i * 2]), 0, (unsigned*)&dwThreadID[i]);
+    hThread[0] = (HANDLE)_beginthreadex(NULL, 0, outputThreadFunction, NULL, 0, (unsigned*)&dwThreadID[0]);
+    hThread[1] = (HANDLE)_beginthreadex(NULL, 0, countThreadFunction, NULL, 0, (unsigned*)&dwThreadID[1]);
 
-        if (hThread[i] == NULL)
-        {
-            tcout << "Thread creation fault!" << "\n";
-            return -1;
-        }
-    }
+    _fputts(_T("Insert string : "), stdout);
+    _fgetts(str, 30, stdin);
 
-    WaitForMultipleObjects(3, hThread, TRUE, INFINITE);
+    SetEvent(hEvent);
 
-    tcout << "total (1 ~ 10): " << total << "\n";
-
-    for (auto i = 0; i < 3; i++)
-    {
-        CloseHandle(hThread[i]);
-    }
+    WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+    CloseHandle(hThread[0]);
+    CloseHandle(hThread[1]);
+    CloseHandle(hEvent);
+    CloseHandle(hMutex);
     
     return 0;
 }
