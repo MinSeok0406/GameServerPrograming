@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Game Server\Profiling\Release\Profiling.exe</FullPath>
+      <FullPath>C:\GameServerPrograming\Game Server\Profiling\Release\Profiling.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

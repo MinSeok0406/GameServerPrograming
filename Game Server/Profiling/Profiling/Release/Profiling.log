@@ -1,6 +1,7 @@
-﻿  Profile.cpp
+﻿  main.cpp
+  Profile.cpp
   코드를 생성하고 있습니다.
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  Previous IPDB was built with incompatible compiler, fall back to full compilation.
   All 11 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   코드를 생성했습니다.
-  Profiling.vcxproj -> C:\GamePrograming\Game Server\Profiling\Release\Profiling.exe
+  Profiling.vcxproj -> C:\GameServerPrograming\Game Server\Profiling\Release\Profiling.exe
