@@ -3,13 +3,13 @@
 #include <cstdio>
 
 LARGE_INTEGER freq;
-PROFILE_SAMPLE g_profile[50];
+PROFILE_SAMPLE g_profile[INDEX];
 
 // 하나의 함수 Profiling 시작.
 void ProfileBegin(const TCHAR* szName)
 {
     int cnt = -1;
-    for (auto i = 0; i < 50; ++i)
+    for (auto i = 0; i < INDEX; ++i)
     {
         // 문자열이 같은 경우
         if (!_tcscmp(g_profile[i].szName, szName))
@@ -20,7 +20,7 @@ void ProfileBegin(const TCHAR* szName)
         }
     }
 
-    for (auto i = 0; i < 50; ++i)
+    for (auto i = 0; i < INDEX; ++i)
     {
         if (g_profile[i].lFlag == false)
         {
@@ -46,14 +46,14 @@ void ProfileEnd(const TCHAR* szName)
 {
     QueryPerformanceFrequency(&freq);
 
-    for (auto i = 0; i < 50; ++i)
+    for (auto i = 0; i < INDEX; ++i)
     {
         // 문자열이 같은 경우
         if (!_tcscmp(g_profile[i].szName, szName))
         {
             LARGE_INTEGER end;
             QueryPerformanceCounter(&end);
-            double t = (end.QuadPart - g_profile[i].lStartTime.QuadPart) / freq.QuadPart;
+            auto t = (end.QuadPart - g_profile[i].lStartTime.QuadPart) * MICROSECOND / freq.QuadPart;
             g_profile[i].iTotalTime += t;
 
             for (auto j = 0; j < 2; ++j)
@@ -88,16 +88,18 @@ void ProfileDataOutText(const TCHAR* szFileName)
     fwprintf(fp, _T("\t Name| \t Average| \t Min| \t Max| \t Call|\n"));
     fwprintf(fp, _T("--------------------------------------------------------------------\n"));
 
-    for (auto i = 0; i < 50; ++i)
+    for (auto i = 0; i < INDEX; ++i)
     {
         if (g_profile[i].lFlag == false)
         {
             break;
         }
 
-        fwprintf(fp, _T("\t %s| \t %lf| \t %lf| \t %lf| \t %lld|\n"),
-            g_profile[i].szName, (double)g_profile[i].iTotalTime / g_profile[i].iCall, 
-            g_profile[i].iMin[0], g_profile[i].iMax[0], g_profile[i].iCall);
+        fwprintf(fp, _T("\t %s| \t %.4lf㎲| \t %.4lf㎲| \t %.4lf㎲| \t %lld|\n"),
+            g_profile[i].szName,
+            ((double)g_profile[i].iTotalTime / g_profile[i].iCall) / MICROSECOND, 
+            (double)g_profile[i].iMin[0] / MICROSECOND,
+            (double)g_profile[i].iMax[0] / MICROSECOND, g_profile[i].iCall);
     }
 
     fwprintf(fp, _T("--------------------------------------------------------------------\n"));
