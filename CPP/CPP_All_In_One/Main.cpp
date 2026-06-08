@@ -32,19 +32,40 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-class Widget
+#define MAX_PAGE 10
+
+int* nextPageAddr;
+DWORD pageCnt;
+DWORD pageSize;
+
+int pageFaultExceptionFilter(DWORD exptCode)
 {
-public:
-    Widget() { cout << "Widget" << "\n"; }
-    ~Widget() { cout << "~Widget" << "\n"; }
-}; 
+    if (exptCode != EXCEPTION_ACCESS_VIOLATION)
+    {
+        return EXCEPTION_EXECUTE_HANDLER;
+    }
 
-unsigned int WINAPI threadProc(LPVOID lpParam)
-{
-    unique_ptr<Widget> uptr = make_unique<Widget>();
+    tcout << "Exception is a page fault" << "\n";
 
+    if (pageCnt >= MAX_PAGE)
+    {
+        tcout << "Exception : out of pages" << "\n";
+        return EXCEPTION_EXECUTE_HANDLER;
+    }
 
-    return 0;
+    LPVOID lpvResult = VirtualAlloc((LPVOID)nextPageAddr, pageSize, MEM_COMMIT, PAGE_READWRITE);
+    if (lpvResult == nullptr)
+    {
+        return EXCEPTION_EXECUTE_HANDLER;
+    }
+    else
+    {
+        tcout << "Allocating another page" << "\n";
+    }
+
+    pageCnt++;
+    nextPageAddr += pageSize / sizeof(int);
+    return EXCEPTION_CONTINUE_EXECUTION;
 }
 
 int _tmain(int argc, TCHAR* argv[])
@@ -52,16 +73,44 @@ int _tmain(int argc, TCHAR* argv[])
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    HANDLE hThread;
-    DWORD dwThread;
+    LPVOID baseAddr;
+    int* lpPtr;
+    SYSTEM_INFO sSysInfo;
 
-    hThread = (HANDLE)_beginthreadex(NULL, 0, threadProc, NULL, 0, (unsigned*)&dwThread);
+    GetSystemInfo(&sSysInfo);
+    pageSize = sSysInfo.dwPageSize;
 
-    WaitForSingleObject(hThread, INFINITE);
+    baseAddr = VirtualAlloc(NULL, MAX_PAGE * pageSize, MEM_RESERVE, PAGE_NOACCESS);
 
-    CloseHandle(hThread);
+    lpPtr = (int*)baseAddr;
+    nextPageAddr = (int*)baseAddr;
 
+    for (auto i = 0; i < (MAX_PAGE * pageSize) / sizeof(int); ++i)
+    {
+        __try
+        {
+            lpPtr[i] = i;
+        }
+        __except (pageFaultExceptionFilter(GetExceptionCode()))
+        {
+            ExitProcess(GetLastError());
+        }
+    }
     
+    for (auto i = 0; i < (MAX_PAGE * pageSize) / sizeof(int); ++i)
+    {
+        tcout << lpPtr[i] << " ";
+    }
+
+    BOOL isSuccess = VirtualFree(baseAddr, 0, MEM_RESERVE);
+    if (isSuccess)
+    {
+        tcout << "succeeded!" << "\n";
+    }
+    else
+    {
+        tcout << "failed" << "\n";
+    }
 
     return 0;
 }
