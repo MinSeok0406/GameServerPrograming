@@ -5,7 +5,7 @@
 #include <Windows.h>
 using namespace std;
 
-//#include "Profile.h"
+#include "Profile.h"
 
 #ifdef PROFILE
 	#define PRO_BEGIN(TagName)	ProfileBegin(TagName)
@@ -17,21 +17,27 @@ using namespace std;
 
 #pragma comment(lib, "winmm.lib")
 
+void Test()
+{
+	PRO_BEGIN(_T("Test"));
+
+	auto t = (rand() % 1000) + 1000;
+	Sleep(t);
+
+	PRO_END(_T("Test"));
+}
 
 int main()
 {
 	timeBeginPeriod(1);
+	srand((unsigned int)time(nullptr));
 
-	LARGE_INTEGER start;
-	LARGE_INTEGER end;
-	LARGE_INTEGER freq;
-	QueryPerformanceFrequency(&freq);
+	for (auto i = 0; i < 30; i++)
+	{
+		Test();
+	}
 
-	QueryPerformanceCounter(&start);
-	Sleep(1000);
-	QueryPerformanceCounter(&end);
-
-	cout << "second : " << (double)(end.QuadPart - start.QuadPart) / freq.QuadPart << "\n";
+	ProfileDataOutText(_T("profile.txt"));
 
 	return 0;
 }

@@ -1,9 +1,7 @@
 ﻿  Main.cpp
-C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(88,24): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-C:\GamePrograming\CPP\CPP_All_In_One\Main.cpp(100,24): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   코드를 생성하고 있습니다.
-  2 of 45 functions ( 4.4%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  1 of 19 functions ( 5.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\Release\CPP_All_In_One.exe
+  CPP_All_In_One.vcxproj -> C:\GameServerPrograming\CPP\CPP_All_In_One\Release\CPP_All_In_One.exe

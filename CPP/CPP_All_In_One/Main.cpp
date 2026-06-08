@@ -1,8 +1,10 @@
-﻿#include <iostream>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
 #include <tchar.h>
 #include <process.h>
 #include <Windows.h>
 #include "Temp.h"
+#include "overflow_check.h"
 using namespace std;
 using ll = long long;
 
@@ -32,85 +34,20 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-#define MAX_PAGE 10
-
-int* nextPageAddr;
-DWORD pageCnt;
-DWORD pageSize;
-
-int pageFaultExceptionFilter(DWORD exptCode)
-{
-    if (exptCode != EXCEPTION_ACCESS_VIOLATION)
-    {
-        return EXCEPTION_EXECUTE_HANDLER;
-    }
-
-    tcout << "Exception is a page fault" << "\n";
-
-    if (pageCnt >= MAX_PAGE)
-    {
-        tcout << "Exception : out of pages" << "\n";
-        return EXCEPTION_EXECUTE_HANDLER;
-    }
-
-    LPVOID lpvResult = VirtualAlloc((LPVOID)nextPageAddr, pageSize, MEM_COMMIT, PAGE_READWRITE);
-    if (lpvResult == nullptr)
-    {
-        return EXCEPTION_EXECUTE_HANDLER;
-    }
-    else
-    {
-        tcout << "Allocating another page" << "\n";
-    }
-
-    pageCnt++;
-    nextPageAddr += pageSize / sizeof(int);
-    return EXCEPTION_CONTINUE_EXECUTION;
-}
-
 int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    LPVOID baseAddr;
-    int* lpPtr;
-    SYSTEM_INFO sSysInfo;
+    auto ptr = alloc_overflow_check(1024 * 65);
 
-    GetSystemInfo(&sSysInfo);
-    pageSize = sSysInfo.dwPageSize;
-
-    baseAddr = VirtualAlloc(NULL, MAX_PAGE * pageSize, MEM_RESERVE, PAGE_NOACCESS);
-
-    lpPtr = (int*)baseAddr;
-    nextPageAddr = (int*)baseAddr;
-
-    for (auto i = 0; i < (MAX_PAGE * pageSize) / sizeof(int); ++i)
+    char* p = static_cast<char*>(ptr);
+    for (auto i = 0; i < 1024 * 65 + 1; ++i)
     {
-        __try
-        {
-            lpPtr[i] = i;
-        }
-        __except (pageFaultExceptionFilter(GetExceptionCode()))
-        {
-            ExitProcess(GetLastError());
-        }
-    }
-    
-    for (auto i = 0; i < (MAX_PAGE * pageSize) / sizeof(int); ++i)
-    {
-        tcout << lpPtr[i] << " ";
+        p[i] = i;
     }
 
-    BOOL isSuccess = VirtualFree(baseAddr, 0, MEM_RESERVE);
-    if (isSuccess)
-    {
-        tcout << "succeeded!" << "\n";
-    }
-    else
-    {
-        tcout << "failed" << "\n";
-    }
+    free_overflow_check(ptr, 1024 * 65);
 
     return 0;
 }

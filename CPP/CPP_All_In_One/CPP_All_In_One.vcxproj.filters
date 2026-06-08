@@ -32,6 +32,9 @@
     <Filter Include="Practice09">
       <UniqueIdentifier>{c0f374c2-e09d-453f-86b1-75b12faae08d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VirtualMemory_overflow_check">
+      <UniqueIdentifier>{3a98252d-a05d-4946-97e2-8b35456a67ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -79,6 +82,9 @@
     <ClCompile Include="StartPrint.cpp">
       <Filter>Practice09</Filter>
     </ClCompile>
+    <ClCompile Include="overflow_check.cpp">
+      <Filter>VirtualMemory_overflow_check</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Temp.h">
@@ -92,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="StartPrint.h">
       <Filter>Practice09</Filter>
+    </ClInclude>
+    <ClInclude Include="overflow_check.h">
+      <Filter>VirtualMemory_overflow_check</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
