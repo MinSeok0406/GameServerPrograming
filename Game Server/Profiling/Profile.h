@@ -29,3 +29,8 @@ void ProfileDataOutText(const TCHAR* szFileName);
 
 // 프로파일링 된 데이터를 모두 초기화 한다.
 void ProfileReset(void);
+
+__int64 FileTimeToQuadWord(PFILETIME pft);
+
+// 쓰레드 별 커널 및 유저 시간 합
+void performLongOperation();

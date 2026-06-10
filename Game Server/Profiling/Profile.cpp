@@ -113,3 +113,33 @@ void ProfileReset(void)
 {
 
 }
+
+__int64 FileTimeToQuadWord(PFILETIME pft)
+{
+    return (Int64ShllMod32(pft->dwHighDateTime, 32) | pft->dwLowDateTime);
+}
+
+// 쓰레드 별 커널 및 유저 시간 합
+void performLongOperation()
+{
+    FILETIME ftKernelTimeStart;
+    FILETIME ftKernelTimeEnd;
+    FILETIME ftUserTimeStart;
+    FILETIME ftUserTimeEnd;
+    FILETIME ftDummy;
+
+    __int64 qwKernelTimeElapsed;
+    __int64 qwUserTimeElapsed;
+    __int64 qwTotalTimeElapsed;
+
+    GetThreadTimes(GetCurrentThread(), &ftDummy, &ftDummy, &ftKernelTimeStart, &ftUserTimeStart);
+
+    Sleep(600);
+
+    GetThreadTimes(GetCurrentThread(), &ftDummy, &ftDummy, &ftKernelTimeEnd, &ftUserTimeEnd);
+
+    qwKernelTimeElapsed = FileTimeToQuadWord(&ftKernelTimeEnd) - FileTimeToQuadWord(&ftKernelTimeStart);
+    qwUserTimeElapsed = FileTimeToQuadWord(&ftUserTimeEnd) - FileTimeToQuadWord(&ftUserTimeStart);
+
+    qwTotalTimeElapsed = qwKernelTimeElapsed + qwUserTimeElapsed;
+}

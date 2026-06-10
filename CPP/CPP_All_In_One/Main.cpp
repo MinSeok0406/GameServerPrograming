@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include <process.h>
 #include <Windows.h>
+#include <vector>
 using namespace std;
 using ll = long long;
 
@@ -37,12 +38,7 @@ int _tmain(int argc, TCHAR* argv[])
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    int data = 192837;
-    while (1)
-    {
-        printf("%d \n", data);
-        Sleep(500);
-    }
+    
 
     return 0;
 }
