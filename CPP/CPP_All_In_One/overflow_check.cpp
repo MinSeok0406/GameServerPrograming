@@ -33,6 +33,12 @@ void* alloc_overflow_check(int size)
 		return nullptr;
 	}
 
+	// 페이지 4KB 시작 부분 맞추기
+	/*
+	int remainPage = (size % rangePage);
+	ptr += (1024 * remainPage);
+	*/
+
 	ptr -= size;
 	return ptr;
 }
@@ -49,6 +55,12 @@ void free_overflow_check(void* ptr, int size)
 	{
 		p -= onePage;
 	}
+
+	// 페이지 4KB 시작 부분 맞추기
+	/*
+	int remainPage = (size % rangePage);
+	p -= (1024 * remainPage);
+	*/
 
 	VirtualFree(p, 0, MEM_RELEASE);
 }

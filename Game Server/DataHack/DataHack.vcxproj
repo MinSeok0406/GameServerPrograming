@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{0cf0f0bf-8359-44cc-adcb-054b790b93e6}</ProjectGuid>
-    <RootNamespace>CPPAllInOne</RootNamespace>
+    <ProjectGuid>{cf6a3873-f55b-4a86-b5e8-5749fb26b83e}</ProjectGuid>
+    <RootNamespace>DataHack</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -82,6 +82,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -92,16 +95,14 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <Optimization>Disabled</Optimization>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -110,14 +111,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdclatest</LanguageStandard_C>
-      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
-      <TranslateIncludes>true</TranslateIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -133,31 +134,12 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableSegmentHeap>true</EnableSegmentHeap>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="addshlsub.cpp" />
-    <ClCompile Include="ClassStarPrint.cpp" />
-    <ClCompile Include="DFS_BFS_FindRoute.cpp" />
-    <ClCompile Include="DFS_Test.cpp" />
-    <ClCompile Include="FileSynthesis.cpp" />
-    <ClCompile Include="HashTable.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="make_rand.cpp" />
-    <ClCompile Include="overflow_check.cpp" />
-    <ClCompile Include="Practice01_1.cpp" />
-    <ClCompile Include="Practice01_2.cpp" />
-    <ClCompile Include="Practice01_3.cpp" />
-    <ClCompile Include="RandomSystem.cpp" />
-    <ClCompile Include="StartPrint.cpp" />
-    <ClCompile Include="Temp.cpp" />
-    <ClCompile Include="TimingGame.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Address.h" />
-    <ClInclude Include="Date.h" />
-    <ClInclude Include="overflow_check.h" />
-    <ClInclude Include="StartPrint.h" />
-    <ClInclude Include="Temp.h" />
+    <ClCompile Include="DataHackProgram.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
