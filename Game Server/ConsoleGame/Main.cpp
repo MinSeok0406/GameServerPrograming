@@ -25,7 +25,7 @@ int main()
     srand((unsigned int)time(nullptr));
 
     FILE* fp;
-    fopen_s(&fp, "../Stage/Stage.txt", "rb");
+    fopen_s(&fp, "Stage/Stage.txt", "rb");
 
     fseek(fp, 0, SEEK_END);
     long fileSize = ftell(fp);
@@ -50,7 +50,7 @@ int main()
     //--------------------------------
 
     FILE* efp;
-    fopen_s(&efp, "../Enemy/Enemy.txt", "rb");
+    fopen_s(&efp, "Enemy/Enemy.txt", "rb");
 
     fseek(efp, 0, SEEK_END);
     long efileSize = ftell(efp);

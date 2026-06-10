@@ -8,7 +8,14 @@ struct Player
 	int y;
 };
 
+struct playerBullet
+{
+	int x;
+	int y;
+};
+
 void PlayerInit();
 void PlayerMoveMent();
 void PlayerAttack();
+void PlayerRendering();
 bool PlayerDie();

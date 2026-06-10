@@ -9,14 +9,14 @@
 using namespace std;
 
 vector<Enemy> enemies;
-vector<pair<int, int>> Enemybullet;
+vector<enemyBullet> Enemybullet;
 bool isMove = true;
 
 int tempTick = timeGetTime();
 int enemyCnt = 0;
 
 extern Player* p;
-extern vector<pair<int, int>> Playerbullet;
+extern vector<playerBullet> Playerbullet;
 
 extern char g_stageBuffer[LENGTH];
 extern char g_enemyBuffer[LENGTH];
@@ -94,25 +94,6 @@ void EnemyMovement()
         isMove = true;
         tempTick += 2000;
     }
-
-    for (int i = 0; i < (int)enemies.size(); ++i)
-    {
-        if (enemies[i].live)
-        {
-            Sprite_Draw(enemies[i].x, enemies[i].y, enemies[i].sprite);
-
-            if (isMove)
-            {
-                enemies[i].x += enemies[i].moveX;
-                enemies[i].y += enemies[i].moveY;
-            }
-            else
-            {
-                enemies[i].x -= enemies[i].moveX;
-                enemies[i].y -= enemies[i].moveY;
-            }
-        }
-    }
 }
 
 void EnemyAttack()
@@ -139,12 +120,12 @@ void EnemyAttack()
     int x = 0;
     for (int i = 0; i < (int)Enemybullet.size(); ++i)
     {
-        y = Enemybullet[i].second + 1;
-        x = Enemybullet[i].first;
+        y = Enemybullet[i].y + 1;
+        x = Enemybullet[i].x;
         if (p->x == x && p->y == y)
         {
-            Enemybullet[i].first = -1;
-            Enemybullet[i].second = -1;
+            Enemybullet[i].x = -1;
+            Enemybullet[i].y = -1;
             p->hp -= 20;
             if (p->hp <= 0)
             {
@@ -153,18 +134,43 @@ void EnemyAttack()
         }
     }
 
+    
+}
+
+void EnemyRendering()
+{
+    // 적 이동
+    for (int i = 0; i < (int)enemies.size(); ++i)
+    {
+        if (enemies[i].live)
+        {
+            Sprite_Draw(enemies[i].x, enemies[i].y, enemies[i].sprite);
+
+            if (isMove)
+            {
+                enemies[i].x += enemies[i].moveX;
+                enemies[i].y += enemies[i].moveY;
+            }
+            else
+            {
+                enemies[i].x -= enemies[i].moveX;
+                enemies[i].y -= enemies[i].moveY;
+            }
+        }
+    }
+
     // 적 총알 이동
     for (int i = 0; i < (int)Enemybullet.size(); ++i)
     {
-        if (Enemybullet[i].first != -1 && Enemybullet[i].second != -1)
+        if (Enemybullet[i].x != -1 && Enemybullet[i].y != -1)
         {
-            Sprite_Draw(Enemybullet[i].first, Enemybullet[i].second, 'v');
-            Enemybullet[i].second += 1;
+            Sprite_Draw(Enemybullet[i].x, Enemybullet[i].y, 'v');
+            Enemybullet[i].y += 1;
 
-            if (Enemybullet[i].second >= dfSCREEN_HEIGHT)
+            if (Enemybullet[i].y >= dfSCREEN_HEIGHT)
             {
-                Enemybullet[i].first = -1;
-                Enemybullet[i].second = -1;
+                Enemybullet[i].x = -1;
+                Enemybullet[i].y = -1;
             }
         }
     }

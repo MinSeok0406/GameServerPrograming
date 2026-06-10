@@ -10,7 +10,14 @@ struct Enemy
 	int moveY;
 };
 
+struct enemyBullet
+{
+	int x;
+	int y;
+};
+
 void EnemyInit();
 void EnemyMovement();
 void EnemyAttack();
+void EnemyRendering();
 bool EnemyDie();

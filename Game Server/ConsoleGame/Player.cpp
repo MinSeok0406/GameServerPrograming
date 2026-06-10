@@ -8,10 +8,10 @@
 using namespace std;
 
 Player* p;
-vector<pair<int, int>> Playerbullet;
+vector<playerBullet> Playerbullet;
 
 extern vector<Enemy> enemies;
-extern vector<pair<int, int>> Enemybullet;
+extern vector<enemyBullet> Enemybullet;
 extern bool isMove;
 
 void PlayerInit()
@@ -57,8 +57,6 @@ void PlayerMoveMent()
 	{
 		p->y += 1;
 	}
-
-	Sprite_Draw(p->x, p->y, 'A');
 }
 
 void PlayerAttack()
@@ -81,29 +79,35 @@ void PlayerAttack()
 				continue;
 			}
 
-			y = Playerbullet[i].second - 1;
-			x = Playerbullet[i].first;
+			y = Playerbullet[i].y - 1;
+			x = Playerbullet[i].x;
 			if (enemies[j].x == x && enemies[j].y == y)
 			{
-				Playerbullet[i].second = -1;
-				Playerbullet[i].first = -1;
+				Playerbullet[i].y = -1;
+				Playerbullet[i].x = -1;
 				enemies[j].live = false;
 			}
 		}
 	}
+}
+
+void PlayerRendering()
+{
+	// 플레이어 이동
+	Sprite_Draw(p->x, p->y, 'A');
 
 	// 총알 이동
 	for (int i = 0; i < (int)Playerbullet.size(); ++i)
 	{
-		if (Playerbullet[i].first != -1 && Playerbullet[i].second != -1)
+		if (Playerbullet[i].x != -1 && Playerbullet[i].y != -1)
 		{
-			Sprite_Draw(Playerbullet[i].first, Playerbullet[i].second, '^');
-			Playerbullet[i].second -= 1;
+			Sprite_Draw(Playerbullet[i].x, Playerbullet[i].y, '^');
+			Playerbullet[i].y -= 1;
 
-			if (Playerbullet[i].second < 0)
+			if (Playerbullet[i].y < 0)
 			{
-				Playerbullet[i].second = -1;
-				Playerbullet[i].first = -1;
+				Playerbullet[i].y = -1;
+				Playerbullet[i].x = -1;
 			}
 		}
 	}

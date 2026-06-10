@@ -147,13 +147,18 @@ void UpdateGame()
             break;
         }
 
-        Buffer_Clear();
-
+        // 로직
         EnemyMovement();
         EnemyAttack();
 
         PlayerMoveMent();
         PlayerAttack();
+
+        // 렌더링
+        Buffer_Clear();
+
+        EnemyRendering();
+        PlayerRendering();
 
         Buffer_Flip();
 
