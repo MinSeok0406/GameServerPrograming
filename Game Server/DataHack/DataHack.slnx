@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="DataHack.vcxproj" />
+  <Project Path="DataHack.vcxproj" Id="cf6a3873-f55b-4a86-b5e8-5749fb26b83e" />
 </Solution>

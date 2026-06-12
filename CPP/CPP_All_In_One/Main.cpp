@@ -38,7 +38,12 @@ int _tmain(int argc, TCHAR* argv[])
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    
+    int a = 129583;
+    while (true)
+    {
+        cout << a << "\n";
+        Sleep(500);
+    }
 
     return 0;
 }
