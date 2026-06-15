@@ -13,6 +13,9 @@
     <Filter Include="Practice">
       <UniqueIdentifier>{1b6e4e57-e516-42aa-b6d0-f69d497762bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Array_Practice">
+      <UniqueIdentifier>{33d42b0a-01b1-4823-8845-0b6049849f7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EmployeeTest.cpp">
@@ -45,5 +48,16 @@
     <ClCompile Include="Employee01.cpp">
       <Filter>Practice</Filter>
     </ClCompile>
+    <ClCompile Include="Array.cpp">
+      <Filter>Array_Practice</Filter>
+    </ClCompile>
+    <ClCompile Include="Array_Main.cpp">
+      <Filter>Array_Practice</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Array.h">
+      <Filter>Array_Practice</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\stdexcept_1ZXC368MQDJR1HPE.obj",
+            "outputs": [
+                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
+                "x64\\Release\\stdexcept_1ZXC368MQDJR1HPE.module.json",
+                "x64\\Release\\stdexcept_1ZXC368MQDJR1HPE.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stdexcept",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stdexcept",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

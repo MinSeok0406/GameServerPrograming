@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Game Server\DataHack\x64\Debug\DataHack.exe</FullPath>
+      <FullPath>C:\GameServerPrograming\Game Server\DataHack\x64\Debug\DataHack.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

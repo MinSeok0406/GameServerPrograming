@@ -1,4 +1,4 @@
-#include <array>
+Ôªø/*#include <array>
 #include <vector>
 import <iostream>;
 import <format>;
@@ -66,7 +66,7 @@ int main()
     AirlineTicket alt;
     alt.setHasEliteSuperRewardsStatus(true);
     alt.setNumberOrMiles(100);
-    alt.setPassengerName("¿ÂπŒºÆ");
+    alt.setPassengerName("Ïû•ÎØºÏÑù");
     alt.setPrimierPassenger(50);
 
     cout << format("Name: {}", alt.getPassengerName()) << "\n";
@@ -74,4 +74,4 @@ int main()
     cout << format("Primier: {}", alt.getPrimierPassenger()) << "\n";
 
     return 0;
-}
+}*/

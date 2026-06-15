@@ -4,6 +4,7 @@
 #include <process.h>
 #include <Windows.h>
 #include <vector>
+#include <algorithm>
 using namespace std;
 using ll = long long;
 
@@ -33,17 +34,15 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
+
+
 int _tmain(int argc, TCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    int a = 129583;
-    while (true)
-    {
-        cout << a << "\n";
-        Sleep(500);
-    }
+    
+    
 
     return 0;
 }

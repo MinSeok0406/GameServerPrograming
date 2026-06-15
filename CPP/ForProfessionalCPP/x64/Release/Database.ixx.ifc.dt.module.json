@@ -1,0 +1,44 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\Database.obj",
+            "outputs": [
+                "x64\\Release\\Database.ixx.ifc.dt.module.json",
+                "x64\\Release\\Database.ixx.ifc.dt.d.json",
+                "x64\\Release\\Database.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Database",
+                    "source-path": "c:\\gameserverprograming\\cpp\\forprofessionalcpp\\database.ixx",
+                    "is-interface": true
+                }
+            ],
+            "requires": [
+                {
+                    "logical-name": "Employee"
+                },
+                {
+                    "logical-name": "string",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "vector",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "stdexcept",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stdexcept",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                }
+            ]
+        }
+    ]
+}

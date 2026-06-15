@@ -1,0 +1,41 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\Employee.ixx.obj",
+            "outputs": [
+                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
+                "x64\\Release\\",
+                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\Employee.ixx.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Employee",
+                    "source-path": "c:\\gameserverprograming\\cpp\\forprofessionalcpp\\employee.ixx",
+                    "is-interface": true
+                }
+            ],
+            "requires": [
+                {
+                    "logical-name": "iostream",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "format",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\format",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "string",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                }
+            ]
+        }
+    ]
+}

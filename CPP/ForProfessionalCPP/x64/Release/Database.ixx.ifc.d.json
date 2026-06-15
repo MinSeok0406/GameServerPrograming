@@ -1,0 +1,28 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\gameserverprograming\\cpp\\forprofessionalcpp\\database.ixx",
+        "ProvidedModule": "Database",
+        "Includes": [],
+        "ImportedModules": [
+            {
+                "Name": "Employee",
+                "BMI": "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\Employee.ixx.ifc"
+            }
+        ],
+        "ImportedHeaderUnits": [
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
+                "BMI": "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\string_NRRGA8QZX7ZPQQ1I.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
+                "BMI": "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vector_ZB5PUF150NIU6STS.ifc"
+            },
+            {
+                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stdexcept",
+                "BMI": "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\stdexcept_1ZXC368MQDJR1HPE.ifc"
+            }
+        ]
+    }
+}

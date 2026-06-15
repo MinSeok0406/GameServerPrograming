@@ -132,6 +132,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Array.cpp" />
+    <ClCompile Include="Array_Main.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Database.ixx" />
     <ClCompile Include="DatabaseTest.cpp" />
@@ -142,6 +144,9 @@
     <ClCompile Include="EmployeeTest.cpp" />
     <ClCompile Include="Practice01.cpp" />
     <ClCompile Include="UserInterface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Array.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
