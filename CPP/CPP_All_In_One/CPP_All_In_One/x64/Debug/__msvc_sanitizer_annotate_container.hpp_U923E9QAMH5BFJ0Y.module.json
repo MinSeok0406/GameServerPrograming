@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_U923E9QAMH5BFJ0Y.obj",
+            "outputs": [
+                "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
+                "CPP_All_In_One\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_U923E9QAMH5BFJ0Y.module.json",
+                "CPP_All_In_One\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_U923E9QAMH5BFJ0Y.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_sanitizer_annotate_container.hpp",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_sanitizer_annotate_container.hpp",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

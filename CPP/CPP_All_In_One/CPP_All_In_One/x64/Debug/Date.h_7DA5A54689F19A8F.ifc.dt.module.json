@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\Date.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\Date.h_7DA5A54689F19A8F.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\Date.h_7DA5A54689F19A8F.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\Date.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\Date.h",
+                    "source-path": "c:\\gameprograming\\cpp\\cpp_all_in_one\\date.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

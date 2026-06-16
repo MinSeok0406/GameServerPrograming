@@ -19,19 +19,19 @@
             "requires": [
                 {
                     "logical-name": "iostream",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\iostream",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
                 },
                 {
                     "logical-name": "format",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\format",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\format",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
                 },
                 {
                     "logical-name": "string",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.50.35717\\include\\string",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
                 }

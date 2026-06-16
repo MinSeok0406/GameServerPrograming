@@ -33,6 +33,9 @@
     <ClCompile Include="UpdateScene.cpp">
       <Filter>Update</Filter>
     </ClCompile>
+    <ClCompile Include="IBaseObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enemy.h">
@@ -49,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="UpdateScene.h">
       <Filter>Update</Filter>
+    </ClInclude>
+    <ClInclude Include="IBaseObject.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

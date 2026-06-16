@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\cstdio.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\cstdio_5A42BCDA64A052B2.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\cstdio_5A42BCDA64A052B2.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\cstdio.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\include\\cstdio",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstdio",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

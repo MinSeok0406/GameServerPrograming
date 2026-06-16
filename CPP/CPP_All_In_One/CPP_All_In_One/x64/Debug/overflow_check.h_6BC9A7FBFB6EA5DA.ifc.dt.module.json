@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\overflow_check.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\overflow_check.h_6BC9A7FBFB6EA5DA.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\overflow_check.h_6BC9A7FBFB6EA5DA.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\overflow_check.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\overflow_check.h",
+                    "source-path": "c:\\gameprograming\\cpp\\cpp_all_in_one\\overflow_check.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

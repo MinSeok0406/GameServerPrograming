@@ -59,7 +59,7 @@ void KeyProcess()
 
                 break;
             }
-            else if (g_ibo[i]->_release == true)
+            else if (g_ibo[i]->GetRelease() == true)
             {
                 switch (key)
                 {
@@ -124,7 +124,7 @@ int _tmain(int argc, TCHAR* argv[])
         system("cls");
         Render();
 
-        Sleep(30);
+        Sleep(50);
     }
 
     return 0;

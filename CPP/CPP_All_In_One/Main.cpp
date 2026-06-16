@@ -4,6 +4,7 @@
 #include <process.h>
 #include <Windows.h>
 #include <vector>
+#include <list>
 #include <algorithm>
 using namespace std;
 using ll = long long;

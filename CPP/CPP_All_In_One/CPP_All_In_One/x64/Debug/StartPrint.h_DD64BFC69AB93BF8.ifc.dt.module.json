@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\StartPrint.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\StartPrint.h_DD64BFC69AB93BF8.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\StartPrint.h_DD64BFC69AB93BF8.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\StartPrint.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\StartPrint.h",
+                    "source-path": "c:\\gameprograming\\cpp\\cpp_all_in_one\\startprint.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

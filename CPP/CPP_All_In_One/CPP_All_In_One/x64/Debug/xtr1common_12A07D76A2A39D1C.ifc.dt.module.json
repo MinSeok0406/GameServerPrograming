@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\xtr1common.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\xtr1common_12A07D76A2A39D1C.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\xtr1common_12A07D76A2A39D1C.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\xtr1common.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\include\\xtr1common",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xtr1common",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

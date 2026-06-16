@@ -1,4 +1,16 @@
 ﻿#pragma once
+#include "IBaseObject.h"
+
+class EnemyObject : public IBaseObject
+{
+public:
+	EnemyObject(int x, int y, int size);
+
+
+protected:
+
+	
+};
 
 struct Enemy
 {
