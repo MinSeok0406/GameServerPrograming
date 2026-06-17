@@ -143,10 +143,13 @@
     <ClCompile Include="Employee01.ixx" />
     <ClCompile Include="EmployeeTest.cpp" />
     <ClCompile Include="Practice01.cpp" />
+    <ClCompile Include="RoundRobin.cpp" />
     <ClCompile Include="UserInterface.cpp" />
+    <ClCompile Include="Vector_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array.h" />
+    <ClInclude Include="RoundRobin.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,24 +1,22 @@
-﻿#include <windows.h>
-#include <stdio.h>
-#include "Console.h"
+﻿#include "Console.h"
 
-HANDLE hConsole;
+Console* Console::_pConsole = nullptr;
 
-void cs_Initial(void)
+void Console::cs_Initial(void)
 {
 	CONSOLE_CURSOR_INFO stConsoleCursor;
 
 	stConsoleCursor.bVisible = FALSE;
 	stConsoleCursor.dwSize = 1;
 
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	if (hConsole == INVALID_HANDLE_VALUE)
+	_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (_hConsole == INVALID_HANDLE_VALUE)
 	{
 		// 로그 남기기
 		return;
 	}
 
-	auto result = SetConsoleCursorInfo(hConsole, &stConsoleCursor);
+	auto result = SetConsoleCursorInfo(_hConsole, &stConsoleCursor);
 	if (result == 0)
 	{
 		// 로그 남기기
@@ -26,13 +24,13 @@ void cs_Initial(void)
 	}
 }
 
-void cs_MoveCursor(int iPosX, int iPosY)
+void Console::cs_MoveCursor(int iPosX, int iPosY)
 {
 	COORD stCoord;
 	stCoord.X = iPosX;
 	stCoord.Y = iPosY;
 
-	auto result = SetConsoleCursorPosition(hConsole, stCoord);
+	auto result = SetConsoleCursorPosition(_hConsole, stCoord);
 	if (result == 0)
 	{
 		// 로그 남기기
@@ -40,7 +38,7 @@ void cs_MoveCursor(int iPosX, int iPosY)
 	}
 }
 
-void cs_ClearScreen(void)
+void Console::cs_ClearScreen(void)
 {
 	DWORD dw;
 

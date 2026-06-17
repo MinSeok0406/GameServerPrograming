@@ -4,9 +4,14 @@
 #include "Console.h"
 #include "Buffer.h"
 #include "UpdateScene.h"
+#include "ManagerObject.h"
 using namespace std;
 
 #pragma comment(lib, "Winmm.lib")
+
+ScreenBuffer* g_screenBuffer = nullptr;
+Console* g_console = nullptr;
+ManagerObject* g_managerObject = nullptr;
 
 string str;
 SCENE g_scene = SCENE::TITLE;
@@ -21,7 +26,9 @@ int enemyTypeCnt = 0;
 int main()
 {
     timeBeginPeriod(1);
-    cs_Initial();
+    g_screenBuffer = ScreenBuffer::getInstance();
+    g_console = Console::getInstance();
+    g_managerObject = ManagerObject::getInstance();
     srand((unsigned int)time(nullptr));
 
     FILE* fp;
@@ -41,7 +48,7 @@ int main()
         cnt++;
     }
 
-    fseek(fp, str.size() + 2, SEEK_SET);
+    fseek(fp, (long)(str.size() + 2), SEEK_SET);
     readBytes = fread(g_stageBuffer, sizeof(char), fileSize, fp);
     g_stageBuffer[readBytes] = '\0';
 
@@ -125,6 +132,10 @@ int main()
             break;
         }
     }
+
+    g_screenBuffer->destoryInstance();
+    g_console->destoryInstance();
+    g_managerObject->destoryInstance();
 
     return 0;
 }

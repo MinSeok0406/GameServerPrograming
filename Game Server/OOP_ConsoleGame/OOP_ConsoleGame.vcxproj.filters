@@ -13,15 +13,18 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{1456d9b2-4dec-40b5-9f8d-6c3e965ded56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Manager">
+      <UniqueIdentifier>{95df8a35-64e9-4151-9e0d-9f52b58b869c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="EnemyObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="PlayerObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Buffer.cpp">
@@ -36,12 +39,18 @@
     <ClCompile Include="IBaseObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="BulletObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ManagerObject.cpp">
+      <Filter>Object\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Enemy.h">
+    <ClInclude Include="EnemyObject.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="PlayerObject.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
@@ -55,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="IBaseObject.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ManagerObject.h">
+      <Filter>Object\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

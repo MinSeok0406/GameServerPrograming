@@ -11,7 +11,7 @@ enum class OBJECT_TYPE
 class IBaseObject
 {
 public:
-    IBaseObject(int x, int y, OBJECT_TYPE obt);
+    IBaseObject(OBJECT_TYPE objType);
     virtual ~IBaseObject();
 
     virtual bool Update() = 0;
@@ -20,7 +20,5 @@ public:
     OBJECT_TYPE GetObjectType();
 
 protected:
-    int _x;
-    int _y;
     OBJECT_TYPE _objectType;
 };

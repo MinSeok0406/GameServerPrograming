@@ -131,6 +131,8 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,19 +144,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="BulletObject.cpp" />
     <ClCompile Include="Console.cpp" />
-    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyObject.cpp" />
     <ClCompile Include="IBaseObject.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ManagerObject.cpp" />
+    <ClCompile Include="PlayerObject.cpp" />
     <ClCompile Include="UpdateScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="BulletObject.h" />
     <ClInclude Include="Console.h" />
-    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyObject.h" />
     <ClInclude Include="IBaseObject.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="ManagerObject.h" />
+    <ClInclude Include="PlayerObject.h" />
     <ClInclude Include="UpdateScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

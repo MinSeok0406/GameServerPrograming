@@ -2,35 +2,37 @@
 #include "Buffer.h"
 #include "Console.h"
 
-char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
+ScreenBuffer* ScreenBuffer::_pScreenBuffer = nullptr;
 
-void Buffer_Flip(void)
+extern Console* g_console;
+
+void ScreenBuffer::Buffer_Flip(void)
 {
     int iCnt;
     for (iCnt = 0; iCnt < dfSCREEN_HEIGHT; ++iCnt)
     {
-        cs_MoveCursor(0, iCnt);
-        printf(szScreenBuffer[iCnt]);
+        g_console->cs_MoveCursor(0, iCnt);
+        printf(_screenBuffer[iCnt]);
     }
 }
 
-void Buffer_Clear(void)
+void ScreenBuffer::Buffer_Clear(void)
 {
     int iCnt;
-    memset(szScreenBuffer, ' ', dfSCREEN_WIDTH * dfSCREEN_HEIGHT);
+    memset(_screenBuffer, ' ', dfSCREEN_WIDTH * dfSCREEN_HEIGHT);
 
     for (iCnt = 0; iCnt < dfSCREEN_HEIGHT; ++iCnt)
     {
-        szScreenBuffer[iCnt][dfSCREEN_WIDTH - 1] = '\0';
+        _screenBuffer[iCnt][dfSCREEN_WIDTH - 1] = '\0';
     }
 }
 
-void Sprite_Draw(int iX, int iY, char chSprite)
+void ScreenBuffer::Sprite_Draw(int iX, int iY, char chSprite)
 {
     if (iX < 0 || iY < 0 || iX >= dfSCREEN_WIDTH - 1 || iY >= dfSCREEN_HEIGHT)
     {
         return;
     }
 
-    szScreenBuffer[iY][iX] = chSprite;
+    _screenBuffer[iY][iX] = chSprite;
 }

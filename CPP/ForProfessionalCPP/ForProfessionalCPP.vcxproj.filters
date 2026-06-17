@@ -13,8 +13,14 @@
     <Filter Include="Practice">
       <UniqueIdentifier>{1b6e4e57-e516-42aa-b6d0-f69d497762bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Array_Practice">
+    <Filter Include="STL_Practice">
+      <UniqueIdentifier>{b3464dfa-4c17-4a3c-b259-112409ff51c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL_Practice\Array_Practice">
       <UniqueIdentifier>{33d42b0a-01b1-4823-8845-0b6049849f7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL_Practice\Vector_Practice">
+      <UniqueIdentifier>{8d0aba03-8094-47f3-a74c-3af800e2f085}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,15 +55,24 @@
       <Filter>Practice</Filter>
     </ClCompile>
     <ClCompile Include="Array.cpp">
-      <Filter>Array_Practice</Filter>
+      <Filter>STL_Practice\Array_Practice</Filter>
     </ClCompile>
     <ClCompile Include="Array_Main.cpp">
-      <Filter>Array_Practice</Filter>
+      <Filter>STL_Practice\Array_Practice</Filter>
+    </ClCompile>
+    <ClCompile Include="RoundRobin.cpp">
+      <Filter>STL_Practice\Vector_Practice</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector_Main.cpp">
+      <Filter>STL_Practice\Vector_Practice</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Array.h">
-      <Filter>Array_Practice</Filter>
+      <Filter>STL_Practice\Array_Practice</Filter>
+    </ClInclude>
+    <ClInclude Include="RoundRobin.h">
+      <Filter>STL_Practice\Vector_Practice</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

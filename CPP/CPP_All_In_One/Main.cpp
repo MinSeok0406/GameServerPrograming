@@ -37,7 +37,7 @@ using ll = long long;
 
 
 
-int _tmain(int argc, TCHAR* argv[])
+int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");

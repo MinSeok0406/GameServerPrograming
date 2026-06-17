@@ -1,14 +1,18 @@
-﻿#include <iostream>
+﻿#include "UpdateScene.h"
+#include <iostream>
 #include <string>
 #include <Windows.h>
 #include "Console.h"
 #include "Buffer.h"
-#include "UpdateScene.h"
-#include "Player.h"
-#include "Enemy.h"
+#include "ManagerObject.h"
+#include "PlayerObject.h"
+#include "EnemyObject.h"
 using namespace std;
 
-extern char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
+extern ScreenBuffer* g_screenBuffer;
+extern ManagerObject* g_managerObject;
+extern Console* g_console;
+
 extern char g_stageBuffer[LENGTH];
 extern string str;
 
@@ -33,32 +37,32 @@ void FPS()
 
 void UpdateTitle()
 {
-    Buffer_Clear();
-    Sprite_Draw(20, 0, 'G');
-    Sprite_Draw(22, 0, 'A');
-    Sprite_Draw(24, 0, 'M');
-    Sprite_Draw(26, 0, 'E');
-    Sprite_Draw(30, 0, 'R');
-    Sprite_Draw(32, 0, 'E');
-    Sprite_Draw(34, 0, 'A');
-    Sprite_Draw(36, 0, 'D');
-    Sprite_Draw(38, 0, 'Y');
+    g_screenBuffer->Buffer_Clear();
+    g_screenBuffer->Sprite_Draw(20, 0, 'G');
+    g_screenBuffer->Sprite_Draw(22, 0, 'A');
+    g_screenBuffer->Sprite_Draw(24, 0, 'M');
+    g_screenBuffer->Sprite_Draw(26, 0, 'E');
+    g_screenBuffer->Sprite_Draw(30, 0, 'R');
+    g_screenBuffer->Sprite_Draw(32, 0, 'E');
+    g_screenBuffer->Sprite_Draw(34, 0, 'A');
+    g_screenBuffer->Sprite_Draw(36, 0, 'D');
+    g_screenBuffer->Sprite_Draw(38, 0, 'Y');
 
-    Sprite_Draw(18, 2, 'P');
-    Sprite_Draw(20, 2, 'R');
-    Sprite_Draw(22, 2, 'E');
-    Sprite_Draw(24, 2, 'E');
-    Sprite_Draw(26, 2, 'S');
-    Sprite_Draw(30, 2, 'T');
-    Sprite_Draw(32, 2, 'A');
-    Sprite_Draw(34, 2, 'B');
-    Buffer_Flip();
+    g_screenBuffer->Sprite_Draw(18, 2, 'P');
+    g_screenBuffer->Sprite_Draw(20, 2, 'R');
+    g_screenBuffer->Sprite_Draw(22, 2, 'E');
+    g_screenBuffer->Sprite_Draw(24, 2, 'E');
+    g_screenBuffer->Sprite_Draw(26, 2, 'S');
+    g_screenBuffer->Sprite_Draw(30, 2, 'T');
+    g_screenBuffer->Sprite_Draw(32, 2, 'A');
+    g_screenBuffer->Sprite_Draw(34, 2, 'B');
+    g_screenBuffer->Buffer_Flip();
 
     if (GetAsyncKeyState(VK_TAB))
     {
         g_stage = 1;
         g_scene = SCENE::LOAD;
-        cs_ClearScreen();
+        g_console->cs_ClearScreen();
     }
 }
 
@@ -121,7 +125,6 @@ void UpdateLoad()
 
 void UpdateGame()
 {
-    PlayerInit();
     EnemyInit();
     tick = timeGetTime();
 
@@ -135,7 +138,7 @@ void UpdateGame()
         {
             g_scene = SCENE::LOAD;
             g_stage++;
-            cs_ClearScreen();
+            g_console->cs_ClearScreen();
             break;
         }
 
@@ -143,24 +146,18 @@ void UpdateGame()
         if (PlayerDie())
         {
             g_scene = SCENE::OVER;
-            cs_ClearScreen();
+            g_console->cs_ClearScreen();
             break;
         }
 
         // 로직
-        EnemyMovement();
-        EnemyAttack();
-
-        PlayerMoveMent();
-        PlayerAttack();
 
         // 렌더링
-        Buffer_Clear();
+        g_screenBuffer->Buffer_Clear();
 
-        EnemyRendering();
-        PlayerRendering();
+        g_managerObject->Render();
 
-        Buffer_Flip();
+        g_screenBuffer->Buffer_Flip();
 
         int useTime = (int)(timeGetTime() - tick);
         if (useTime > 0 && useTime < 100)
@@ -175,72 +172,72 @@ void UpdateGame()
 
 void UpdateClear()
 {
-    Buffer_Clear();
-    Sprite_Draw(20, 0, 'G');
-    Sprite_Draw(22, 0, 'A');
-    Sprite_Draw(24, 0, 'M');
-    Sprite_Draw(26, 0, 'E');
-    Sprite_Draw(30, 0, 'C');
-    Sprite_Draw(32, 0, 'L');
-    Sprite_Draw(34, 0, 'E');
-    Sprite_Draw(36, 0, 'A');
-    Sprite_Draw(38, 0, 'R');
+    g_screenBuffer->Buffer_Clear();
+    g_screenBuffer->Sprite_Draw(20, 0, 'G');
+    g_screenBuffer->Sprite_Draw(22, 0, 'A');
+    g_screenBuffer->Sprite_Draw(24, 0, 'M');
+    g_screenBuffer->Sprite_Draw(26, 0, 'E');
+    g_screenBuffer->Sprite_Draw(30, 0, 'C');
+    g_screenBuffer->Sprite_Draw(32, 0, 'L');
+    g_screenBuffer->Sprite_Draw(34, 0, 'E');
+    g_screenBuffer->Sprite_Draw(36, 0, 'A');
+    g_screenBuffer->Sprite_Draw(38, 0, 'R');
 
-    Sprite_Draw(20, 2, 'G');
-    Sprite_Draw(22, 2, 'O');
-    Sprite_Draw(26, 2, 'T');
-    Sprite_Draw(28, 2, 'I');
-    Sprite_Draw(30, 2, 'T');
-    Sprite_Draw(32, 2, 'L');
-    Sprite_Draw(34, 2, 'E');
-    Sprite_Draw(36, 2, '?');
-    Sprite_Draw(38, 2, '?');
+    g_screenBuffer->Sprite_Draw(20, 2, 'G');
+    g_screenBuffer->Sprite_Draw(22, 2, 'O');
+    g_screenBuffer->Sprite_Draw(26, 2, 'T');
+    g_screenBuffer->Sprite_Draw(28, 2, 'I');
+    g_screenBuffer->Sprite_Draw(30, 2, 'T');
+    g_screenBuffer->Sprite_Draw(32, 2, 'L');
+    g_screenBuffer->Sprite_Draw(34, 2, 'E');
+    g_screenBuffer->Sprite_Draw(36, 2, '?');
+    g_screenBuffer->Sprite_Draw(38, 2, '?');
 
-    Sprite_Draw(18, 4, 'P');
-    Sprite_Draw(20, 4, 'R');
-    Sprite_Draw(22, 4, 'E');
-    Sprite_Draw(24, 4, 'E');
-    Sprite_Draw(26, 4, 'S');
-    Sprite_Draw(30, 4, 'T');
-    Sprite_Draw(32, 4, 'A');
-    Sprite_Draw(34, 4, 'B');
-    Buffer_Flip();
+    g_screenBuffer->Sprite_Draw(18, 4, 'P');
+    g_screenBuffer->Sprite_Draw(20, 4, 'R');
+    g_screenBuffer->Sprite_Draw(22, 4, 'E');
+    g_screenBuffer->Sprite_Draw(24, 4, 'E');
+    g_screenBuffer->Sprite_Draw(26, 4, 'S');
+    g_screenBuffer->Sprite_Draw(30, 4, 'T');
+    g_screenBuffer->Sprite_Draw(32, 4, 'A');
+    g_screenBuffer->Sprite_Draw(34, 4, 'B');
+    g_screenBuffer->Buffer_Flip();
 
     if (GetAsyncKeyState(VK_TAB))
     {
         g_scene = SCENE::TITLE;
         g_stageBufferOffset = 0;
-        cs_ClearScreen();
+        g_console->cs_ClearScreen();
         return;
     }
 }
 
 void UpdateOver()
 {
-    Buffer_Clear();
-    Sprite_Draw(20, 0, 'G');
-    Sprite_Draw(22, 0, 'A');
-    Sprite_Draw(24, 0, 'M');
-    Sprite_Draw(26, 0, 'E');
-    Sprite_Draw(30, 0, 'O');
-    Sprite_Draw(32, 0, 'V');
-    Sprite_Draw(34, 0, 'E');
-    Sprite_Draw(36, 0, 'R');
+    g_screenBuffer->Buffer_Clear();
+    g_screenBuffer->Sprite_Draw(20, 0, 'G');
+    g_screenBuffer->Sprite_Draw(22, 0, 'A');
+    g_screenBuffer->Sprite_Draw(24, 0, 'M');
+    g_screenBuffer->Sprite_Draw(26, 0, 'E');
+    g_screenBuffer->Sprite_Draw(30, 0, 'O');
+    g_screenBuffer->Sprite_Draw(32, 0, 'V');
+    g_screenBuffer->Sprite_Draw(34, 0, 'E');
+    g_screenBuffer->Sprite_Draw(36, 0, 'R');
 
-    Sprite_Draw(18, 2, 'P');
-    Sprite_Draw(20, 2, 'R');
-    Sprite_Draw(22, 2, 'E');
-    Sprite_Draw(24, 2, 'E');
-    Sprite_Draw(26, 2, 'S');
-    Sprite_Draw(30, 2, 'T');
-    Sprite_Draw(32, 2, 'A');
-    Sprite_Draw(34, 2, 'B');
-    Buffer_Flip();
+    g_screenBuffer->Sprite_Draw(18, 2, 'P');
+    g_screenBuffer->Sprite_Draw(20, 2, 'R');
+    g_screenBuffer->Sprite_Draw(22, 2, 'E');
+    g_screenBuffer->Sprite_Draw(24, 2, 'E');
+    g_screenBuffer->Sprite_Draw(26, 2, 'S');
+    g_screenBuffer->Sprite_Draw(30, 2, 'T');
+    g_screenBuffer->Sprite_Draw(32, 2, 'A');
+    g_screenBuffer->Sprite_Draw(34, 2, 'B');
+    g_screenBuffer->Buffer_Flip();
 
     if (GetAsyncKeyState(VK_TAB))
     {
         g_scene = SCENE::GAME;
-        cs_ClearScreen();
+        g_console->cs_ClearScreen();
         return;
     }
 }
