@@ -1,0 +1,16 @@
+C:\GamePrograming\Game Server\OOP_ConsoleGame\Buffer.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\Buffer.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\BulletObject.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\BulletObject.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\ClearScene.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\ClearScene.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\Console.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\Console.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\EnemyObject.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\EnemyObject.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\GameScene.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\GameScene.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\IBaseObject.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\IBaseObject.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\ISceneBase.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\ISceneBase.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\LoadScene.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\LoadScene.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\Main.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\Main.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\ManagerObject.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\ManagerObject.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\OverScene.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\OverScene.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\PlayerObject.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\PlayerObject.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\SceneManager.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\SceneManager.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\TitleScene.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\TitleScene.obj
+C:\GamePrograming\Game Server\OOP_ConsoleGame\UpdateScene.cpp;C:\GamePrograming\Game Server\OOP_ConsoleGame\OOP_ConsoleGame\x64\Debug\UpdateScene.obj

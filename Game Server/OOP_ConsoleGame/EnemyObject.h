@@ -10,36 +10,19 @@ public:
 
 	bool Update() override;
 	void Render() override;
+	bool RemoveObject() override;
+	bool OnCollision(IBaseObject* obj) override;
 
 	void movement();
 	void attack();
 	bool die();
 
 protected:
-	bool _isMove;
 	bool _live;
+	bool _isMove;
 	char _sprite;
 	int _x;
 	int _y;
 	int _moveX;
 	int _moveY;
 };
-
-struct Enemy
-{
-	bool live;
-	char sprite;
-	int x;
-	int y;
-	int moveX;
-	int moveY;
-};
-
-struct enemyBullet
-{
-	int x;
-	int y;
-};
-
-void EnemyInit();
-bool EnemyDie();

@@ -2,11 +2,8 @@
 #include <Windows.h>
 #include <vector>
 #include "EnemyObject.h"
-#include "PlayerObject.h"
 #include "ManagerObject.h"
-#include "UpdateScene.h"
 #include "Buffer.h"
-#include "Console.h"
 using namespace std;
 
 extern ScreenBuffer* g_screenBuffer;
@@ -14,91 +11,7 @@ extern ManagerObject* g_managerObject;
 
 //--------------------------------------
 
-vector<Enemy> enemies;
-vector<enemyBullet> Enemybullet;
-bool isMove = true;
-
 int tempTick = timeGetTime();
-int enemyCnt = 0;
-
-extern vector<playerBullet> Playerbullet;
-
-extern char g_stageBuffer[LENGTH];
-extern char g_enemyBuffer[LENGTH];
-extern char buffer[256];
-extern char enemyInfo[256][6];
-extern int enemyTypeCnt;
-
-void EnemyInit()
-{
-    isMove = true;
-
-    // Stage에 나오는 스프라이트 좌표 수집
-    int x = 0;
-    int y = 0;
-    int cnt = 0;
-    while (buffer[cnt] != '\0')
-    {
-        char c = buffer[cnt];
-
-        if (c == '\r' || c == '\n')
-        {
-            if (c == '\r')
-            {
-                cnt += 2;
-            }
-            x = 0;
-            y++;
-            continue;
-        }
-
-        if (c == '@' || c == 'a' || c == 'Q' || c == 'W' || c == 'V')
-        {
-            enemies.push_back({ true, c, x, y, 0, 0 });
-        }
-
-        x++;
-        cnt++;
-    }
-
-    // Enemy 이동 패턴 값 설정
-    char sprite;
-    int moveX;
-    int moveY;
-
-    for (auto i = 0; i < enemyTypeCnt; ++i)
-    {
-        sscanf_s(enemyInfo[i], " %c %d %d", &sprite, 1, &moveX, &moveY);
-
-        for (auto& enemy : enemies)
-        {
-            if (enemy.sprite == sprite)
-            {
-                enemy.moveX = moveX;
-                enemy.moveY = moveY;
-            }
-        }
-    }
-
-    enemyCnt = (int)enemies.size();
-}
-
-bool EnemyDie()
-{
-    for (int i = 0; i < (int)enemies.size(); ++i)
-    {
-        if (enemies[i].live)
-        {
-            return false;
-        }
-    }
-
-    enemies.clear();
-    Enemybullet.clear();
-    isMove = true;
-    Playerbullet.clear();
-    return true;
-}
 
 EnemyObject::EnemyObject(bool live, bool isMove, char sprite, int x, int y, int moveX, int moveY)
     : _live(live), _isMove(isMove), _sprite(sprite), _x(x), _y(y), _moveX(moveX), _moveY(moveY),
@@ -113,6 +26,9 @@ EnemyObject::~EnemyObject()
 
 bool EnemyObject::Update()
 {
+    movement();
+    attack();
+
     return true;
 }
 
@@ -131,6 +47,23 @@ void EnemyObject::Render()
         this->_x -= this->_moveX;
         this->_y -= this->_moveY;
     }
+}
+
+bool EnemyObject::RemoveObject()
+{
+    if (die())
+    {
+        g_managerObject->DestoryObject(this);
+        return true;
+    }
+
+    return false;
+}
+
+// _live 멤버변수 변경될 수 있는 함수
+bool EnemyObject::OnCollision(IBaseObject* obj)
+{
+    return false;
 }
 
 void EnemyObject::movement()
@@ -159,11 +92,19 @@ void EnemyObject::attack()
     // 적 총알 생성
     if (randValue > 80)
     {
-        g_managerObject->CreateObject(OBJECT_TYPE::ENEMY_BULLET);
+        g_managerObject->CreateObject(OBJECT_TYPE::ENEMY_BULLET,
+            this->_x, this->_y + 1);
     }
 }
 
 bool EnemyObject::die()
 {
-    return false;
+    if (this->_live == false)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

@@ -145,22 +145,36 @@
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="BulletObject.cpp" />
+    <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="EnemyObject.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="IBaseObject.cpp" />
+    <ClCompile Include="ISceneBase.cpp" />
+    <ClCompile Include="LoadScene.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ManagerObject.cpp" />
+    <ClCompile Include="OverScene.cpp" />
     <ClCompile Include="PlayerObject.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="UpdateScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="BulletObject.h" />
+    <ClInclude Include="ClearScene.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="EnemyObject.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="IBaseObject.h" />
+    <ClInclude Include="ISceneBase.h" />
+    <ClInclude Include="LoadScene.h" />
     <ClInclude Include="ManagerObject.h" />
+    <ClInclude Include="OverScene.h" />
     <ClInclude Include="PlayerObject.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="UpdateScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

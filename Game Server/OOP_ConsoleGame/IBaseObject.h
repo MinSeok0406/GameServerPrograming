@@ -16,6 +16,8 @@ public:
 
     virtual bool Update() = 0;
     virtual void Render() = 0;
+    virtual bool RemoveObject() = 0;
+    virtual bool OnCollision(IBaseObject* obj) = 0;
 
     OBJECT_TYPE GetObjectType();
 

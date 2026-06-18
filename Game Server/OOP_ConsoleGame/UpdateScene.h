@@ -2,20 +2,7 @@
 
 #define LENGTH 1024
 
-enum class SCENE
-{
-    TITLE,
-    LOAD,
-    GAME,
-    CLEAR,
-    OVER
-};
-
-extern SCENE g_scene;
 extern int g_stage;
-
-// 프레임 표시
-void FPS();
 
 // 타이틀 로직 업데이트
 void UpdateTitle();

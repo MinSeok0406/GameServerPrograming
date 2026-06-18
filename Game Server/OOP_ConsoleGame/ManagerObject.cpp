@@ -5,6 +5,7 @@
 
 ManagerObject* ManagerObject::_pManagerObject = nullptr;
 
+// 플레이어 오브젝트 생성 함수
 void ManagerObject::CreateObject(OBJECT_TYPE objType)
 {
 	IBaseObject* ibo;
@@ -13,19 +14,37 @@ void ManagerObject::CreateObject(OBJECT_TYPE objType)
 	{
 		ibo = new PlayerObject(true, 100, 40, 20);
 	}
-	else if (objType == OBJECT_TYPE::ENEMY)
+
+	_objectList.push_back(ibo);
+}
+
+// 적 오브젝트 생성 함수
+void ManagerObject::CreateObject(OBJECT_TYPE objType, bool live, bool isMove, char sprite, int x, int y, int moveX, int moveY)
+{
+	IBaseObject* ibo;
+
+	if (objType == OBJECT_TYPE::ENEMY)
 	{
-		ibo = new EnemyObject(true, true, ' ', 0, 0, 0, 0);
+		ibo = new EnemyObject(live, isMove, sprite, x, y, moveX, moveY);
 	}
-	else if (objType == OBJECT_TYPE::PLAYER_BULLET)
+
+	_objectList.push_back(ibo);
+}
+
+// 위치가 필요한 오브젝트 생성 함수
+void ManagerObject::CreateObject(OBJECT_TYPE objType, int x, int y)
+{
+	IBaseObject* ibo;
+
+	if (objType == OBJECT_TYPE::PLAYER_BULLET)
 	{
 		// 플레이어 쪽에서 위치 줘야됨
-		ibo = new BulletObject(0, 0, OBJECT_TYPE::PLAYER_BULLET);
+		ibo = new BulletObject(x, y, OBJECT_TYPE::PLAYER_BULLET);
 	}
 	else if (objType == OBJECT_TYPE::ENEMY_BULLET)
 	{
 		// 적 쪽에서 위치 줘야됨
-		ibo = new BulletObject(0, 0, OBJECT_TYPE::ENEMY_BULLET);
+		ibo = new BulletObject(x, y, OBJECT_TYPE::ENEMY_BULLET);
 	}
 
 	_objectList.push_back(ibo);
@@ -34,31 +53,17 @@ void ManagerObject::CreateObject(OBJECT_TYPE objType)
 void ManagerObject::DestoryObject(IBaseObject* obj)
 {
 	std::erase(_objectList, obj);
-
-	if (obj->GetObjectType() == OBJECT_TYPE::PLAYER)
-	{
-		delete obj;
-	}
-	else if (obj->GetObjectType() == OBJECT_TYPE::ENEMY)
-	{
-		delete obj;
-	}
-	else if (obj->GetObjectType() == OBJECT_TYPE::PLAYER_BULLET
-		|| obj->GetObjectType() == OBJECT_TYPE::ENEMY_BULLET)
-	{
-		delete obj;
-	}
+	delete obj;
 }
 
 bool ManagerObject::Update()
 {
 	for (auto& obj : _objectList)
 	{
-		if (!obj->Update())
-		{
-			// 예외처리
-		}
+		obj->Update();
 	}
+
+	return true;
 }
 
 void ManagerObject::Render()
@@ -66,5 +71,13 @@ void ManagerObject::Render()
 	for (auto& obj : _objectList)
 	{
 		obj->Render();
+	}
+}
+
+void ManagerObject::RemoveObject()
+{
+	for (auto obj : _objectList)
+	{
+		obj->RemoveObject();
 	}
 }

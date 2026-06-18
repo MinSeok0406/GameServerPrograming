@@ -5,6 +5,8 @@
 #include "Buffer.h"
 #include "UpdateScene.h"
 #include "ManagerObject.h"
+#include "SceneManager.h"
+#include "TitleScene.h"
 using namespace std;
 
 #pragma comment(lib, "Winmm.lib")
@@ -12,9 +14,9 @@ using namespace std;
 ScreenBuffer* g_screenBuffer = nullptr;
 Console* g_console = nullptr;
 ManagerObject* g_managerObject = nullptr;
+SceneManager* g_sceneManager = nullptr;
 
 string str;
-SCENE g_scene = SCENE::TITLE;
 int g_stage;
 
 char g_stageBuffer[LENGTH];
@@ -29,6 +31,7 @@ int main()
     g_screenBuffer = ScreenBuffer::getInstance();
     g_console = Console::getInstance();
     g_managerObject = ManagerObject::getInstance();
+    g_sceneManager = SceneManager::getInstance();
     srand((unsigned int)time(nullptr));
 
     FILE* fp;
@@ -111,31 +114,16 @@ int main()
         enemyTypeCnt++;
     }
 
+    g_sceneManager->_pScene = new TitleScene;
     while (1)
     {
-        switch (g_scene)
-        {
-        case SCENE::TITLE:
-            UpdateTitle();
-            break;
-        case SCENE::LOAD:
-            UpdateLoad();
-            break;
-        case SCENE::GAME:
-            UpdateGame();
-            break;
-        case SCENE::CLEAR:
-            UpdateClear();
-            break;
-        case SCENE::OVER:
-            UpdateOver();
-            break;
-        }
+        g_sceneManager->run();
     }
 
     g_screenBuffer->destoryInstance();
     g_console->destoryInstance();
     g_managerObject->destoryInstance();
+    g_sceneManager->destoryInstance();
 
     return 0;
 }

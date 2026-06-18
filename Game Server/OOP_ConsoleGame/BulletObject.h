@@ -9,6 +9,8 @@ public:
 
 	bool Update() override;
 	void Render() override;
+	bool RemoveObject() override;
+	bool OnCollision(IBaseObject* obj) override;
 
 protected:
 	int _x;

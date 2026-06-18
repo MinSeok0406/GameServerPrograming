@@ -9,6 +9,8 @@ public:
 
 	bool Update() override;
 	void Render() override;
+	bool RemoveObject() override;
+	bool OnCollision(IBaseObject* obj) override;
 
 	void movement();
 	void attack();
@@ -20,19 +22,3 @@ protected:
 	int _x;
 	int _y;
 };
-
-struct Player
-{
-	bool live;
-	int hp;
-	int x;
-	int y;
-};
-
-struct playerBullet
-{
-	int x;
-	int y;
-};
-
-bool PlayerDie();

@@ -6,10 +6,14 @@ class ManagerObject
 {
 public:
 	void CreateObject(OBJECT_TYPE objType);
+	void CreateObject(OBJECT_TYPE objType, int x, int y);
+	void CreateObject(OBJECT_TYPE objType, bool live, bool isMove,
+		char sprite, int x, int y, int moveX, int moveY);
 	void DestoryObject(IBaseObject* obj);
 
 	bool Update();
 	void Render();
+	void RemoveObject();
 
 	static ManagerObject* getInstance()
 	{

@@ -1,37 +1,94 @@
 ﻿#include "UpdateScene.h"
 #include <iostream>
 #include <string>
+#include <vector>
 #include <Windows.h>
 #include "Console.h"
 #include "Buffer.h"
 #include "ManagerObject.h"
-#include "PlayerObject.h"
-#include "EnemyObject.h"
 using namespace std;
 
 extern ScreenBuffer* g_screenBuffer;
 extern ManagerObject* g_managerObject;
 extern Console* g_console;
 
+extern char buffer[256];
+extern char enemyInfo[256][6];
+extern int enemyTypeCnt;
 extern char g_stageBuffer[LENGTH];
 extern string str;
 
+struct Enemy
+{
+    bool live;
+    bool isMove;
+    char sprite;
+    int x;
+    int y;
+    int moveX;
+    int moveY;
+};
+
+vector<Enemy> enemies;
+
 char buffer[256];
 int tick;
-int t = timeGetTime();
-int g_fpsCnt;
 int g_stageBufferOffset = 0;
 
-void FPS()
+void EnemyInit()
 {
-    g_fpsCnt++;
-
-    if (timeGetTime() - t > 1000)
+    // Stage에 나오는 스프라이트 좌표 수집
+    int x = 0;
+    int y = 0;
+    int cnt = 0;
+    while (buffer[cnt] != '\0')
     {
-        printf("FPS : %d\n", g_fpsCnt);
-        printf("Move : ← ↑ → ↓ \t Attack : SPACE");
-        g_fpsCnt = 0;
-        t += 1000;
+        char c = buffer[cnt];
+
+        if (c == '\r' || c == '\n')
+        {
+            if (c == '\r')
+            {
+                cnt += 2;
+            }
+            x = 0;
+            y++;
+            continue;
+        }
+
+        if (c == '@' || c == 'a' || c == 'Q' || c == 'W' || c == 'V')
+        {
+            enemies.push_back({ true, true, c, x, y, 0, 0 });
+        }
+
+        x++;
+        cnt++;
+    }
+
+    // Enemy 이동 패턴 값 설정
+    char sprite;
+    int moveX;
+    int moveY;
+
+    for (auto i = 0; i < enemyTypeCnt; ++i)
+    {
+        sscanf_s(enemyInfo[i], " %c %d %d", &sprite, 1, &moveX, &moveY);
+
+        for (auto& enemy : enemies)
+        {
+            if (enemy.sprite == sprite)
+            {
+                enemy.moveX = moveX;
+                enemy.moveY = moveY;
+            }
+        }
+    }
+
+    for (auto& enemy : enemies)
+    {
+        g_managerObject->CreateObject(OBJECT_TYPE::ENEMY,
+            enemy.live, enemy.isMove, enemy.sprite, enemy.x, enemy.y,
+            enemy.moveX, enemy.moveY);
     }
 }
 
@@ -61,7 +118,7 @@ void UpdateTitle()
     if (GetAsyncKeyState(VK_TAB))
     {
         g_stage = 1;
-        g_scene = SCENE::LOAD;
+        //g_scene = SCENE::LOAD;
         g_console->cs_ClearScreen();
     }
 }
@@ -73,7 +130,7 @@ void UpdateLoad()
     // 개발자가 만든 스테이지를 초과한다면...
     if (g_stage > maxStage)
     {
-        g_scene = SCENE::CLEAR;
+        //g_scene = SCENE::CLEAR;
         return;
     }
 
@@ -106,7 +163,7 @@ void UpdateLoad()
     // 작성된 스테이지 텍스트 파일이 없다면...
     if (fp == nullptr)
     {
-        g_scene = SCENE::CLEAR;
+        //g_scene = SCENE::CLEAR;
         return;
     }
 
@@ -119,21 +176,21 @@ void UpdateLoad()
 
     fclose(fp);
 
-    g_scene = SCENE::GAME;
+    g_managerObject->CreateObject(OBJECT_TYPE::PLAYER);
+    EnemyInit();
+
+    //g_scene = SCENE::GAME;
     return;
 }
 
 void UpdateGame()
 {
-    EnemyInit();
     tick = timeGetTime();
 
     // 10fps 게임으로 만든다.
     while (1)
     {
-        FPS();
-
-        // 게임 클리어
+/*        // 게임 클리어
         if (EnemyDie())
         {
             g_scene = SCENE::LOAD;
@@ -148,15 +205,17 @@ void UpdateGame()
             g_scene = SCENE::OVER;
             g_console->cs_ClearScreen();
             break;
-        }
+        }*/
 
         // 로직
+        g_managerObject->Update();
+
+        // 객체 삭제 관련 함수
+        g_managerObject->RemoveObject();
 
         // 렌더링
         g_screenBuffer->Buffer_Clear();
-
         g_managerObject->Render();
-
         g_screenBuffer->Buffer_Flip();
 
         int useTime = (int)(timeGetTime() - tick);
@@ -205,7 +264,7 @@ void UpdateClear()
 
     if (GetAsyncKeyState(VK_TAB))
     {
-        g_scene = SCENE::TITLE;
+        //g_scene = SCENE::TITLE;
         g_stageBufferOffset = 0;
         g_console->cs_ClearScreen();
         return;
@@ -236,7 +295,7 @@ void UpdateOver()
 
     if (GetAsyncKeyState(VK_TAB))
     {
-        g_scene = SCENE::GAME;
+        //g_scene = SCENE::GAME;
         g_console->cs_ClearScreen();
         return;
     }

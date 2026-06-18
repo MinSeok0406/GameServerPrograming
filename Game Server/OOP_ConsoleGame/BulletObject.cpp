@@ -102,3 +102,13 @@ void BulletObject::Render()
 		}*/
 	}
 }
+
+bool BulletObject::RemoveObject()
+{
+	return false;
+}
+
+bool BulletObject::OnCollision(IBaseObject* obj)
+{
+	return false;
+}

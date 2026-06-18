@@ -7,14 +7,17 @@
     <Filter Include="Object">
       <UniqueIdentifier>{ecd5de09-b2e8-403e-9993-5acfce5ae23c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Update">
-      <UniqueIdentifier>{ccf7268a-5b9c-4744-b0a6-755da378a032}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{1456d9b2-4dec-40b5-9f8d-6c3e965ded56}</UniqueIdentifier>
     </Filter>
     <Filter Include="Object\Manager">
       <UniqueIdentifier>{95df8a35-64e9-4151-9e0d-9f52b58b869c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{4eff44b0-fade-47e8-a922-55372f2adb8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Manager">
+      <UniqueIdentifier>{91a3a2f6-ee30-4518-a11c-d15ab3b1cc80}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,9 +36,6 @@
     <ClCompile Include="Console.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateScene.cpp">
-      <Filter>Update</Filter>
-    </ClCompile>
     <ClCompile Include="IBaseObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
@@ -44,6 +44,30 @@
     </ClCompile>
     <ClCompile Include="ManagerObject.cpp">
       <Filter>Object\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ISceneBase.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Scene\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ClearScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="OverScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,9 +83,6 @@
     <ClInclude Include="Console.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="UpdateScene.h">
-      <Filter>Update</Filter>
-    </ClInclude>
     <ClInclude Include="IBaseObject.h">
       <Filter>Object</Filter>
     </ClInclude>
@@ -70,6 +91,30 @@
     </ClInclude>
     <ClInclude Include="ManagerObject.h">
       <Filter>Object\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ISceneBase.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Scene\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="OverScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
