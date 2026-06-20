@@ -1,7 +1,7 @@
 ﻿#include "IBaseObject.h"
 
-IBaseObject::IBaseObject(OBJECT_TYPE objType)
-    : _objectType(objType)
+IBaseObject::IBaseObject(OBJECT_TYPE objType, int x, int y)
+    : _objectType(objType), _x(x), _y(y)
 {
 
 }

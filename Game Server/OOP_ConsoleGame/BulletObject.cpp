@@ -1,7 +1,12 @@
 ﻿#include "BulletObject.h"
+#include "ManagerObject.h"
+#include "Buffer.h"
+
+extern ScreenBuffer* g_screenBuffer;
+extern ManagerObject* g_managerObject;
 
 BulletObject::BulletObject(int x, int y, OBJECT_TYPE objType)
-	: _x(x), _y(y), IBaseObject(objType)
+	: _live(true), IBaseObject(objType, x, y)
 {
 }
 
@@ -13,102 +18,60 @@ bool BulletObject::Update()
 {
 	if (this->GetObjectType() == OBJECT_TYPE::PLAYER_BULLET)
 	{
-		//Playerbullet.push_back({ p->x, p->y - 1 });
+		this->_y -= 1;
 
-	  /*// 몬스터 피격 판정
-		int y = 0;
-		int x = 0;
-		for (int i = 0; i < (int)Playerbullet.size(); ++i)
+		if (this->_y < 0)
 		{
-			for (int j = 0; j < (int)enemies.size(); ++j)
-			{
-				if (!enemies[j].live)
-				{
-					continue;
-				}
-
-				y = Playerbullet[i].y - 1;
-				x = Playerbullet[i].x;
-				if (enemies[j].x == x && enemies[j].y == y)
-				{
-					Playerbullet[i].y = -1;
-					Playerbullet[i].x = -1;
-					enemies[j].live = false;
-				}
-			}
-		}*/
+			this->_live = false;
+		}
 	}
 	else if (this->GetObjectType() == OBJECT_TYPE::ENEMY_BULLET)
 	{
-		// 플레이어 피격 판정
-		/*int y = 0;
-		int x = 0;
-		for (int i = 0; i < (int)Enemybullet.size(); ++i)
+		this->_y += 1;
+
+		if (this->_y >= dfSCREEN_HEIGHT)
 		{
-			y = Enemybullet[i].y + 1;
-			x = Enemybullet[i].x;
-			if (p->x == x && p->y == y)
-			{
-				Enemybullet[i].x = -1;
-				Enemybullet[i].y = -1;
-				p->hp -= 20;
-				if (p->hp <= 0)
-				{
-					p->live = false;
-				}
-			}
-		}*/
+			this->_live = false;
+		}
 	}
 
-	return false;
+	return true;
 }
 
 void BulletObject::Render()
 {
 	if (this->GetObjectType() == OBJECT_TYPE::PLAYER_BULLET)
 	{
-		// 총알 이동
-		/*for (int i = 0; i < (int)Playerbullet.size(); ++i)
-		{
-			if (Playerbullet[i].x != -1 && Playerbullet[i].y != -1)
-			{
-				g_screenBuffer->Sprite_Draw(Playerbullet[i].x, Playerbullet[i].y, '^');
-				Playerbullet[i].y -= 1;
-
-				if (Playerbullet[i].y < 0)
-				{
-					Playerbullet[i].y = -1;
-					Playerbullet[i].x = -1;
-				}
-			}
-		}*/
+		g_screenBuffer->Sprite_Draw(this->_x, this->_y, '^');
 	}
 	else if (this->GetObjectType() == OBJECT_TYPE::ENEMY_BULLET)
 	{
-		// 적 총알 이동
-		/*for (int i = 0; i < (int)Enemybullet.size(); ++i)
-		{
-			if (Enemybullet[i].x != -1 && Enemybullet[i].y != -1)
-			{
-				g_screenBuffer->Sprite_Draw(Enemybullet[i].x, Enemybullet[i].y, 'v');
-				Enemybullet[i].y += 1;
-
-				if (Enemybullet[i].y >= dfSCREEN_HEIGHT)
-				{
-					Enemybullet[i].x = -1;
-					Enemybullet[i].y = -1;
-				}
-			}
-		}*/
+		g_screenBuffer->Sprite_Draw(this->_x, this->_y, 'v');
 	}
 }
 
 bool BulletObject::RemoveObject()
 {
-	return false;
+	if (this->_live)
+	{
+		return false;
+	}
+
+	g_managerObject->DestoryObject(this);
+
+	return true;
 }
 
+// 플레이어 혹은 적이 변수로 들어옴
 bool BulletObject::OnCollision(IBaseObject* obj)
 {
-	return false;
+	// 플레이어 혹은 적 총알과의 충돌은 무시
+	if (obj->GetObjectType() == OBJECT_TYPE::ENEMY_BULLET
+		|| obj->GetObjectType() == OBJECT_TYPE::PLAYER_BULLET)
+	{
+		return false;
+	}
+
+	this->_live = false;
+	return true;
 }

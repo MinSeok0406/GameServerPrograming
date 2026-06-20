@@ -58,9 +58,25 @@ void ManagerObject::DestoryObject(IBaseObject* obj)
 
 bool ManagerObject::Update()
 {
-	for (auto& obj : _objectList)
+	auto iter = _objectList.begin();
+
+	for (; iter != _objectList.end(); ++iter)
 	{
-		obj->Update();
+		auto pObject = *iter;
+		pObject->Update();
+
+		// 충돌 처리
+		auto targetIter = iter;
+		for (++targetIter; targetIter != _objectList.end(); ++targetIter)
+		{
+			auto pTargetObject = *targetIter;
+			if (pObject->GetX() == pTargetObject->GetX()
+				&& pObject->GetY() == pTargetObject->GetY())
+			{
+				pObject->OnCollision(pTargetObject);
+				pTargetObject->OnCollision(pObject);
+			}
+		}
 	}
 
 	return true;
@@ -76,7 +92,7 @@ void ManagerObject::Render()
 
 void ManagerObject::RemoveObject()
 {
-	for (auto obj : _objectList)
+	for (auto& obj : _objectList)
 	{
 		obj->RemoveObject();
 	}

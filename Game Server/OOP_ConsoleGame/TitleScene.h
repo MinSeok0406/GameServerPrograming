@@ -4,5 +4,8 @@
 class TitleScene : public ISceneBase
 {
 public:
+    TitleScene();
+    ~TitleScene();
+
     bool Update() override;
 };

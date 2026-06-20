@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <cstring>
 
 #define dfSCREEN_WIDTH	81
 #define dfSCREEN_HEIGHT	24
@@ -6,11 +7,6 @@
 class ScreenBuffer
 {
 public:
-	ScreenBuffer()
-	{
-		memset(_screenBuffer, 0, sizeof(_screenBuffer));
-	}
-
 	// 버퍼의 내용을 화면으로 찍어주는 함수
 	void Buffer_Flip(void);
 
@@ -43,5 +39,6 @@ private:
 	char _screenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
 	static ScreenBuffer* _pScreenBuffer;
 
+	ScreenBuffer() = default;
 	~ScreenBuffer() = default;
 };

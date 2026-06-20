@@ -16,5 +16,4 @@ public:
     ~ISceneBase() = default;
 
     virtual bool Update() = 0;
-protected:
 };

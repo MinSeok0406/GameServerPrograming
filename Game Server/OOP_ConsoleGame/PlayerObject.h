@@ -19,6 +19,4 @@ public:
 protected:
 	bool _live;
 	int _hp;
-	int _x;
-	int _y;
 };

@@ -21,8 +21,6 @@ protected:
 	bool _live;
 	bool _isMove;
 	char _sprite;
-	int _x;
-	int _y;
 	int _moveX;
 	int _moveY;
 };

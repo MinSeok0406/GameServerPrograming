@@ -1,14 +1,18 @@
 ﻿#include <Windows.h>
 #include "PlayerObject.h"
 #include "ManagerObject.h"
+#include "SceneManager.h"
+#include "Console.h"
 #include "Buffer.h"
 using namespace std;
 
+extern Console* g_console;
+extern SceneManager* g_sceneManager;
 extern ScreenBuffer* g_screenBuffer;
 extern ManagerObject* g_managerObject;
 
 PlayerObject::PlayerObject(int live, int hp, int x, int y)
-	: _live(live), _hp(hp), _x(x), _y(y), IBaseObject(OBJECT_TYPE::PLAYER)
+	: _live(live), _hp(hp), IBaseObject(OBJECT_TYPE::PLAYER, x, y)
 {
 }
 
@@ -35,6 +39,9 @@ bool PlayerObject::RemoveObject()
 	if (die())
 	{
 		g_managerObject->DestoryObject(this);
+		g_sceneManager->loadScene(SCENE::OVER);
+		g_console->cs_ClearScreen();
+
 		return true;
 	}
 
@@ -42,9 +49,21 @@ bool PlayerObject::RemoveObject()
 }
 
 // _live 멤버변수 변경될 수 있는 함수
+// 적 총알이 무조건 변수로 들어옴
 bool PlayerObject::OnCollision(IBaseObject* obj)
 {
-	return false;
+	if (obj->GetObjectType() != OBJECT_TYPE::ENEMY_BULLET)
+	{
+		return false;
+	}
+
+	this->_hp -= 10;
+	if (this->_hp <= 0)
+	{
+		this->_live = false;
+	}
+
+	return true;
 }
 
 void PlayerObject::movement()

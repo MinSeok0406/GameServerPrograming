@@ -1,15 +1,17 @@
 ﻿#include <iostream>
 #include <string>
+#include <vector>
 #include <Windows.h>
 #include "Console.h"
 #include "Buffer.h"
-#include "UpdateScene.h"
 #include "ManagerObject.h"
 #include "SceneManager.h"
 #include "TitleScene.h"
 using namespace std;
 
 #pragma comment(lib, "Winmm.lib")
+
+#define LENGTH 1024
 
 ScreenBuffer* g_screenBuffer = nullptr;
 Console* g_console = nullptr;
@@ -33,6 +35,8 @@ int main()
     g_managerObject = ManagerObject::getInstance();
     g_sceneManager = SceneManager::getInstance();
     srand((unsigned int)time(nullptr));
+
+    g_console->cs_Initial();
 
     FILE* fp;
     fopen_s(&fp, "Stage/Stage.txt", "rb");

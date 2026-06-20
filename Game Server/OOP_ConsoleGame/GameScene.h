@@ -4,5 +4,8 @@
 class GameScene : public ISceneBase
 {
 public:
+    GameScene();
+    ~GameScene();
+
     bool Update() override;
 };

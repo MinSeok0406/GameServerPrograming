@@ -13,6 +13,5 @@ public:
 	bool OnCollision(IBaseObject* obj) override;
 
 protected:
-	int _x;
-	int _y;
+	bool _live;
 };
