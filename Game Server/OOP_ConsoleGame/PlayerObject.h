@@ -17,6 +17,5 @@ public:
 	bool die();
 
 protected:
-	bool _live;
 	int _hp;
 };

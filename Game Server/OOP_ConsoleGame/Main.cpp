@@ -1,12 +1,12 @@
 ﻿#include <iostream>
 #include <string>
-#include <vector>
 #include <Windows.h>
 #include "Console.h"
 #include "Buffer.h"
 #include "ManagerObject.h"
 #include "SceneManager.h"
 #include "TitleScene.h"
+#include "Profile.h"
 using namespace std;
 
 #pragma comment(lib, "Winmm.lib")
@@ -27,7 +27,7 @@ char enemyInfo[256][6];
 int g_enemyBufferOffset = 0;
 int enemyTypeCnt = 0;
 
-int main()
+int wmain()
 {
     timeBeginPeriod(1);
     g_screenBuffer = ScreenBuffer::getInstance();
@@ -128,6 +128,8 @@ int main()
     g_console->destoryInstance();
     g_managerObject->destoryInstance();
     g_sceneManager->destoryInstance();
+
+    ProfileDataOutText(L"profile.txt");
 
     return 0;
 }

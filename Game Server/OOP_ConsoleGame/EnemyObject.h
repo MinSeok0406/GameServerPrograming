@@ -15,10 +15,8 @@ public:
 
 	void movement();
 	void attack();
-	bool die();
 
 protected:
-	bool _live;
 	bool _isMove;
 	char _sprite;
 	int _moveX;

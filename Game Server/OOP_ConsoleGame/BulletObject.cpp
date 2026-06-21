@@ -5,8 +5,8 @@
 extern ScreenBuffer* g_screenBuffer;
 extern ManagerObject* g_managerObject;
 
-BulletObject::BulletObject(int x, int y, OBJECT_TYPE objType)
-	: _live(true), IBaseObject(objType, x, y)
+BulletObject::BulletObject(OBJECT_TYPE objType, int x, int y, bool live)
+	: IBaseObject(objType, x, y, live)
 {
 }
 
@@ -52,26 +52,22 @@ void BulletObject::Render()
 
 bool BulletObject::RemoveObject()
 {
-	if (this->_live)
-	{
-		return false;
-	}
-
-	g_managerObject->DestoryObject(this);
-
-	return true;
+	return !this->_live;
 }
 
 // 플레이어 혹은 적이 변수로 들어옴
 bool BulletObject::OnCollision(IBaseObject* obj)
 {
-	// 플레이어 혹은 적 총알과의 충돌은 무시
-	if (obj->GetObjectType() == OBJECT_TYPE::ENEMY_BULLET
-		|| obj->GetObjectType() == OBJECT_TYPE::PLAYER_BULLET)
+	if (this->GetObjectType() == OBJECT_TYPE::ENEMY_BULLET &&
+		obj->GetObjectType() == OBJECT_TYPE::PLAYER)
 	{
-		return false;
+		this->_live = false;
 	}
-
-	this->_live = false;
+	else if (this->GetObjectType() == OBJECT_TYPE::PLAYER_BULLET &&
+		obj->GetObjectType() == OBJECT_TYPE::ENEMY)
+	{
+		this->_live = false;
+	}
+	
 	return true;
 }

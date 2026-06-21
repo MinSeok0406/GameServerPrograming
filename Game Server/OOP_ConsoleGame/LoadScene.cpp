@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include <string>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 struct Enemy
@@ -48,6 +49,7 @@ bool LoadScene::Update()
     }
 
     g_managerObject->_objectList.clear();
+    g_managerObject->_tempList.clear();
 
     // 스테이지에 맞는 정보 읽기
     string arr;
@@ -94,6 +96,7 @@ bool LoadScene::Update()
     g_managerObject->CreateObject(OBJECT_TYPE::PLAYER);
     EnemyInit();
 
+    std::swap(g_managerObject->_objectList, g_managerObject->_tempList);
     g_sceneManager->loadScene(SCENE::GAME);
 
     return true;
@@ -102,6 +105,7 @@ bool LoadScene::Update()
 void LoadScene::EnemyInit()
 {
     // Stage에 나오는 스프라이트 좌표 수집
+    enemies.clear();
     int x = 0;
     int y = 0;
     int cnt = 0;

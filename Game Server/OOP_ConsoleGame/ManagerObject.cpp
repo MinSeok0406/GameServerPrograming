@@ -2,12 +2,22 @@
 #include "PlayerObject.h"
 #include "EnemyObject.h"
 #include "BulletObject.h"
+#include "Profile.h"
+
+#ifdef PROFILE
+#define PRO_BEGIN(TagName)	ProfileBegin(TagName)
+#define PRO_END(TagName)	ProfileEnd(TagName)
+#else
+#define PRO_BEGIN(TagName)	OUT
+#define PRO_END(TagName)	OUT
+#endif
 
 ManagerObject* ManagerObject::_pManagerObject = nullptr;
 
 // 플레이어 오브젝트 생성 함수
 void ManagerObject::CreateObject(OBJECT_TYPE objType)
 {
+	PRO_BEGIN(L"CreateObject");
 	IBaseObject* ibo;
 
 	if (objType == OBJECT_TYPE::PLAYER)
@@ -15,12 +25,15 @@ void ManagerObject::CreateObject(OBJECT_TYPE objType)
 		ibo = new PlayerObject(true, 100, 40, 20);
 	}
 
-	_objectList.push_back(ibo);
+	_tempList.push_back(ibo);
+	PRO_END(L"CreateObject");
 }
 
 // 적 오브젝트 생성 함수
 void ManagerObject::CreateObject(OBJECT_TYPE objType, bool live, bool isMove, char sprite, int x, int y, int moveX, int moveY)
 {
+	PRO_BEGIN(L"CreateObject");
+
 	IBaseObject* ibo;
 
 	if (objType == OBJECT_TYPE::ENEMY)
@@ -28,41 +41,43 @@ void ManagerObject::CreateObject(OBJECT_TYPE objType, bool live, bool isMove, ch
 		ibo = new EnemyObject(live, isMove, sprite, x, y, moveX, moveY);
 	}
 
-	_objectList.push_back(ibo);
+	_tempList.push_back(ibo);
+	PRO_END(L"CreateObject");
 }
 
 // 위치가 필요한 오브젝트 생성 함수
 void ManagerObject::CreateObject(OBJECT_TYPE objType, int x, int y)
 {
+	PRO_BEGIN(L"CreateObject");
+
 	IBaseObject* ibo;
 
 	if (objType == OBJECT_TYPE::PLAYER_BULLET)
 	{
 		// 플레이어 쪽에서 위치 줘야됨
-		ibo = new BulletObject(x, y, OBJECT_TYPE::PLAYER_BULLET);
+		ibo = new BulletObject(OBJECT_TYPE::PLAYER_BULLET, x, y, true);
 	}
 	else if (objType == OBJECT_TYPE::ENEMY_BULLET)
 	{
 		// 적 쪽에서 위치 줘야됨
-		ibo = new BulletObject(x, y, OBJECT_TYPE::ENEMY_BULLET);
+		ibo = new BulletObject(OBJECT_TYPE::ENEMY_BULLET, x, y, true);
 	}
 
-	_objectList.push_back(ibo);
-}
-
-void ManagerObject::DestoryObject(IBaseObject* obj)
-{
-	std::erase(_objectList, obj);
-	delete obj;
+	_tempList.push_back(ibo);
+	PRO_END(L"CreateObject");
 }
 
 bool ManagerObject::Update()
 {
-	auto iter = _objectList.begin();
+	PRO_BEGIN(L"Update");
 
-	for (; iter != _objectList.end(); ++iter)
+	for (auto iter = _objectList.begin(); iter != _objectList.end(); ++iter)
 	{
 		auto pObject = *iter;
+		if (!pObject->GetLive())
+		{
+			continue;
+		}
 		pObject->Update();
 
 		// 충돌 처리
@@ -70,6 +85,11 @@ bool ManagerObject::Update()
 		for (++targetIter; targetIter != _objectList.end(); ++targetIter)
 		{
 			auto pTargetObject = *targetIter;
+			if (!pTargetObject->GetLive())
+			{
+				continue;
+			}
+
 			if (pObject->GetX() == pTargetObject->GetX()
 				&& pObject->GetY() == pTargetObject->GetY())
 			{
@@ -79,21 +99,54 @@ bool ManagerObject::Update()
 		}
 	}
 
+	if (_tempList.empty() == false)
+	{
+		_objectList.insert(_objectList.cend(), _tempList.cbegin(), _tempList.cend());
+		_tempList.clear();
+	}
+
+	PRO_END(L"Update");
 	return true;
 }
 
 void ManagerObject::Render()
 {
+	PRO_BEGIN(L"Render");
 	for (auto& obj : _objectList)
 	{
+		if (!obj->GetLive())
+		{
+			continue;
+		}
+
 		obj->Render();
 	}
+	PRO_END(L"Render");
 }
 
 void ManagerObject::RemoveObject()
 {
-	for (auto& obj : _objectList)
+	PRO_BEGIN(L"RemoveObject");
+
+	for (auto iter = _objectList.cbegin(); iter != _objectList.cend();)
 	{
-		obj->RemoveObject();
+		auto obj = *iter;
+		if (obj == nullptr)
+		{
+			iter = _objectList.erase(iter);
+			continue;
+		}
+
+		if (obj->RemoveObject())
+		{
+			delete obj;
+			iter = _objectList.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
 	}
+
+	PRO_END(L"RemoveObject");
 }

@@ -156,6 +156,7 @@
     <ClCompile Include="ManagerObject.cpp" />
     <ClCompile Include="OverScene.cpp" />
     <ClCompile Include="PlayerObject.cpp" />
+    <ClCompile Include="Profile.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
@@ -172,6 +173,7 @@
     <ClInclude Include="ManagerObject.h" />
     <ClInclude Include="OverScene.h" />
     <ClInclude Include="PlayerObject.h" />
+    <ClInclude Include="Profile.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="TitleScene.h" />
   </ItemGroup>

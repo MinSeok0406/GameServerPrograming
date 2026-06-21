@@ -28,12 +28,12 @@ void ProfileBegin(const WCHAR* szName)
             break;
         }
     }
-    
+
     g_profile[cnt].lFlag = true;
     wcscpy(g_profile[cnt].szName, szName);
     QueryPerformanceCounter(&g_profile[cnt].lStartTime);
     g_profile[cnt].iCall = 1;
-    
+
     for (auto i = 0; i < 2; ++i)
     {
         g_profile[cnt].iMax[i] = (__int64)-1e9;
@@ -97,7 +97,7 @@ void ProfileDataOutText(const WCHAR* szFileName)
 
         fwprintf(fp, L"\t %s| \t %.4lf㎲| \t %.4lf㎲| \t %.4lf㎲| \t %lld|\n",
             g_profile[i].szName,
-            ((double)g_profile[i].iTotalTime / g_profile[i].iCall) / MICROSECOND, 
+            ((double)g_profile[i].iTotalTime / g_profile[i].iCall) / MICROSECOND,
             (double)g_profile[i].iMin[0] / MICROSECOND,
             (double)g_profile[i].iMax[0] / MICROSECOND, g_profile[i].iCall);
     }

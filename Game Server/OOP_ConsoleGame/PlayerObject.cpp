@@ -12,7 +12,7 @@ extern ScreenBuffer* g_screenBuffer;
 extern ManagerObject* g_managerObject;
 
 PlayerObject::PlayerObject(int live, int hp, int x, int y)
-	: _live(live), _hp(hp), IBaseObject(OBJECT_TYPE::PLAYER, x, y)
+	: _hp(hp), IBaseObject(OBJECT_TYPE::PLAYER, x, y, live)
 {
 }
 
@@ -22,8 +22,8 @@ PlayerObject::~PlayerObject()
 
 bool PlayerObject::Update()
 {
-	movement();
-	attack();
+	this->movement();
+	this->attack();
 
 	return true;
 }
@@ -36,9 +36,8 @@ void PlayerObject::Render()
 
 bool PlayerObject::RemoveObject()
 {
-	if (die())
+	if (this->die())
 	{
-		g_managerObject->DestoryObject(this);
 		g_sceneManager->loadScene(SCENE::OVER);
 		g_console->cs_ClearScreen();
 
@@ -118,12 +117,5 @@ void PlayerObject::attack()
 
 bool PlayerObject::die()
 {
-	if (this->_live == false)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return !this->_live;
 }

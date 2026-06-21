@@ -9,7 +9,6 @@ public:
 	void CreateObject(OBJECT_TYPE objType, int x, int y);
 	void CreateObject(OBJECT_TYPE objType, bool live, bool isMove,
 		char sprite, int x, int y, int moveX, int moveY);
-	void DestoryObject(IBaseObject* obj);
 
 	bool Update();
 	void Render();
@@ -35,7 +34,7 @@ public:
 	}
 
 	std::list<IBaseObject*> _objectList;
-
+	std::list<IBaseObject*> _tempList;
 private:
 	static ManagerObject* _pManagerObject;
 

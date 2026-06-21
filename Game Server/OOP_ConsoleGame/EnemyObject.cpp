@@ -1,23 +1,20 @@
 ﻿#include "EnemyObject.h"
 #include <iostream>
 #include <Windows.h>
-#include "Console.h"
 #include "SceneManager.h"
 #include "ManagerObject.h"
 #include "Buffer.h"
 using namespace std;
 
-extern Console* g_console;
 extern SceneManager* g_sceneManager;
 extern ScreenBuffer* g_screenBuffer;
 extern ManagerObject* g_managerObject;
-extern int g_stage;
 
 int tempTick = timeGetTime();
 
 EnemyObject::EnemyObject(bool live, bool isMove, char sprite, int x, int y, int moveX, int moveY)
-    : _live(live), _isMove(isMove), _sprite(sprite), _moveX(moveX), _moveY(moveY),
-    IBaseObject(OBJECT_TYPE::ENEMY, x, y)
+    : _isMove(isMove), _sprite(sprite), _moveX(moveX), _moveY(moveY),
+    IBaseObject(OBJECT_TYPE::ENEMY, x, y, live)
 {
 
 }
@@ -28,8 +25,8 @@ EnemyObject::~EnemyObject()
 
 bool EnemyObject::Update()
 {
-    movement();
-    attack();
+    this->movement();
+    this->attack();
 
     return true;
 }
@@ -42,34 +39,7 @@ void EnemyObject::Render()
 
 bool EnemyObject::RemoveObject()
 {
-    if (die())
-    {
-        g_managerObject->DestoryObject(this);
-        
-        // 오브젝트 리스트에 객체가 없다면...
-        if (g_managerObject->_objectList.empty())
-        {
-            g_sceneManager->loadScene(SCENE::OVER);
-            g_console->cs_ClearScreen();
-            return true;
-        }
-
-        // 적이 필드에 있는지 검사
-        for (auto& objList : g_managerObject->_objectList)
-        {
-            if (objList->GetObjectType() == OBJECT_TYPE::ENEMY)
-            {
-                return false;
-            }
-        }
-
-        g_sceneManager->loadScene(SCENE::LOAD);
-        g_stage++;
-        g_console->cs_ClearScreen();
-        return true;
-    }
-
-    return false;
+    return !this->_live;
 }
 
 // _live 멤버변수 변경될 수 있는 함수
@@ -122,21 +92,9 @@ void EnemyObject::attack()
     int randValue = rand() % 100 + 1;
 
     // 적 총알 생성
-    if (randValue > 90)
+    if (randValue > 95)
     {
-        g_managerObject->CreateObject(OBJECT_TYPE::ENEMY_BULLET,
+       g_managerObject->CreateObject(OBJECT_TYPE::ENEMY_BULLET,
             this->_x, this->_y + 1);
-    }
-}
-
-bool EnemyObject::die()
-{
-    if (this->_live == false)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
     }
 }

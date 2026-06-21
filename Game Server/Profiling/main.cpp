@@ -19,15 +19,15 @@ using namespace std;
 
 void Test()
 {
-	PRO_BEGIN(_T("Test"));
+	PRO_BEGIN(L"Test");
 
 	auto t = (rand() % 1000) + 1000;
 	Sleep(t);
 
-	PRO_END(_T("Test"));
+	PRO_END(L"Test");
 }
 
-int main()
+int wmain()
 {
 	timeBeginPeriod(1);
 	srand((unsigned int)time(nullptr));
@@ -37,7 +37,7 @@ int main()
 		Test();
 	}
 
-	ProfileDataOutText(_T("profile.txt"));
+	ProfileDataOutText(L"profile.txt");
 
 	return 0;
 }

@@ -19,6 +19,9 @@
     <Filter Include="Scene\Manager">
       <UniqueIdentifier>{91a3a2f6-ee30-4518-a11c-d15ab3b1cc80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Profile">
+      <UniqueIdentifier>{60ea642d-f0b7-4e68-954a-bd46b2fce176}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -66,6 +69,9 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Profile.cpp">
+      <Filter>Profile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EnemyObject.h">
@@ -109,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="TitleScene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Profile.h">
+      <Filter>Profile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
