@@ -14,7 +14,6 @@ public:
 
 	void movement();
 	void attack();
-	bool die();
 
 protected:
 	int _hp;

@@ -35,14 +35,13 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-
+DWORD arr[4096];
 
 int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    
     
 
     return 0;

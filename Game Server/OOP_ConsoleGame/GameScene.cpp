@@ -41,7 +41,7 @@ bool GameScene::Update()
     for (auto& objList : g_managerObject->_objectList)
     {
         if ((objList->GetObjectType() == OBJECT_TYPE::ENEMY) &&
-            (objList->GetLive() == true))
+            (objList->RemoveObject() == false))
         {
             flag = false;
             break;

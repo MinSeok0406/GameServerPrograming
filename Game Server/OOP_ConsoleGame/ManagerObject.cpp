@@ -71,10 +71,10 @@ bool ManagerObject::Update()
 {
 	PRO_BEGIN(L"Update");
 
-	for (auto iter = _objectList.begin(); iter != _objectList.end(); ++iter)
+	for (auto iter = _objectList.cbegin(); iter != _objectList.cend(); ++iter)
 	{
 		auto pObject = *iter;
-		if (!pObject->GetLive())
+		if (!pObject->RemoveObject())
 		{
 			continue;
 		}
@@ -82,10 +82,10 @@ bool ManagerObject::Update()
 
 		// 충돌 처리
 		auto targetIter = iter;
-		for (++targetIter; targetIter != _objectList.end(); ++targetIter)
+		for (++targetIter; targetIter != _objectList.cend(); ++targetIter)
 		{
 			auto pTargetObject = *targetIter;
-			if (!pTargetObject->GetLive())
+			if (!pTargetObject->RemoveObject())
 			{
 				continue;
 			}
@@ -99,10 +99,10 @@ bool ManagerObject::Update()
 		}
 	}
 
+	// 추가된 오브젝트 리스트에 추가
 	if (_tempList.empty() == false)
 	{
-		_objectList.insert(_objectList.cend(), _tempList.cbegin(), _tempList.cend());
-		_tempList.clear();
+		_objectList.splice(_objectList.cend(), _tempList);
 	}
 
 	PRO_END(L"Update");
@@ -114,7 +114,7 @@ void ManagerObject::Render()
 	PRO_BEGIN(L"Render");
 	for (auto& obj : _objectList)
 	{
-		if (!obj->GetLive())
+		if (!obj->RemoveObject())
 		{
 			continue;
 		}

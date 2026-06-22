@@ -24,7 +24,6 @@ public:
     // 개선이 필요한 코드
     int GetX() { return _x; }
     int GetY() { return _y; }
-    bool GetLive() { return _live; }
 
 protected:
     bool _live;

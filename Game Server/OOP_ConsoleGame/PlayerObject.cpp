@@ -36,7 +36,7 @@ void PlayerObject::Render()
 
 bool PlayerObject::RemoveObject()
 {
-	if (this->die())
+	if (!this->_live)
 	{
 		g_sceneManager->loadScene(SCENE::OVER);
 		g_console->cs_ClearScreen();
@@ -113,9 +113,4 @@ void PlayerObject::attack()
 		g_managerObject->CreateObject(OBJECT_TYPE::PLAYER_BULLET,
 			this->_x, this->_y - 1);
 	}
-}
-
-bool PlayerObject::die()
-{
-	return !this->_live;
 }
