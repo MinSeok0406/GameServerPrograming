@@ -22,6 +22,15 @@
     <Filter Include="STL_Practice\Vector_Practice">
       <UniqueIdentifier>{8d0aba03-8094-47f3-a74c-3af800e2f085}</UniqueIdentifier>
     </Filter>
+    <Filter Include="STL_Practice\Queue_Practice">
+      <UniqueIdentifier>{585affff-7050-40fc-ac32-9635711387e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL_Practice\Map_Practice">
+      <UniqueIdentifier>{dda2d763-8104-4d4c-8b00-a569b98150ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL_Practice\Set_Practice">
+      <UniqueIdentifier>{48d08514-c508-44b8-82b6-2fa03b5a8201}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EmployeeTest.cpp">
@@ -60,11 +69,8 @@
     <ClCompile Include="Array_Main.cpp">
       <Filter>STL_Practice\Array_Practice</Filter>
     </ClCompile>
-    <ClCompile Include="RoundRobin.cpp">
-      <Filter>STL_Practice\Vector_Practice</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector_Main.cpp">
-      <Filter>STL_Practice\Vector_Practice</Filter>
+    <ClCompile Include="BankDB.cpp">
+      <Filter>STL_Practice\Map_Practice</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +79,15 @@
     </ClInclude>
     <ClInclude Include="RoundRobin.h">
       <Filter>STL_Practice\Vector_Practice</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.h">
+      <Filter>STL_Practice\Queue_Practice</Filter>
+    </ClInclude>
+    <ClInclude Include="BankDB.h">
+      <Filter>STL_Practice\Map_Practice</Filter>
+    </ClInclude>
+    <ClInclude Include="AccessList.h">
+      <Filter>STL_Practice\Set_Practice</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -125,6 +125,8 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="Array.cpp" />
     <ClCompile Include="Array_Main.cpp" />
+    <ClCompile Include="BankDB.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Database.ixx" />
     <ClCompile Include="DatabaseTest.cpp" />
@@ -143,12 +146,13 @@
     <ClCompile Include="Employee01.ixx" />
     <ClCompile Include="EmployeeTest.cpp" />
     <ClCompile Include="Practice01.cpp" />
-    <ClCompile Include="RoundRobin.cpp" />
     <ClCompile Include="UserInterface.cpp" />
-    <ClCompile Include="Vector_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccessList.h" />
     <ClInclude Include="Array.h" />
+    <ClInclude Include="BankDB.h" />
+    <ClInclude Include="Queue.h" />
     <ClInclude Include="RoundRobin.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
