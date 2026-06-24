@@ -4,7 +4,7 @@ using namespace std;
 
 #pragma comment(lib, "winmm.lib")
 
-int main()
+int wmain()
 {
 	timeBeginPeriod(1);
 

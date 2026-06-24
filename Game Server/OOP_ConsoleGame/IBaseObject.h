@@ -22,8 +22,8 @@ public:
     OBJECT_TYPE GetObjectType();
 
     // 개선이 필요한 코드
-    int GetX() { return _x; }
-    int GetY() { return _y; }
+    virtual int GetX() = 0;
+    virtual int GetY() = 0;
 
 protected:
     bool _live;

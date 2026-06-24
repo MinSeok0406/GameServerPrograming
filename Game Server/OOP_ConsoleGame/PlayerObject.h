@@ -15,6 +15,16 @@ public:
 	void movement();
 	void attack();
 
+	int GetX() override
+	{
+		return this->_x;
+	}
+
+	int GetY() override
+	{
+		return this->_y;
+	}
+
 protected:
 	int _hp;
 };

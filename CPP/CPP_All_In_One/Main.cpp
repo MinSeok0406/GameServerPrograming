@@ -35,14 +35,50 @@ using ll = long long;
 #define tclog std::clog
 #endif
 
-DWORD arr[4096];
+class Base
+{
+public:
+
+    int Test()
+    {
+        int a = 2;
+
+        int ret = Test2();
+
+        return ret;
+    }
+
+private:
+    virtual int Test2()
+    {
+
+
+        return 0;
+    }
+};
+
+class Derived : public Base
+{
+public:
+    int Test2() override
+    {
+        int b = 4;
+
+        b++;
+        b++;
+
+        return b;
+    }
+};
 
 int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
     system("chcp 65001");
 
-    
+    Base* b = new Derived;
+
+    b->Test();
 
     return 0;
 }

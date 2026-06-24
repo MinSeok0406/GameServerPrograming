@@ -11,4 +11,13 @@ public:
 	void Render() override;
 	bool RemoveObject() override;
 	bool OnCollision(IBaseObject* obj) override;
+	int GetX() override
+	{
+		return this->_x;
+	}
+
+	int GetY() override
+	{
+		return this->_y;
+	}
 };
