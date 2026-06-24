@@ -178,6 +178,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     GRID_SIZE = 16;
                 }
             }
+            InvalidateRect(hWnd, NULL, true);
         }
         break;
     case WM_MOUSEMOVE:

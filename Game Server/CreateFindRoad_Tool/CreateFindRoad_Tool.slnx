@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CreateFindRoad_Tool.vcxproj" />
+  <Project Path="CreateFindRoad_Tool.vcxproj" Id="a30d8f8b-5b35-46dc-8a04-f570ebc3c306" />
 </Solution>
