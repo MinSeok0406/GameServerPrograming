@@ -74,7 +74,7 @@ bool ManagerObject::Update()
 	for (auto iter = _objectList.cbegin(); iter != _objectList.cend(); ++iter)
 	{
 		auto pObject = *iter;
-		if (!pObject->RemoveObject())
+		if (pObject->RemoveObject())
 		{
 			continue;
 		}
@@ -85,7 +85,7 @@ bool ManagerObject::Update()
 		for (++targetIter; targetIter != _objectList.cend(); ++targetIter)
 		{
 			auto pTargetObject = *targetIter;
-			if (!pTargetObject->RemoveObject())
+			if (pTargetObject->RemoveObject())
 			{
 				continue;
 			}
@@ -114,7 +114,7 @@ void ManagerObject::Render()
 	PRO_BEGIN(L"Render");
 	for (auto& obj : _objectList)
 	{
-		if (!obj->RemoveObject())
+		if (obj->RemoveObject())
 		{
 			continue;
 		}
