@@ -1,36 +1,54 @@
 ﻿#include "Parser.h"
+#include <cstdio>
+#include <tchar.h>
 
-BOOL Parser::LoadFile(const char* str)
+Parser* Parser::_pParser = nullptr;
+
+extern Parser* parser;
+
+BOOL Parser::LoadFile(const WCHAR* str)
 {
+    FILE* fp;
+    _wfopen_s(&fp, str, L"rb");
+    if (fp == nullptr)
+    {
+        // 에러 코드
+    }
 
+    auto result = fread(chpBuff, sizeof(str), 1, fp);
+    if (result != 1)
+    {
+        // 에러 코드
+    }
+
+    fclose(fp);
 
     return 0;
 }
 
-BOOL Parser::GetValue(const char* str, int* value)
+BOOL Parser::GetValue(const WCHAR* str, int* value)
 {
-    char* chpBuff;
-    char chWord[256];
+    WCHAR chWord[256];
     int iLength;
 
     while (GetNextWord(&chpBuff, &iLength))
     {
-        memset(chWord, 0, 256);
-        memcpy(chWord, chpBuff, iLength);
+        wmemset(chWord, 0, 256);
+        wmemcpy(chWord, chpBuff, iLength);
 
-        if (0 == strcmp(str, chWord))
+        if (0 == wcscmp(str, chWord))
         {
             if (GetNextWord(&chpBuff, &iLength))
             {
-                memset(chWord, 0, 256);
-                memcpy(chWord, chpBuff, iLength);
-                if (0 == strcmp(chWord, "="))
+                wmemset(chWord, 0, 256);
+                wmemcpy(chWord, chpBuff, iLength);
+                if (0 == wcscmp(chWord, L"="))
                 {
                     if (GetNextWord(&chpBuff, &iLength))
                     {
-                        memset(chWord, 0, 256);
-                        memcpy(chWord, chpBuff, iLength);
-                        *value = atoi(chWord);
+                        wmemset(chWord, 0, 256);
+                        wmemcpy(chWord, chpBuff, iLength);
+                        *value = _wtoi(chWord);
                         return TRUE;
                     }
                     return FALSE;
@@ -45,15 +63,33 @@ BOOL Parser::GetValue(const char* str, int* value)
 
 BOOL SkipNoneCommand(void)
 {
+    WCHAR* buffer = parser->chpBuff;
+
+    while (true)
+    {
+        if (*buffer == ',' || *buffer == '"' || *buffer == 0x20 ||
+            *buffer == 0x08 || *buffer == 0x09 || *buffer == 0x0a ||
+            *buffer == 0x0d)
+        {
+            break;
+        }
+
+        buffer++;
+    }
+
     return 0;
 }
 
-BOOL GetNextWord(char** chppBuffer, int* ipLength)
+BOOL GetNextWord(WCHAR** chppBuffer, int* ipLength)
 {
+    
+
+
+
     return 0;
 }
 
-BOOL GetStringWord(char** chppBuffer, int* ipLength)
+BOOL GetStringWord(WCHAR** chppBuffer, int* ipLength)
 {
     return 0;
 }

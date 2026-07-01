@@ -4,10 +4,32 @@
 class Parser
 {
 public:
-    BOOL LoadFile(const char* str);
-    BOOL GetValue(const char* str, int* value);
+    BOOL LoadFile(const WCHAR* str);
+    BOOL GetValue(const WCHAR* str, int* value);
+
+    static Parser* GetInstance()
+    {
+        if (_pParser == nullptr)
+        {
+            _pParser = new Parser();
+        }
+
+        return _pParser;
+    }
+
+    void DestoryInstance()
+    {
+        if (_pParser)
+        {
+            delete _pParser;
+            _pParser = nullptr;
+        }
+    }
+
+    WCHAR* chpBuff;
 
 private:
+    static Parser* _pParser;
     Parser() = default;
     ~Parser() = default;
 };
@@ -16,7 +38,7 @@ private:
 BOOL SkipNoneCommand(void);
 
 // 다음 단어 얻기
-BOOL GetNextWord(char** chppBuffer, int* ipLength);
+BOOL GetNextWord(WCHAR** chppBuffer, int* ipLength);
 
 // 문자열 얻기
-BOOL GetStringWord(char** chppBuffer, int* ipLength);
+BOOL GetStringWord(WCHAR** chppBuffer, int* ipLength);

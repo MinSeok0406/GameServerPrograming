@@ -8,7 +8,7 @@ void* alloc_overflow_check(int size)
 	{
 		if (totalPage <= size)
 		{
-			totalPage *= 2;
+			totalPage += 1024 * 64;
 		}
 		else
 		{
@@ -16,18 +16,14 @@ void* alloc_overflow_check(int size)
 		}
 	}
 
-	int onePage = 1024 * 4;
 	int rangePage = (size + 4095) & ~4095;
 
 	auto vp = VirtualAlloc(0, totalPage, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	char* ptr = (char*)vp;
-	for (auto i = 0x0000; i < rangePage; i += 0x1000)
-	{
-		ptr += onePage;
-	}
+	ptr += rangePage;
 
 	DWORD value;
-	auto isSuccess = VirtualProtect(ptr, onePage, PAGE_NOACCESS, &value);
+	auto isSuccess = VirtualProtect(ptr, rangePage, PAGE_NOACCESS, &value);
 	if (!isSuccess)
 	{
 		return nullptr;
@@ -45,16 +41,11 @@ void* alloc_overflow_check(int size)
 
 void free_overflow_check(void* ptr, int size)
 {
-	int onePage = 1024 * 4;
 	int rangePage = (size + 4095) & ~4095;
 
 	char* p = (char*)ptr;
+	p -= rangePage;
 	p += size;
-
-	for (auto i = 0x0000; i < rangePage; i += 0x1000)
-	{
-		p -= onePage;
-	}
 
 	// 페이지 4KB 시작 부분 맞추기
 	/*

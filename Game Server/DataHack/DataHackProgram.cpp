@@ -6,7 +6,7 @@ using namespace std;
 
 char buffer[4];
 
-int main()
+int wmain()
 {
 	timeBeginPeriod(1);
 
@@ -23,7 +23,7 @@ int main()
 
 	GetSystemInfo(&systemInfo);
 
-	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid); 
+	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 	void* addr = systemInfo.lpMinimumApplicationAddress;
 
 	while (true)
