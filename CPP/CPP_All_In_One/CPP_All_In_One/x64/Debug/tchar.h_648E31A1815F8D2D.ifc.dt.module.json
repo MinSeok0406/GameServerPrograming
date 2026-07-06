@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\x64\\Debug\\tchar.obj",
+            "outputs": [
+                "CPP_All_In_One\\x64\\Debug\\tchar.h_648E31A1815F8D2D.ifc.dt.module.json",
+                "CPP_All_In_One\\x64\\Debug\\tchar.h_648E31A1815F8D2D.ifc.dt.d.json",
+                "CPP_All_In_One\\x64\\Debug\\tchar.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt\\tchar.h",
+                    "source-path": "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\tchar.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -11,23 +11,31 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\concurrencysal.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vadefs.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xkeycheck.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_doom_core.hpp",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\sal.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\concurrencysal.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vadefs.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xkeycheck.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\crtdbg.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime_new_debug.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime_new.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\crtdefs.h",
-            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\use_ansi.h"
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\use_ansi.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\ctime",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\sal.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\concurrencysal.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vadefs.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xkeycheck.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\time.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt.h",
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_wtime.h"
         ],
         "ImportedModules": [],
-        "ImportedHeaderUnits": [
-            {
-                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_doom_core.hpp",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_doom_core.hpp_F306B77E6930B27D.ifc.dt"
-            },
-            {
-                "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\ctime",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\ctime_DC2C836A90E2E85C.ifc.dt"
-            }
-        ]
+        "ImportedHeaderUnits": []
     }
 }

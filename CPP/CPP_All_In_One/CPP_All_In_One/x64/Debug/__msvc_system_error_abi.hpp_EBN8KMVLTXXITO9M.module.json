@@ -5,7 +5,7 @@
         {
             "primary-output": "CPP_All_In_One\\x64\\Debug\\__msvc_system_error_abi.hpp_EBN8KMVLTXXITO9M.obj",
             "outputs": [
-                "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
+                "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
                 "CPP_All_In_One\\x64\\Debug\\__msvc_system_error_abi.hpp_EBN8KMVLTXXITO9M.module.json",
                 "CPP_All_In_One\\x64\\Debug\\__msvc_system_error_abi.hpp_EBN8KMVLTXXITO9M.ifc"
             ],

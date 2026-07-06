@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\cpp\\cpp_all_in_one\\temp.cpp",
+        "Source": "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\temp.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\gameprograming\\cpp\\cpp_all_in_one\\temp.h",
+            "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\temp.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\string",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
@@ -394,8 +394,8 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime_new.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\crtdefs.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\use_ansi.h",
-            "c:\\gameprograming\\cpp\\cpp_all_in_one\\address.h",
-            "c:\\gameprograming\\cpp\\cpp_all_in_one\\date.h"
+            "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\address.h",
+            "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\date.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

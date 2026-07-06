@@ -9,11 +9,10 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-
-
 int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
+
 
     
 

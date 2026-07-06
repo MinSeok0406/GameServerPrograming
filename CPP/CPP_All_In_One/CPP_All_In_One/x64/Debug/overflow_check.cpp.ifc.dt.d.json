@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\cpp\\cpp_all_in_one\\overflow_check.cpp",
+        "Source": "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\overflow_check.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\gameprograming\\cpp\\cpp_all_in_one\\overflow_check.h",
+            "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\overflow_check.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\windows.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winpackagefamily.h",

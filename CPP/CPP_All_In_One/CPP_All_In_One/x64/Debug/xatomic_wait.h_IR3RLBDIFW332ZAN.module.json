@@ -5,7 +5,7 @@
         {
             "primary-output": "CPP_All_In_One\\x64\\Debug\\xatomic_wait.h_IR3RLBDIFW332ZAN.obj",
             "outputs": [
-                "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
+                "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
                 "CPP_All_In_One\\x64\\Debug\\xatomic_wait.h_IR3RLBDIFW332ZAN.module.json",
                 "CPP_All_In_One\\x64\\Debug\\xatomic_wait.h_IR3RLBDIFW332ZAN.ifc"
             ],

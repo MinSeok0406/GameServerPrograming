@@ -5,7 +5,7 @@
         {
             "primary-output": "CPP_All_In_One\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_U923E9QAMH5BFJ0Y.obj",
             "outputs": [
-                "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
+                "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\vc145.pdb",
                 "CPP_All_In_One\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_U923E9QAMH5BFJ0Y.module.json",
                 "CPP_All_In_One\\x64\\Debug\\__msvc_sanitizer_annotate_container.hpp_U923E9QAMH5BFJ0Y.ifc"
             ],

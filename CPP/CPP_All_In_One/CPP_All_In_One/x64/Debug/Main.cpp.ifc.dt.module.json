@@ -358,18 +358,6 @@
                     "unique-on-source-path": true
                 },
                 {
-                    "logical-name": "vector",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
-                    "lookup-method": "include-angle",
-                    "unique-on-source-path": true
-                },
-                {
-                    "logical-name": "__msvc_bit_utils.hpp",
-                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_bit_utils.hpp",
-                    "lookup-method": "include-angle",
-                    "unique-on-source-path": true
-                },
-                {
                     "logical-name": "algorithm",
                     "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\algorithm",
                     "lookup-method": "include-angle",
@@ -384,6 +372,12 @@
                 {
                     "logical-name": "__msvc_int128.hpp",
                     "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_int128.hpp",
+                    "lookup-method": "include-angle",
+                    "unique-on-source-path": true
+                },
+                {
+                    "logical-name": "__msvc_bit_utils.hpp",
+                    "source-path": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_bit_utils.hpp",
                     "lookup-method": "include-angle",
                     "unique-on-source-path": true
                 },

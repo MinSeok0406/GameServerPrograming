@@ -22,31 +22,31 @@
         "ImportedHeaderUnits": [
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_doom_core.hpp",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_doom_core.hpp_8LJMFF3XK32KLFL3.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_doom_core.hpp_8LJMFF3XK32KLFL3.ifc"
             },
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstdlib",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstdlib_3LOADI29Y62K1414.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstdlib_3LOADI29Y62K1414.ifc"
             },
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xatomic.h",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xatomic.h_T8OYISTMC0AQT3WR.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xatomic.h_T8OYISTMC0AQT3WR.ifc"
             },
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\type_traits",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\type_traits_CEK88BVNVWRAFVDJ.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\type_traits_CEK88BVNVWRAFVDJ.ifc"
             },
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstddef",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstddef_GTUT2O4GLAZXBY65.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstddef_GTUT2O4GLAZXBY65.ifc"
             },
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xtr1common",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xtr1common_40T9INK1U7US64I3.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\xtr1common_40T9INK1U7US64I3.ifc"
             },
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstdint",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstdint_IZX859T1Y9FIK0J5.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\cstdint_IZX859T1Y9FIK0J5.ifc"
             }
         ]
     }

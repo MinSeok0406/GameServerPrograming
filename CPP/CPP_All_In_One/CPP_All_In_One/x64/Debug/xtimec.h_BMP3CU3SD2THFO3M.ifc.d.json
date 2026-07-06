@@ -22,11 +22,11 @@
         "ImportedHeaderUnits": [
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_doom_core.hpp",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_doom_core.hpp_8LJMFF3XK32KLFL3.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\__msvc_doom_core.hpp_8LJMFF3XK32KLFL3.ifc"
             },
             {
                 "Header": "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\ctime",
-                "BMI": "C:\\GamePrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\ctime_DYQVW9U4NHIK6W7O.ifc"
+                "BMI": "C:\\GameServerPrograming\\CPP\\CPP_All_In_One\\CPP_All_In_One\\x64\\Debug\\ctime_DYQVW9U4NHIK6W7O.ifc"
             }
         ]
     }
