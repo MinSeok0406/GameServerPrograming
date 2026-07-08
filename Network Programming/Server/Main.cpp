@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include <process.h>
 #include <Windows.h>
+#include <WinSock2.h>
 using namespace std;
 using ll = long long;
 
@@ -14,7 +15,7 @@ int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
 
-
     
+
     return 0;
 }

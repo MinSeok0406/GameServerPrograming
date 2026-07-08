@@ -3,5 +3,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Window_SocketProgramming.vcxproj" />
+  <Project Path="../Client/Client.vcxproj" Id="3fe790eb-44cf-496b-a6e2-eb280e2557d0" />
+  <Project Path="../Server/Server.vcxproj" Id="7d0211c8-4647-4ceb-88be-0f0c2edb683d" />
+  <Project Path="Window_SocketProgramming.vcxproj" Id="e0b44168-bb00-48b8-914b-a238debd954b" />
 </Solution>
