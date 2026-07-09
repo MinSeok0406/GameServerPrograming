@@ -3,10 +3,14 @@
 #include <tchar.h>
 #include <process.h>
 #include <Windows.h>
+#include <map>
+#include <string>
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
+
+
 
 int wmain(int argc, WCHAR* argv[])
 {
