@@ -25,6 +25,7 @@ BOOL DomainToIP(const WCHAR* szDomain, IN_ADDR* pAddr)
 
     if (GetAddrInfo(szDomain, L"0", NULL, &pAddrInfo) != 0)
     {
+        auto errCode = WSAGetLastError();
         return FALSE;
     }
 

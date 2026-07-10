@@ -1,11 +1,13 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <conio.h>
 #include <time.h>
 #include <fcntl.h>
 #include <io.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
+#include "Util.h"
 using namespace std;
 using ll = long long;
 
@@ -14,7 +16,6 @@ using ll = long long;
 
 #define SERVERPORT  47000
 #define BUFSIZE     512
-
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -85,6 +86,7 @@ int wmain(int argc, WCHAR* argv[])
             }
 
             buf[retval] = '\0';
+
             wprintf(L"[TCP/%s:%d] %hs\n", addr, ntohs(clientaddr.sin_port), buf);
 
             retval = send(client_sock, buf, retval, 0);

@@ -1,8 +1,8 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <tchar.h>
 #include <time.h>
-#include <process.h>
+#include <fcntl.h>
+#include <io.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
@@ -12,13 +12,12 @@ using ll = long long;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-
-
 int wmain(int argc, WCHAR* argv[])
 {
+    _setmode(_fileno(stdout), _O_U16TEXT);
     timeBeginPeriod(1);
 
 
-    
+
     return 0;
 }

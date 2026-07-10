@@ -32,7 +32,11 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+    
+    SOCKET sock;
+    int retval;
+
+    sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == INVALID_SOCKET)
     {
         return 1;
@@ -43,8 +47,8 @@ int wmain(int argc, WCHAR* argv[])
     serveraddr.sin_family = AF_INET;
     InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
     serveraddr.sin_port = htons(SERVERPORT);
-    
-    int retval = connect(sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
+
+    retval = connect(sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR)
     {
         return 1;
