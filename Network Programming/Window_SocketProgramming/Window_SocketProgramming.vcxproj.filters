@@ -2,5 +2,43 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="server4.cpp">
+      <Filter>챕터4 문제</Filter>
+    </ClCompile>
+    <ClCompile Include="client4.cpp">
+      <Filter>챕터4 문제</Filter>
+    </ClCompile>
+    <ClCompile Include="server5_FixedByte.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+    <ClCompile Include="client5_FixedByte.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+    <ClCompile Include="server5_Variable.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+    <ClCompile Include="client5_Variable.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+    <ClCompile Include="server5_FixedVariable.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+    <ClCompile Include="client5_FixedVariable.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+    <ClCompile Include="server5_Close.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+    <ClCompile Include="client5_Close.cpp">
+      <Filter>챕터5</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="챕터4 문제">
+      <UniqueIdentifier>{24a06e90-b966-49dc-bc98-3b6fac214a02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터5">
+      <UniqueIdentifier>{8aaf3de0-e5be-4cab-bf8b-82c0b28d66a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

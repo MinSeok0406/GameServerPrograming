@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <conio.h>
 #include <time.h>
@@ -41,7 +41,7 @@ int wmain(int argc, WCHAR* argv[])
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(SERVERPORT);
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    
+
     int retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR)
     {
@@ -96,4 +96,4 @@ int wmain(int argc, WCHAR* argv[])
     WSACleanup();
 
     return 0;
-}
+}*/

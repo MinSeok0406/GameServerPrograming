@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <time.h>
 #include <fcntl.h>
@@ -27,11 +27,23 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET)
+    {
+        return 1;
+    }
+
     SOCKADDR_IN sockaddrin;
     memset(&sockaddrin, 0, sizeof(sockaddrin));
     sockaddrin.sin_family = AF_INET;
     sockaddrin.sin_port = htons(SERVERPORT);
     InetPton(AF_INET, SERVERIP, &sockaddrin.sin_addr);
+
+    int retval = connect(sock, (SOCKADDR*)&sockaddrin, sizeof(sockaddrin));
+    if (retval == SOCKET_ERROR)
+    {
+        return 1;
+    }
 
     wchar_t buf[BUFSIZE];
     const wchar_t* testdata[] =
@@ -45,20 +57,14 @@ int wmain(int argc, WCHAR* argv[])
 
     for (auto i = 0; i < 4; ++i)
     {
-        SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-        if (sock == INVALID_SOCKET)
-        {
-            return 1;
-        }
-
-        int retval = connect(sock, (SOCKADDR*)&sockaddrin, sizeof(sockaddrin));
-        if (retval == SOCKET_ERROR)
-        {
-            return 1;
-        }
-
         int textlen = static_cast<int>(wcslen(testdata[i]));
         wcsncpy(buf, testdata[i], textlen);
+
+        retval = send(sock, (char*)&textlen, sizeof(int), 0);
+        if (retval == SOCKET_ERROR)
+        {
+            break;
+        }
 
         len = static_cast<int>(textlen * sizeof(wchar_t));
         retval = send(sock, (char*)buf, len, 0);
@@ -67,11 +73,11 @@ int wmain(int argc, WCHAR* argv[])
             break;
         }
 
-        wprintf(L"[TCP 클라이언트] %d바이트를 보냈습니다.\n", retval);
-        closesocket(sock);
+        wprintf(L"[TCP 클라이언트] %d+%d바이트를 보냈습니다.\n", (int)sizeof(int), retval);
     }
 
+    closesocket(sock);
     WSACleanup();
 
     return 0;
-}
+}*/

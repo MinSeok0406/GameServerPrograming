@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <conio.h>
 #include <time.h>
@@ -15,7 +15,7 @@ using ll = long long;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT  47000
-#define BUFSIZE     1024
+#define BUFSIZE     512
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -41,7 +41,7 @@ int wmain(int argc, WCHAR* argv[])
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(SERVERPORT);
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    
+
     int retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR)
     {
@@ -57,6 +57,7 @@ int wmain(int argc, WCHAR* argv[])
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
+    int len;
     wchar_t buf[BUFSIZE + 1];
 
     while (true)
@@ -74,7 +75,17 @@ int wmain(int argc, WCHAR* argv[])
 
         while (true)
         {
-            retval = recv(client_sock, (char*)buf, BUFSIZE * sizeof(wchar_t), MSG_WAITALL);
+            retval = recv(client_sock, (char*)&len, sizeof(int), MSG_WAITALL);
+            if (retval == SOCKET_ERROR)
+            {
+                break;
+            }
+            else if (retval == 0)
+            {
+                break;
+            }
+
+            retval = recv(client_sock, (char*)buf, len * sizeof(wchar_t), MSG_WAITALL);
             if (retval == SOCKET_ERROR)
             {
                 break;
@@ -96,4 +107,4 @@ int wmain(int argc, WCHAR* argv[])
     WSACleanup();
 
     return 0;
-}
+}*/

@@ -19,7 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="client4.cpp" />
+    <ClCompile Include="client5_Close.cpp" />
+    <ClCompile Include="client5_FixedByte.cpp" />
+    <ClCompile Include="client5_FixedVariable.cpp" />
+    <ClCompile Include="client5_Variable.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="server4.cpp" />
+    <ClCompile Include="server5_Close.cpp" />
+    <ClCompile Include="server5_FixedByte.cpp" />
+    <ClCompile Include="server5_FixedVariable.cpp" />
+    <ClCompile Include="server5_Variable.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
@@ -139,7 +149,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
