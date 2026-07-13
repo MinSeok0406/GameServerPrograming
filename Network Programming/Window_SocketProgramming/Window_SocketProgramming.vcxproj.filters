@@ -3,10 +3,10 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="server4.cpp">
-      <Filter>챕터4 문제</Filter>
+      <Filter>챕터4</Filter>
     </ClCompile>
     <ClCompile Include="client4.cpp">
-      <Filter>챕터4 문제</Filter>
+      <Filter>챕터4</Filter>
     </ClCompile>
     <ClCompile Include="server5_FixedByte.cpp">
       <Filter>챕터5</Filter>
@@ -32,13 +32,25 @@
     <ClCompile Include="client5_Close.cpp">
       <Filter>챕터5</Filter>
     </ClCompile>
+    <ClCompile Include="Practice5_1.cpp">
+      <Filter>챕터5\챕터5 문제</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice5_2.cpp">
+      <Filter>챕터5\챕터5 문제</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice5_3.cpp">
+      <Filter>챕터5\챕터5 문제</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="챕터4 문제">
-      <UniqueIdentifier>{24a06e90-b966-49dc-bc98-3b6fac214a02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="챕터5">
       <UniqueIdentifier>{8aaf3de0-e5be-4cab-bf8b-82c0b28d66a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터5\챕터5 문제">
+      <UniqueIdentifier>{6713865b-21a5-4060-a4b6-ed2b400e5f75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터4">
+      <UniqueIdentifier>{24a06e90-b966-49dc-bc98-3b6fac214a02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

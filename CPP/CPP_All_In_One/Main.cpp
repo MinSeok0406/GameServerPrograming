@@ -3,8 +3,10 @@
 #include <tchar.h>
 #include <process.h>
 #include <Windows.h>
+#include <vector>
 #include <map>
 #include <string>
+#include <stack>
 using namespace std;
 using ll = long long;
 

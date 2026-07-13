@@ -1,4 +1,5 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿// Server
+/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <conio.h>
 #include <time.h>
@@ -15,7 +16,7 @@ using ll = long long;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT  47000
-#define BUFSIZE     512
+#define BUFSIZE     50
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -58,7 +59,6 @@ int wmain(int argc, WCHAR* argv[])
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
-    int len;
     wchar_t buf[BUFSIZE + 1];
 
     while (true)
@@ -76,21 +76,11 @@ int wmain(int argc, WCHAR* argv[])
 
         while (true)
         {
-            retval = recv(client_sock, (char*)&len, sizeof(int), MSG_WAITALL);
-            if (retval == SOCKET_ERROR)
-            {
-                wprintf(L"%d\n", WSAGetLastError());
-                break;
-            }
-            else if (retval == 0)
-            {
-                break;
-            }
+            int len = static_cast<int>(BUFSIZE * sizeof(wchar_t));
 
             retval = recv(client_sock, (char*)buf, len, MSG_WAITALL);
             if (retval == SOCKET_ERROR)
             {
-                wprintf(L"%d\n", WSAGetLastError());
                 break;
             }
             else if (retval == 0)
@@ -102,7 +92,7 @@ int wmain(int argc, WCHAR* argv[])
             wprintf(L"[TCP/%s:%d] %s\n", addr, ntohs(clientaddr.sin_port), buf);
 
             wchar_t sendMessage[BUFSIZE];
-            int sendlen;
+
             if (fgetws(sendMessage, BUFSIZE, stdin) == NULL)
             {
                 break;
@@ -119,18 +109,9 @@ int wmain(int argc, WCHAR* argv[])
                 break;
             }
 
-            sendlen = static_cast<int>(wcslen(sendMessage) * sizeof(wchar_t));
-            retval = send(client_sock, (char*)&sendlen, sizeof(int), 0);
+            retval = send(client_sock, (char*)sendMessage, len, 0);
             if (retval == SOCKET_ERROR)
             {
-                wprintf(L"%d\n", WSAGetLastError());
-                break;
-            }
-            
-            retval = send(client_sock, (char*)sendMessage, sendlen, 0);
-            if (retval == SOCKET_ERROR)
-            {
-                wprintf(L"%d\n", WSAGetLastError());
                 break;
             }
         }
@@ -143,4 +124,106 @@ int wmain(int argc, WCHAR* argv[])
     WSACleanup();
 
     return 0;
-}
+}*/
+
+// Client
+/*#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <time.h>
+#include <fcntl.h>
+#include <io.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <Windows.h>
+using namespace std;
+using ll = long long;
+
+#pragma comment(lib, "Winmm.lib")
+#pragma comment(lib, "Ws2_32.lib")
+
+const wchar_t* SERVERIP = L"127.0.0.1";
+#define SERVERPORT  47000
+#define BUFSIZE     50
+
+int wmain(int argc, WCHAR* argv[])
+{
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    timeBeginPeriod(1);
+
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+    {
+        return 1;
+    }
+
+    SOCKET sock;
+    int retval;
+
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET)
+    {
+        return 1;
+    }
+
+    SOCKADDR_IN sockaddrin;
+    memset(&sockaddrin, 0, sizeof(sockaddrin));
+    sockaddrin.sin_family = AF_INET;
+    sockaddrin.sin_port = htons(SERVERPORT);
+    InetPton(AF_INET, SERVERIP, &sockaddrin.sin_addr);
+
+    retval = connect(sock, (SOCKADDR*)&sockaddrin, sizeof(sockaddrin));
+    if (retval == SOCKET_ERROR)
+    {
+        return 1;
+    }
+
+    wchar_t buf[BUFSIZE];
+
+    while (true)
+    {
+        int len = static_cast<int>(BUFSIZE * sizeof(wchar_t));
+
+        if (fgetws(buf, BUFSIZE, stdin) == NULL)
+        {
+            break;
+        }
+
+        int length = static_cast<int>(wcslen(buf));
+        if (buf[length - 1] == '\n')
+        {
+            buf[length - 1] = '\0';
+        }
+
+        if (wcslen(buf) == 0)
+        {
+            break;
+        }
+
+        retval = send(sock, (char*)buf, len, 0);
+        if (retval == SOCKET_ERROR)
+        {
+            break;
+        }
+
+        wchar_t recvMessage[BUFSIZE + 1];
+
+        retval = recv(sock, (char*)recvMessage, len, MSG_WAITALL);
+        if (retval == SOCKET_ERROR)
+        {
+            break;
+        }
+        else if (retval == 0)
+        {
+            break;
+        }
+
+        recvMessage[retval / sizeof(wchar_t)] = L'\0';
+        wprintf(L"[TCP/%s:%d] %s\n", SERVERIP, SERVERPORT, recvMessage);
+    }
+
+    closesocket(sock);
+    WSACleanup();
+
+    return 0;
+}*/
