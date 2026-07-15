@@ -15,7 +15,7 @@ using ll = long long;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT  47000
-#define BUFSIZE     50
+#define BUFSIZE     512
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -88,7 +88,6 @@ int wmain(int argc, WCHAR* argv[])
             }
 
             buf[retval / sizeof(wchar_t)] = L'\0';
-            wprintf(L"[TCP/%s:%d] %s\n", addr, ntohs(clientaddr.sin_port), buf);
         }
 
         closesocket(client_sock);

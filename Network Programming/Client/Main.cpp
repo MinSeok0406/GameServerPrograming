@@ -52,7 +52,7 @@ int wmain(int argc, WCHAR* argv[])
     FILE* fp;
     wchar_t buf[BUFSIZE];
 
-    _wfopen_s(&fp, L"butterfly.png", L"rb");
+    _wfopen_s(&fp, L"butterfly.png", L"r");
     if (fp == NULL)
     {
         return 1;
@@ -64,25 +64,20 @@ int wmain(int argc, WCHAR* argv[])
 
     while (true)
     {
-        int len = static_cast<int>(BUFSIZE * sizeof(wchar_t));
-
-        int length = min(totalsize, BUFSIZE - 1);
-        auto a = fread(buf, length, 1, fp);
-        totalsize -= BUFSIZE;
-
-        if (a == 0)
+        if (totalsize <= 0)
         {
             break;
         }
 
-        retval = send(sock, (char*)buf, len, 0);
+        int length = min(totalsize, BUFSIZE * sizeof(wchar_t));
+        fread(buf, 1, length, fp);
+        totalsize -= length;
+
+        retval = send(sock, (char*)buf, length, 0);
         if (retval == SOCKET_ERROR)
         {
             break;
         }
-
-        auto sendbyte = static_cast<int>(wcslen(buf) * sizeof(wchar_t));
-        wprintf(L"%d\n", sendbyte);
     }
 
     fclose(fp);
