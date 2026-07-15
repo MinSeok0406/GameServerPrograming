@@ -41,6 +41,9 @@
     <ClCompile Include="Practice5_3.cpp">
       <Filter>챕터5\챕터5 문제</Filter>
     </ClCompile>
+    <ClCompile Include="server6_ThreadTCP.cpp">
+      <Filter>챕터6</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">
@@ -51,6 +54,9 @@
     </Filter>
     <Filter Include="챕터4">
       <UniqueIdentifier>{24a06e90-b966-49dc-bc98-3b6fac214a02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터6">
+      <UniqueIdentifier>{3b4f667b-c900-4e14-ace3-37a0bb8eb61a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

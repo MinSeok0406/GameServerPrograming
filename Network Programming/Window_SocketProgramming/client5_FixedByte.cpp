@@ -19,6 +19,7 @@ const wchar_t* SERVERIP = L"127.0.0.1";
 int wmain(int argc, WCHAR* argv[])
 {
     _setmode(_fileno(stdout), _O_U16TEXT);
+    _setmode(_fileno(stdin), _O_U16TEXT);
     timeBeginPeriod(1);
 
     WSADATA wsa;

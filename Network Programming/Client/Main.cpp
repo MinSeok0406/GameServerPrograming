@@ -14,7 +14,7 @@ using ll = long long;
 
 const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT  47000
-#define BUFSIZE     512
+#define BUFSIZE     500
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -28,7 +28,10 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+    SOCKET sock;
+    int retval;
+
+    sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == INVALID_SOCKET)
     {
         return 1;
@@ -40,76 +43,49 @@ int wmain(int argc, WCHAR* argv[])
     sockaddrin.sin_port = htons(SERVERPORT);
     InetPton(AF_INET, SERVERIP, &sockaddrin.sin_addr);
 
-    int retval = connect(sock, (SOCKADDR*)&sockaddrin, sizeof(sockaddrin));
+    retval = connect(sock, (SOCKADDR*)&sockaddrin, sizeof(sockaddrin));
     if (retval == SOCKET_ERROR)
     {
         return 1;
     }
 
+    FILE* fp;
     wchar_t buf[BUFSIZE];
-    int len;
+
+    _wfopen_s(&fp, L"butterfly.png", L"rb");
+    if (fp == NULL)
+    {
+        return 1;
+    }
+
+    fseek(fp, 0, SEEK_END);
+    auto totalsize = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
 
     while (true)
     {
-        if (fgetws(buf, BUFSIZE, stdin) == NULL)
-        {
-            break;
-        }
+        int len = static_cast<int>(BUFSIZE * sizeof(wchar_t));
 
-        int length = static_cast<int>(wcslen(buf));
-        if (buf[length - 1] == '\n')
-        {
-            buf[length - 1] = '\0';
-        }
+        int length = min(totalsize, BUFSIZE - 1);
+        auto a = fread(buf, length, 1, fp);
+        totalsize -= BUFSIZE;
 
-        if (wcslen(buf) == 0)
+        if (a == 0)
         {
-            break;
-        }
-
-        len = static_cast<int>(wcslen(buf) * sizeof(wchar_t));
-        retval = send(sock, (char*)&len, sizeof(int), 0);
-        if (retval == SOCKET_ERROR)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
             break;
         }
 
         retval = send(sock, (char*)buf, len, 0);
         if (retval == SOCKET_ERROR)
         {
-            wprintf(L"%d\n", WSAGetLastError());
             break;
         }
 
-        wchar_t recvMessage[BUFSIZE + 1];
-        int recvlen;
-        retval = recv(sock, (char*)&recvlen, sizeof(int), MSG_WAITALL);
-        if (retval == SOCKET_ERROR)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
-            break;
-        }
-        else if (retval == 0)
-        {
-            break;
-        }
-
-        retval = recv(sock, (char*)recvMessage, recvlen, MSG_WAITALL);
-        if (retval == SOCKET_ERROR)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
-            break;
-        }
-        else if (retval == 0)
-        {
-            break;
-        }
-
-        recvMessage[retval / sizeof(wchar_t)] = L'\0';
-        wprintf(L"[TCP/%s:%d] %s\n", SERVERIP, SERVERPORT, recvMessage);
+        auto sendbyte = static_cast<int>(wcslen(buf) * sizeof(wchar_t));
+        wprintf(L"%d\n", sendbyte);
     }
 
+    fclose(fp);
     closesocket(sock);
     WSACleanup();
 
