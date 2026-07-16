@@ -28,6 +28,7 @@
     <ClCompile Include="Practice5_1.cpp" />
     <ClCompile Include="Practice5_2.cpp" />
     <ClCompile Include="Practice5_3.cpp" />
+    <ClCompile Include="Practice5_4.cpp" />
     <ClCompile Include="server4.cpp" />
     <ClCompile Include="server5_Close.cpp" />
     <ClCompile Include="server5_FixedByte.cpp" />

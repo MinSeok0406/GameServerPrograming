@@ -4,6 +4,7 @@
 #include <process.h>
 #include <Windows.h>
 #include <vector>
+#include <algorithm>
 #include <map>
 #include <string>
 #include <stack>
@@ -15,38 +16,29 @@ using ll = long long;
 
 const int dy[4] = { 0, 1, 0, -1 };
 const int dx[4] = { 1, 0, -1, 0 };
-int t, n, m, k, cnt;
-int adj[54][54];
-int visited[54][54];
+int n, m, k;
+int cnt, ret;
+int adj[104][104];
+int visited[104][104];
+vector<int> v;
 
-void Bfs(int y, int x)
+void Dfs(int y, int x)
 {
     visited[y][x] = 1;
-    queue<pair<int, int>> q;
-    q.push({ y, x });
-
-    while (q.empty() == false)
+    for (auto i = 0; i < 4; ++i)
     {
-        tie(y, x) = q.front();
-        q.pop();
+        int ny = y + dy[i];
+        int nx = x + dx[i];
 
-        for (auto i = 0; i < 4; ++i)
+        if (ny < 0 || ny >= m || nx < 0 || nx >= n || adj[ny][nx] == 1)
         {
-            int ny = y + dy[i];
-            int nx = x + dx[i];
+            continue;
+        }
 
-            if (ny < 0 || ny >= n || nx < 0 || nx >= m || adj[ny][nx] == 0)
-            {
-                continue;
-            }
-
-            if (visited[ny][nx])
-            {
-                continue;
-            }
-
-            visited[ny][nx] = visited[y][x] + 1;
-            q.push({ ny, nx });
+        if (visited[ny][nx] == 0)
+        {
+            ret++;
+            Dfs(ny, nx);
         }
     }
 }
@@ -58,42 +50,41 @@ int wmain(int argc, WCHAR* argv[])
     cout.tie(NULL);
     timeBeginPeriod(1);
 
-    cin >> t;
+    cin >> m >> n >> k;
 
-    while (t--)
+    for (auto i = 0; i < k; ++i)
     {
-        cin >> m >> n >> k;
-
-        cnt = 0;
-        for (auto i = 0; i < 54; ++i)
+        int x1, x2, y1, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+        for (auto y = y1; y < y2; ++y)
         {
-            for (auto j = 0; j < 54; ++j)
+            for (auto x = x1; x < x2; ++x)
             {
-                adj[i][j] = 0;
-                visited[i][j] = 0;
+                adj[y][x] = 1;
             }
         }
+    }
 
-        for (auto i = 0; i < k; ++i)
+    for (auto i = 0; i < m; ++i)
+    {
+        for (auto j = 0; j < n; ++j)
         {
-            int x, y;
-            cin >> x >> y;
-            adj[y][x] = 1;
-        }
-
-        for (auto i = 0; i < n; ++i)
-        {
-            for (auto j = 0; j < m; ++j)
+            if (visited[i][j] == 0 && adj[i][j] == 0)
             {
-                if (visited[i][j] == 0 && adj[i][j] == 1)
-                {
-                    Bfs(i, j);
-                    cnt++;
-                }
+                ret = 1;
+                Dfs(i, j);
+                cnt++;
+                v.push_back(ret);
             }
         }
+    }
 
-        cout << cnt << "\n";
+    sort(v.begin(), v.end());
+
+    cout << cnt << "\n";
+    for (auto i : v)
+    {
+        cout << i << " ";
     }
 
     return 0;

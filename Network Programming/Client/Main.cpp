@@ -52,7 +52,7 @@ int wmain(int argc, WCHAR* argv[])
     FILE* fp;
     wchar_t buf[BUFSIZE];
 
-    _wfopen_s(&fp, L"butterfly.png", L"r");
+    _wfopen_s(&fp, L"butterfly.png", L"rb");
     if (fp == NULL)
     {
         return 1;
@@ -70,7 +70,7 @@ int wmain(int argc, WCHAR* argv[])
         }
 
         int length = min(totalsize, BUFSIZE * sizeof(wchar_t));
-        fread(buf, 1, length, fp);
+        fread(buf, length, 1, fp);
         totalsize -= length;
 
         retval = send(sock, (char*)buf, length, 0);
