@@ -16,6 +16,15 @@ const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT  47000
 #define BUFSIZE     500
 
+struct st_PACKET_HEADER
+{
+    DWORD   dwPacketCode;
+
+    WCHAR	szName[32];		    // 본인이름, 유니코드 utf-16 NULL 문자 끝
+    WCHAR	szFileName[128];	// 파일이름, 유니코드 utf-16 NULL 문자 끝
+    int	iFileSize;
+};
+
 int wmain(int argc, WCHAR* argv[])
 {
     _setmode(_fileno(stdout), _O_U16TEXT);
@@ -62,20 +71,42 @@ int wmain(int argc, WCHAR* argv[])
     auto totalsize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
+    st_PACKET_HEADER stPH;
+    stPH.dwPacketCode = 0x11223344;
+    wcscpy(stPH.szName, L"Minseok");
+    wcscpy(stPH.szFileName, L"butterfly.png");
+    stPH.iFileSize = totalsize;
+
+    stPH.dwPacketCode = htonl(stPH.dwPacketCode);
+    retval = send(sock, (char*)&stPH.dwPacketCode, sizeof(DWORD), 0);
+    if (retval == SOCKET_ERROR)
+    {
+        wprintf(L"%d\n", WSAGetLastError());
+        return 1;
+    }
+
+    retval = send(sock, (char*)stPH.szName, 160 * sizeof(wchar_t), 0);
+    if (retval == SOCKET_ERROR)
+    {
+        wprintf(L"%d\n", WSAGetLastError());
+        return 1;
+    }
+
     while (true)
     {
-        if (totalsize <= 0)
+        if (stPH.iFileSize <= 0)
         {
             break;
         }
 
-        int length = min(totalsize, BUFSIZE * sizeof(wchar_t));
+        int length = min(stPH.iFileSize, BUFSIZE * sizeof(wchar_t));
         fread(buf, length, 1, fp);
-        totalsize -= length;
+        stPH.iFileSize -= length;
 
         retval = send(sock, (char*)buf, length, 0);
         if (retval == SOCKET_ERROR)
         {
+            wprintf(L"%d\n", WSAGetLastError());
             break;
         }
     }

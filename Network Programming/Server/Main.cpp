@@ -73,8 +73,42 @@ int wmain(int argc, WCHAR* argv[])
         InetNtop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
         wprintf(L"\n[TCP 서버] 클라이언트 접속 : IP 주소 = %s, 포트 번호 = %d\n", addr, ntohs(clientaddr.sin_port));
 
+        DWORD password = 0;
+        wchar_t szName[32];
+        wchar_t szFileName[128];
+
+        retval = recv(client_sock, (char*)&password, sizeof(DWORD), MSG_WAITALL);
+        if (retval == SOCKET_ERROR)
+        {
+            wprintf(L"%d\n", WSAGetLastError());
+            break;
+        }
+        else if (password != 0x44332211)
+        {
+            break;
+        }
+
+        retval = recv(client_sock, (char*)szName, 32 * sizeof(wchar_t), MSG_WAITALL);
+        if (retval == SOCKET_ERROR)
+        {
+            wprintf(L"%d\n", WSAGetLastError());
+            break;
+        }
+
+        retval = recv(client_sock, (char*)szFileName, 128 * sizeof(wchar_t), MSG_WAITALL);
+        if (retval == SOCKET_ERROR)
+        {
+            wprintf(L"%d\n", WSAGetLastError());
+            break;
+        }
+
+        wchar_t fileName[256];
+        wcscpy(fileName, szName);
+        wcscat(fileName, L"_");
+        wcscat(fileName, szFileName);
+
         FILE* fp;
-        _wfopen_s(&fp, L"butterfly.png", L"wb");
+        _wfopen_s(&fp, fileName, L"wb");
         if (fp == NULL)
         {
             closesocket(client_sock);

@@ -47,6 +47,9 @@
     <ClCompile Include="Practice5_4.cpp">
       <Filter>챕터5\챕터5 문제</Filter>
     </ClCompile>
+    <ClCompile Include="server6_Event.cpp">
+      <Filter>챕터6</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">

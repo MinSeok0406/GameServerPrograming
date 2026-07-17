@@ -34,6 +34,7 @@
     <ClCompile Include="server5_FixedByte.cpp" />
     <ClCompile Include="server5_FixedVariable.cpp" />
     <ClCompile Include="server5_Variable.cpp" />
+    <ClCompile Include="server6_Event.cpp" />
     <ClCompile Include="server6_ThreadTCP.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
