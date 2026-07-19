@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <time.h>
 #include <fcntl.h>
@@ -12,7 +12,7 @@ using ll = long long;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-const wchar_t* SERVERIP = L"255.255.255.255";
+const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT  47000
 #define BUFSIZE     512
 
@@ -31,14 +31,6 @@ int wmain(int argc, WCHAR* argv[])
     SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock == INVALID_SOCKET)
     {
-        return 1;
-    }
-
-    DWORD bEnable = 1;
-    int retval = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char*)&bEnable, sizeof(bEnable));
-    if (retval == SOCKET_ERROR)
-    {
-        wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -66,23 +58,41 @@ int wmain(int argc, WCHAR* argv[])
         {
             buf[len - 1] = '\0';
         }
-        
+
         if (wcslen(buf) == 0)
         {
             break;
         }
 
-        retval = sendto(sock, (char*)buf, (int)(wcslen(buf) * sizeof(wchar_t)), 0, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+        int retval = sendto(sock, (char*)buf, (int)(wcslen(buf) * sizeof(wchar_t)), 0, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
         if (retval == SOCKET_ERROR)
         {
             wprintf(L"%d\n", WSAGetLastError());
-            break;
+            return 1;
         }
         wprintf(L"[UDP 클라이언트] %d바이트를 보냈습니다.\n", retval);
+
+        addrlen = sizeof(peeraddr);
+        retval = recvfrom(sock, (char*)buf, BUFSIZE, 0, (SOCKADDR*)&peeraddr, &addrlen);
+        if (retval == SOCKET_ERROR)
+        {
+            wprintf(L"%d\n", WSAGetLastError());
+            return 1;
+        }
+
+        if (memcmp(&peeraddr, &serveraddr, sizeof(peeraddr)))
+        {
+            wprintf(L"[오류] 잘못된 데이터입니다.\n");
+            break;
+        }
+
+        buf[retval / sizeof(wchar_t)] = '\0';
+        wprintf(L"[UDP 클라이언트] %d바이트를 받았습니다.\n", retval);
+        wprintf(L"[받은 데이터] %s\n", buf);
     }
-    
+
     closesocket(sock);
     WSACleanup();
 
     return 0;
-}
+}*/

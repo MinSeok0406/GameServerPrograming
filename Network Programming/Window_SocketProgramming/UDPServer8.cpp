@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <conio.h>
 #include <time.h>
@@ -67,10 +67,17 @@ int wmain(int argc, WCHAR* argv[])
         wchar_t addr[INET_ADDRSTRLEN];
         InetNtop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
         wprintf(L"[UDP/%s:%d] %s\n", addr, ntohs(clientaddr.sin_port), buf);
+
+        retval = sendto(sock, (char*)buf, retval, 0, (SOCKADDR*)&clientaddr, sizeof(clientaddr));
+        if (retval == SOCKET_ERROR)
+        {
+            wprintf(L"%d\n", WSAGetLastError());
+            return 1;
+        }
     }
 
     closesocket(sock);
     WSACleanup();
 
     return 0;
-}
+}*/

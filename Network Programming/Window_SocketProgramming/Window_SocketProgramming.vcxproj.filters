@@ -50,6 +50,24 @@
     <ClCompile Include="server6_Event.cpp">
       <Filter>챕터6</Filter>
     </ClCompile>
+    <ClCompile Include="Practice6_6.cpp">
+      <Filter>챕터6\챕터6_문제</Filter>
+    </ClCompile>
+    <ClCompile Include="Procademy2_1.cpp">
+      <Filter>프로카데미과제\2주차</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPServer8.cpp">
+      <Filter>챕터8</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPClient8.cpp">
+      <Filter>챕터8</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPBrodcastServer8.cpp">
+      <Filter>챕터8</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPBrodcastClient8.cpp">
+      <Filter>챕터8</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">
@@ -63,6 +81,18 @@
     </Filter>
     <Filter Include="챕터6">
       <UniqueIdentifier>{3b4f667b-c900-4e14-ace3-37a0bb8eb61a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터6\챕터6_문제">
+      <UniqueIdentifier>{36d07495-be44-4dc1-af55-1f277baa9f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="프로카데미과제">
+      <UniqueIdentifier>{31f4a3c2-c890-4e80-8470-7208606665cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="프로카데미과제\2주차">
+      <UniqueIdentifier>{25a46721-8cf5-4384-b3cf-aa67fde74e4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터8">
+      <UniqueIdentifier>{5f76eca1-3b09-413d-8515-bcb08cdd4025}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

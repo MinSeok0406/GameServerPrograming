@@ -29,6 +29,8 @@
     <ClCompile Include="Practice5_2.cpp" />
     <ClCompile Include="Practice5_3.cpp" />
     <ClCompile Include="Practice5_4.cpp" />
+    <ClCompile Include="Practice6_6.cpp" />
+    <ClCompile Include="Procademy2_1.cpp" />
     <ClCompile Include="server4.cpp" />
     <ClCompile Include="server5_Close.cpp" />
     <ClCompile Include="server5_FixedByte.cpp" />
@@ -36,6 +38,10 @@
     <ClCompile Include="server5_Variable.cpp" />
     <ClCompile Include="server6_Event.cpp" />
     <ClCompile Include="server6_ThreadTCP.cpp" />
+    <ClCompile Include="UDPBrodcastClient8.cpp" />
+    <ClCompile Include="UDPBrodcastServer8.cpp" />
+    <ClCompile Include="UDPClient8.cpp" />
+    <ClCompile Include="UDPServer8.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

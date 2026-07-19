@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <conio.h>
 #include <time.h>
@@ -73,4 +73,4 @@ int wmain(int argc, WCHAR* argv[])
     WSACleanup();
 
     return 0;
-}
+}*/

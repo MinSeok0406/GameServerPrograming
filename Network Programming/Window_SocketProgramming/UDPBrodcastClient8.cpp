@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <time.h>
 #include <fcntl.h>
@@ -66,7 +66,7 @@ int wmain(int argc, WCHAR* argv[])
         {
             buf[len - 1] = '\0';
         }
-        
+
         if (wcslen(buf) == 0)
         {
             break;
@@ -80,9 +80,9 @@ int wmain(int argc, WCHAR* argv[])
         }
         wprintf(L"[UDP 클라이언트] %d바이트를 보냈습니다.\n", retval);
     }
-    
+
     closesocket(sock);
     WSACleanup();
 
     return 0;
-}
+}*/
