@@ -68,6 +68,12 @@
     <ClCompile Include="UDPBrodcastClient8.cpp">
       <Filter>챕터8</Filter>
     </ClCompile>
+    <ClCompile Include="Practice8_2.cpp">
+      <Filter>챕터8\챕터8_문제</Filter>
+    </ClCompile>
+    <ClCompile Include="Practice8_3.cpp">
+      <Filter>챕터8\챕터8_문제</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">
@@ -93,6 +99,12 @@
     </Filter>
     <Filter Include="챕터8">
       <UniqueIdentifier>{5f76eca1-3b09-413d-8515-bcb08cdd4025}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터8\챕터8_문제">
+      <UniqueIdentifier>{73b4b717-499f-4f87-8d4a-0d6a36de2c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="챕터11">
+      <UniqueIdentifier>{d6eb6a0e-a9ec-4aac-a485-81f481f3ad86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

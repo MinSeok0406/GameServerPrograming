@@ -12,14 +12,13 @@ using ll = long long;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-const wchar_t* SERVERIP = L"255.255.255.255";
+const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT  47000
 #define BUFSIZE     512
 
 int wmain(int argc, WCHAR* argv[])
 {
     _setmode(_fileno(stdout), _O_U16TEXT);
-    _setmode(_fileno(stdin), _O_U16TEXT);
     timeBeginPeriod(1);
 
     WSADATA wsa;
@@ -28,60 +27,67 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
+    SOCKET sock;
+    int retval;
+
+    sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == INVALID_SOCKET)
     {
         return 1;
     }
 
-    DWORD bEnable = 1;
-    int retval = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char*)&bEnable, sizeof(bEnable));
-    if (retval == SOCKET_ERROR)
-    {
-        wprintf(L"%d\n", WSAGetLastError());
-        return 1;
-    }
-
-    SOCKADDR_IN serveraddr;
+    sockaddr_in serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
     serveraddr.sin_port = htons(SERVERPORT);
 
-    SOCKADDR_IN peeraddr;
-    int addrlen;
-    wchar_t buf[BUFSIZE + 1];
-    int len;
+    retval = connect(sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
+    if (retval == SOCKET_ERROR)
+    {
+        return 1;
+    }
 
-    while (true)
+    char buf[BUFSIZE + 1];
+
+    while (1)
     {
         wprintf(L"\n[보낼 데이터] ");
-        if (fgetws(buf, BUFSIZE + 1, stdin) == NULL)
+        if (fgets(buf, BUFSIZE + 1, stdin) == NULL)
         {
             break;
         }
 
-        len = (int)wcslen(buf);
+        int len = strlen(buf);
         if (buf[len - 1] == '\n')
         {
             buf[len - 1] = '\0';
         }
-        
-        if (wcslen(buf) == 0)
+
+        if (strlen(buf) == 0)
         {
             break;
         }
 
-        retval = sendto(sock, (char*)buf, (int)(wcslen(buf) * sizeof(wchar_t)), 0, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+        retval = send(sock, buf, (int)strlen(buf), 0);
         if (retval == SOCKET_ERROR)
         {
             wprintf(L"%d\n", WSAGetLastError());
             break;
         }
-        wprintf(L"[UDP 클라이언트] %d바이트를 보냈습니다.\n", retval);
+
+        retval = recv(sock, buf, retval, MSG_WAITALL);
+        if (retval == SOCKET_ERROR)
+        {
+            wprintf(L"%d\n", WSAGetLastError());
+            break;
+        }
+
+        wprintf(L"%hs", buf);
     }
-    
+
     closesocket(sock);
+
     WSACleanup();
 
     return 0;

@@ -30,6 +30,8 @@
     <ClCompile Include="Practice5_3.cpp" />
     <ClCompile Include="Practice5_4.cpp" />
     <ClCompile Include="Practice6_6.cpp" />
+    <ClCompile Include="Practice8_2.cpp" />
+    <ClCompile Include="Practice8_3.cpp" />
     <ClCompile Include="Procademy2_1.cpp" />
     <ClCompile Include="server4.cpp" />
     <ClCompile Include="server5_Close.cpp" />

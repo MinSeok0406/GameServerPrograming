@@ -14,33 +14,19 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-const int dy[4] = { 0, 1, 0, -1 };
-const int dx[4] = { 1, 0, -1, 0 };
-int n, m, k;
-int cnt, ret;
-int adj[104][104];
-int visited[104][104];
-vector<int> v;
+int n, c;
+vector<pair<int, int>> v;
+map<int, int> mp;
+map<int, int> firstmp;
 
-void Dfs(int y, int x)
+bool comp(pair<int, int> a, pair<int, int> b)
 {
-    visited[y][x] = 1;
-    for (auto i = 0; i < 4; ++i)
+    if (a.second == b.second)
     {
-        int ny = y + dy[i];
-        int nx = x + dx[i];
-
-        if (ny < 0 || ny >= m || nx < 0 || nx >= n || adj[ny][nx] == 1)
-        {
-            continue;
-        }
-
-        if (visited[ny][nx] == 0)
-        {
-            ret++;
-            Dfs(ny, nx);
-        }
+        return firstmp[a.first] < firstmp[b.first];
     }
+
+    return a.second > b.second;
 }
 
 int wmain(int argc, WCHAR* argv[])
@@ -50,41 +36,34 @@ int wmain(int argc, WCHAR* argv[])
     cout.tie(NULL);
     timeBeginPeriod(1);
 
-    cin >> m >> n >> k;
+    cin >> n >> c;
 
-    for (auto i = 0; i < k; ++i)
+    for (auto i = 0; i < n; ++i)
     {
-        int x1, x2, y1, y2;
-        cin >> x1 >> y1 >> x2 >> y2;
-        for (auto y = y1; y < y2; ++y)
+        int k;
+        cin >> k;
+
+        if (firstmp.find(k) == firstmp.end())
         {
-            for (auto x = x1; x < x2; ++x)
-            {
-                adj[y][x] = 1;
-            }
+            firstmp[k] = i;
         }
+        
+        mp[k]++;
     }
 
-    for (auto i = 0; i < m; ++i)
+    for (auto i : mp)
     {
-        for (auto j = 0; j < n; ++j)
-        {
-            if (visited[i][j] == 0 && adj[i][j] == 0)
-            {
-                ret = 1;
-                Dfs(i, j);
-                cnt++;
-                v.push_back(ret);
-            }
-        }
+        v.push_back({ i.first, i.second });
     }
 
-    sort(v.begin(), v.end());
+    sort(v.begin(), v.end(), comp);
 
-    cout << cnt << "\n";
     for (auto i : v)
     {
-        cout << i << " ";
+        for (auto j = 0; j < i.second; ++j)
+        {
+            cout << i.first << " ";
+        }
     }
 
     return 0;
