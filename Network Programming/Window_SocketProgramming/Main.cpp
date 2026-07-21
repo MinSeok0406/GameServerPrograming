@@ -268,7 +268,7 @@ int inputMove()
                 g_starmove[i]._x = g_player._x;
                 g_starmove[i]._y = g_player._y;
 
-                retval = send(server_sock, (char*)&g_starmove[i], 16, 0);
+                retval = send(server_sock, (char*)&g_starmove[i], sizeof(STARMOVE), 0);
                 if (retval == SOCKET_ERROR)
                 {
                     wprintf(L"%d\n", WSAGetLastError());
@@ -311,7 +311,6 @@ int networkLogic()
         }
 
         recvByte += retval;
-
         int sum = 0;
 
         while (recvByte - sum >= 16)
@@ -321,21 +320,16 @@ int networkLogic()
 
             bool isCreate;
             bool isMove;
-            int id;
-            int x;
-            int y;
+            int id = bbuf[1];
+            int x = bbuf[2];
+            int y = bbuf[3];
             switch (type)
             {
             case 0:
-                id = bbuf[1];
                 g_player._id = id;
                 g_idalloc._id = id;
                 break;
             case 1:
-                id = bbuf[1];
-                x = bbuf[2];
-                y = bbuf[3];
-
                 isCreate = true;
                 isMove = true;
                 for (auto i = 0; i < s_create; ++i)
@@ -373,14 +367,9 @@ int networkLogic()
                 }
                 break;
             case 2:
-                id = bbuf[1];
                 g_deletestar[s_delete++] = { 2, id, 0, 0 };
                 break;
             case 3:
-                id = bbuf[1];
-                x = bbuf[2];
-                y = bbuf[3];
-
                 for (auto i = 0; i < s_move; ++i)
                 {
                     if (g_starmove[i]._id == id)
@@ -421,7 +410,7 @@ int Render()
     {
         if (g_starmove[i]._id == -3)
         {
-            continue;
+            break;
         }
 
         bool isDelete = false;
