@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="client4.cpp" />
     <ClCompile Include="client5_Close.cpp" />
     <ClCompile Include="client5_FixedByte.cpp" />
     <ClCompile Include="client5_FixedVariable.cpp" />
     <ClCompile Include="client5_Variable.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Practice5_1.cpp" />
     <ClCompile Include="Practice5_2.cpp" />
@@ -33,6 +35,8 @@
     <ClCompile Include="Practice8_2.cpp" />
     <ClCompile Include="Practice8_3.cpp" />
     <ClCompile Include="Procademy2_1.cpp" />
+    <ClCompile Include="SelectClient11.cpp" />
+    <ClCompile Include="SelectServer11.cpp" />
     <ClCompile Include="server4.cpp" />
     <ClCompile Include="server5_Close.cpp" />
     <ClCompile Include="server5_FixedByte.cpp" />
@@ -44,6 +48,10 @@
     <ClCompile Include="UDPBrodcastServer8.cpp" />
     <ClCompile Include="UDPClient8.cpp" />
     <ClCompile Include="UDPServer8.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="Console.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

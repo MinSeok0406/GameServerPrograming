@@ -74,6 +74,18 @@
     <ClCompile Include="Practice8_3.cpp">
       <Filter>챕터8\챕터8_문제</Filter>
     </ClCompile>
+    <ClCompile Include="SelectServer11.cpp">
+      <Filter>챕터11</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectClient11.cpp">
+      <Filter>챕터11</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>프로카데미과제\3주차</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>프로카데미과제\3주차</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">
@@ -106,5 +118,16 @@
     <Filter Include="챕터11">
       <UniqueIdentifier>{d6eb6a0e-a9ec-4aac-a485-81f481f3ad86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="프로카데미과제\3주차">
+      <UniqueIdentifier>{1ef18f22-0ce7-440e-874d-fcb4dbf9d391}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Buffer.h">
+      <Filter>프로카데미과제\3주차</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>프로카데미과제\3주차</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
