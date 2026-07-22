@@ -27,7 +27,7 @@ void Buffer_Clear(void)
 
 void Sprite_Draw(int iX, int iY, wchar_t chSprite)
 {
-    if (iX < 0 || iY < 0 || iX >= dfSCREEN_WIDTH - 1 || iY >= dfSCREEN_HEIGHT)
+    if (iX < 0 || iY < 0 || iX >= dfSCREEN_WIDTH || iY >= dfSCREEN_HEIGHT)
     {
         return;
     }

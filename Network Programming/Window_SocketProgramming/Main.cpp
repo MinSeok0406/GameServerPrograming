@@ -70,6 +70,8 @@ timeval t;
 SOCKET server_sock;
 int retval;
 int recvByte;
+int useTime;
+DWORD tm;
 static int s_create = 0;
 static int s_delete = 0;
 static int s_move = 0;
@@ -89,8 +91,8 @@ int wmain(int argc, WCHAR* argv[])
     cs_Initial();
 
     memset(g_createstar, -1, sizeof(g_createstar));
-    memset(g_deletestar, -2, sizeof(g_deletestar));
-    memset(g_starmove, -3, sizeof(g_starmove));
+    memset(g_deletestar, -1, sizeof(g_deletestar));
+    memset(g_starmove, -1, sizeof(g_starmove));
 
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -135,7 +137,7 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    DWORD tm = timeGetTime();
+    tm = timeGetTime();
 
     while (true)
     {
@@ -151,7 +153,7 @@ int wmain(int argc, WCHAR* argv[])
 
         Render();
 
-        int useTime = (int)(timeGetTime() - tm);
+        useTime = (int)(timeGetTime() - tm);
         if (useTime > 0 && useTime < 10)
         {
             Sleep(10 - useTime);
@@ -186,7 +188,7 @@ int inputMove()
     }
     else if (GetAsyncKeyState(VK_UP) && GetAsyncKeyState(VK_RIGHT))
     {
-        if (g_player._x + 1 == dfSCREEN_WIDTH || g_player._y - 1 == -1)
+        if (g_player._x + 2 == dfSCREEN_WIDTH || g_player._y - 1 == -1)
         {
             return 1;
         }
@@ -197,7 +199,7 @@ int inputMove()
     }
     else if (GetAsyncKeyState(VK_RIGHT) && GetAsyncKeyState(VK_DOWN))
     {
-        if (g_player._x + 1 == dfSCREEN_WIDTH || g_player._y + 1 == dfSCREEN_HEIGHT)
+        if (g_player._x + 2 == dfSCREEN_WIDTH || g_player._y + 1 == dfSCREEN_HEIGHT)
         {
             return 1;
         }
@@ -239,7 +241,7 @@ int inputMove()
     }
     else if (GetAsyncKeyState(VK_RIGHT))
     {
-        if (g_player._x + 1 == dfSCREEN_WIDTH)
+        if (g_player._x + 2 == dfSCREEN_WIDTH)
         {
             return 1;
         }
@@ -299,7 +301,7 @@ int networkLogic()
 
     if (FD_ISSET(server_sock, &rset))
     {
-        retval = recv(server_sock, buf + recvByte, sizeof(buf) - recvByte, 0);
+        retval = recv(server_sock, buf, sizeof(buf), 0);
         if (retval == SOCKET_ERROR)
         {
             wprintf(L"%d\n", WSAGetLastError());
@@ -310,7 +312,7 @@ int networkLogic()
             return 0;
         }
 
-        recvByte += retval;
+        recvByte = retval;
         int sum = 0;
 
         while (recvByte - sum >= 16)
@@ -385,13 +387,6 @@ int networkLogic()
 
             sum += 16;
         }
-
-        int remainByte = recvByte - sum;
-        if (remainByte > 0)
-        {
-            memmove(buf, buf + sum, remainByte);
-        }
-        recvByte = remainByte;
     }
 
     return 1;
@@ -408,7 +403,7 @@ int Render()
 
     for (auto i = 0; i < s_move; ++i)
     {
-        if (g_starmove[i]._id == -3)
+        if (g_starmove[i]._id == -1)
         {
             break;
         }
