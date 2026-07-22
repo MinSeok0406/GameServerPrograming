@@ -92,6 +92,9 @@
     <ClCompile Include="WSAAsyncSelectClient11.cpp">
       <Filter>챕터11</Filter>
     </ClCompile>
+    <ClCompile Include="Practice3_Client.cpp">
+      <Filter>프로카데미과제\3주차</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">

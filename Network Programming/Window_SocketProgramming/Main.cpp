@@ -6,7 +6,7 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
-#include <vector>
+#include <list>
 #include "Console.h"
 #include "Buffer.h"
 using namespace std;
@@ -15,13 +15,16 @@ using ll = long long;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-wchar_t SERVERIP[INET_ADDRSTRLEN];
-#define SERVERPORT  3000
+#define SERVERPORT  47000
 #define BUFSIZE     160
-#define CLIENT      1000
+#define CLIENT      100
 
-struct Player
+struct SESSION
 {
+    SOCKET _sock;
+    wchar_t* _ip;
+    short _port;
+    bool _live;
     int _id;
     int _x;
     int _y;
@@ -59,27 +62,24 @@ struct STARMOVE
     int _y;
 };
 
-Player g_player(-1, -1, -1);
-IDALLOC g_idalloc(0, 0, 0, 0);
+list<SESSION> g_playerList;
+IDALLOC g_idalloc[CLIENT];
 CREATESTAR g_createstar[CLIENT];
-DELETESTAR g_deletestar[CLIENT];
 STARMOVE g_starmove[CLIENT];
 
 fd_set rset;
-timeval t;
-SOCKET server_sock;
-int retval;
-int recvByte;
+SOCKET listen_sock;
 int useTime;
 DWORD tm;
+static int s_idalloc = 0;
 static int s_create = 0;
-static int s_delete = 0;
 static int s_move = 0;
 char buf[BUFSIZE * 4];
 
-int inputMove();
-int networkLogic();
-int Render();
+void sendUnicast(SESSION* s, char* bbuf);      // Session에는 보낼 세션만을 넣어야함
+void sendBroadcast(SESSION* s, char* bbuf);    // Session에는 보내지 않을 세션을 넣어야함
+int network();
+int render();
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -90,27 +90,18 @@ int wmain(int argc, WCHAR* argv[])
     srand(unsigned int(time(nullptr)));
     cs_Initial();
 
+    memset(g_idalloc, -1, sizeof(g_idalloc));
     memset(g_createstar, -1, sizeof(g_createstar));
-    memset(g_deletestar, -1, sizeof(g_deletestar));
     memset(g_starmove, -1, sizeof(g_starmove));
 
-    WSADATA wsa;
-    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
         return 1;
     }
 
-    wprintf(L"접속할 IP 주소를 입력해주세요 : ");
-    fgetws(SERVERIP, INET_ADDRSTRLEN, stdin);
-
-    int len = (int)wcslen(SERVERIP);
-    if (SERVERIP[len - 1] == '\n')
-    {
-        SERVERIP[len - 1] = '\0';
-    }
-
-    server_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_sock == INVALID_SOCKET)
+    listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (listen_sock == INVALID_SOCKET)
     {
         wprintf(L"%d\n", WSAGetLastError());
         return 1;
@@ -119,19 +110,25 @@ int wmain(int argc, WCHAR* argv[])
     SOCKADDR_IN serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
+    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serveraddr.sin_port = htons(SERVERPORT);
-    InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
-
-    retval = connect(server_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-    if (retval == SOCKET_ERROR)
+    int bindret = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+    if (bindret == SOCKET_ERROR)
     {
         wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
     u_long on = 1;
-    retval = ioctlsocket(server_sock, FIONBIO, &on);
-    if (retval == SOCKET_ERROR)
+    int nbioret = ioctlsocket(listen_sock, FIONBIO, &on);
+    if (nbioret == SOCKET_ERROR)
+    {
+        wprintf(L"%d\n", WSAGetLastError());
+        return 1;
+    }
+
+    int listenret = listen(listen_sock, SOMAXCONN);
+    if (listenret == SOCKET_ERROR)
     {
         wprintf(L"%d\n", WSAGetLastError());
         return 1;
@@ -141,17 +138,9 @@ int wmain(int argc, WCHAR* argv[])
 
     while (true)
     {
-        if (!inputMove())
-        {
-            break;
-        }
+        network();
 
-        if (!networkLogic())
-        {
-            break;
-        }
-
-        Render();
+        render();
 
         useTime = (int)(timeGetTime() - tm);
         if (useTime > 0 && useTime < 10)
@@ -160,271 +149,184 @@ int wmain(int argc, WCHAR* argv[])
         }
         tm += 10;
     }
-    
-    closesocket(server_sock);
+
+    closesocket(listen_sock);
     WSACleanup();
 
     return 0;
 }
 
-int inputMove()
+void sendUnicast(SESSION* s, char* bbuf)
 {
-    if (g_player._id == -1)
+    int sendret = send(s->_sock, bbuf, 16, 0);
+    if (sendret == SOCKET_ERROR)
     {
-        return 1;
+        wprintf(L"%d\n", WSAGetLastError());
+        return;
     }
-
-    bool flag = false;
-    if (GetAsyncKeyState(VK_LEFT) && GetAsyncKeyState(VK_UP))
-    {
-        if (g_player._x - 1 == -1 || g_player._y - 1 == -1)
-        {
-            return 1;
-        }
-
-        g_player._x -= 1;
-        g_player._y -= 1;
-        flag = true;
-    }
-    else if (GetAsyncKeyState(VK_UP) && GetAsyncKeyState(VK_RIGHT))
-    {
-        if (g_player._x + 2 == dfSCREEN_WIDTH || g_player._y - 1 == -1)
-        {
-            return 1;
-        }
-
-        g_player._x += 1;
-        g_player._y -= 1;
-        flag = true;
-    }
-    else if (GetAsyncKeyState(VK_RIGHT) && GetAsyncKeyState(VK_DOWN))
-    {
-        if (g_player._x + 2 == dfSCREEN_WIDTH || g_player._y + 1 == dfSCREEN_HEIGHT)
-        {
-            return 1;
-        }
-
-        g_player._x += 1;
-        g_player._y += 1;
-        flag = true;
-    }
-    else if (GetAsyncKeyState(VK_DOWN) && GetAsyncKeyState(VK_LEFT))
-    {
-        if (g_player._x - 1 == -1 || g_player._y + 1 == dfSCREEN_HEIGHT)
-        {
-            return 1;
-        }
-
-        g_player._x -= 1;
-        g_player._y += 1;
-        flag = true;
-    }
-    else if (GetAsyncKeyState(VK_LEFT))
-    {
-        if (g_player._x - 1 == -1)
-        {
-            return 1;
-        }
-
-        g_player._x -= 1;
-        flag = true;
-    }
-    else if (GetAsyncKeyState(VK_UP))
-    {
-        if (g_player._y - 1 == -1)
-        {
-            return 1;
-        }
-
-        g_player._y -= 1;
-        flag = true;
-    }
-    else if (GetAsyncKeyState(VK_RIGHT))
-    {
-        if (g_player._x + 2 == dfSCREEN_WIDTH)
-        {
-            return 1;
-        }
-
-        g_player._x += 1;
-        flag = true;
-    }
-    else if (GetAsyncKeyState(VK_DOWN))
-    {
-        if (g_player._y + 1 == dfSCREEN_HEIGHT)
-        {
-            return 1;
-        }
-
-        g_player._y += 1;
-        flag = true;
-    }
-
-    if (flag)
-    {
-        // send
-        for (auto i = 0; i < s_move; ++i)
-        {
-            if (g_starmove[i]._id == g_player._id)
-            {
-                g_starmove[i]._x = g_player._x;
-                g_starmove[i]._y = g_player._y;
-
-                retval = send(server_sock, (char*)&g_starmove[i], sizeof(STARMOVE), 0);
-                if (retval == SOCKET_ERROR)
-                {
-                    wprintf(L"%d\n", WSAGetLastError());
-                    return 0;
-                }
-
-                break;
-            }
-        }
-    }
-
-    return 1;
 }
 
-int networkLogic()
+void sendBroadcast(SESSION* s, char* bbuf)
+{
+    for (auto& session : g_playerList)
+    {
+        if (session._id != s->_id)
+        {
+            sendUnicast(&session, bbuf);
+        }
+    }
+}
+
+int network()
 {
     FD_ZERO(&rset);
-    FD_SET(server_sock, &rset);
-    t.tv_sec = 0;
-    t.tv_usec = 1000;
+    FD_SET(listen_sock, &rset);
 
-    retval = select(0, &rset, NULL, NULL, &t);
-    if (retval == SOCKET_ERROR)
+    for (auto& session : g_playerList)
+    {
+        FD_SET(session._sock, &rset);
+    }
+
+    int selectret = select(0, &rset, NULL, NULL, NULL);
+    if (selectret == SOCKET_ERROR)
     {
         wprintf(L"%d\n", WSAGetLastError());
         return 0;
     }
 
-    if (FD_ISSET(server_sock, &rset))
+    if (FD_ISSET(listen_sock, &rset))
     {
-        retval = recv(server_sock, buf, sizeof(buf), 0);
-        if (retval == SOCKET_ERROR)
+        SESSION session = { 0, };
+        SOCKET client_sock;
+        SOCKADDR_IN clientaddr;
+        int addrlen = sizeof(clientaddr);
+
+        client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
+        if (client_sock == INVALID_SOCKET)
         {
             wprintf(L"%d\n", WSAGetLastError());
             return 0;
         }
-        else if (retval == 0)
+
+        session._sock = client_sock;
+        wchar_t addr[INET_ADDRSTRLEN];
+        InetNtop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
+        wcscpy(session._ip, addr);
+        session._port = ntohs(clientaddr.sin_port);
+        session._live = true;
+        session._id = s_idalloc;
+        g_idalloc[s_idalloc]._type = 0;
+        g_idalloc[s_idalloc]._id = s_idalloc;
+        g_idalloc[s_idalloc]._g = 0;
+        g_idalloc[s_idalloc]._g2 = 0;
+
+        sendUnicast(&session, (char*)&g_idalloc[s_idalloc]);
+        s_idalloc++;
+
+        int x = rand() % dfSCREEN_WIDTH;
+        int y = rand() % dfSCREEN_HEIGHT;
+        session._x = x;
+        session._y = y;
+        g_createstar[s_create]._type = 1;
+        g_createstar[s_create]._id = session._id;
+        g_createstar[s_create]._x = x;
+        g_createstar[s_create]._y = y;
+
+        sendUnicast(&session, (char*)&g_createstar[s_create]);
+
+        for (auto i = 0; i < s_create; ++i)
         {
-            return 0;
+            if (g_createstar[i]._id != session._id)
+            {
+                sendUnicast(&session, (char*)&g_createstar[i]);
+            }
         }
 
-        recvByte = retval;
-        int sum = 0;
+        g_playerList.push_back(session);
 
-        while (recvByte - sum >= 16)
+        sendBroadcast(&session, (char*)&g_createstar[s_create]);
+        s_create++;
+
+        g_starmove[s_move]._type = 3;
+        g_starmove[s_move]._id = session._id;
+        g_starmove[s_move]._x = session._x;
+        g_starmove[s_move]._y = session._y;
+        s_move++;
+    }
+
+    for (auto& session : g_playerList)
+    {
+        if (FD_ISSET(session._sock, &rset))
         {
-            int* bbuf = (int*)(buf + sum);
-            int type = bbuf[0];
-
-            bool isCreate;
-            bool isMove;
-            int id = bbuf[1];
-            int x = bbuf[2];
-            int y = bbuf[3];
-            switch (type)
+            int recvret = recv(session._sock, buf, sizeof(buf), 0);
+            if (recvret == SOCKET_ERROR)
             {
-            case 0:
-                g_player._id = id;
-                g_idalloc._id = id;
-                break;
-            case 1:
-                isCreate = true;
-                isMove = true;
-                for (auto i = 0; i < s_create; ++i)
-                {
-                    if (g_createstar[i]._id == id)
-                    {
-                        isCreate = false;
-                        break;
-                    }
-                }
-
-                for (auto i = 0; i < s_move; ++i)
-                {
-                    if (g_starmove[i]._id == id)
-                    {
-                        isMove = false;
-                        break;
-                    }
-                }
-
-                if (isCreate)
-                {
-                    g_createstar[s_create++] = { 1, id, x, y };
-                }
-
-                if (isMove)
-                {
-                    g_starmove[s_move++] = { 3, id, x, y };
-                }
-                
-                if (id == g_player._id)
-                {
-                    g_player._x = x;
-                    g_player._y = y;
-                }
-                break;
-            case 2:
-                g_deletestar[s_delete++] = { 2, id, 0, 0 };
-                break;
-            case 3:
-                for (auto i = 0; i < s_move; ++i)
-                {
-                    if (g_starmove[i]._id == id)
-                    {
-                        g_starmove[i]._x = x;
-                        g_starmove[i]._y = y;
-                        break;
-                    }
-                }
-
-                break;
+                wprintf(L"%d\n", WSAGetLastError());
+                session._live = false;
+                continue;
+            }
+            else if (recvret == 0)
+            {
+                session._live = false;
+                continue;
             }
 
-            sum += 16;
+            int recvByte = recvret;
+            int sum = 0;
+
+            while (recvByte - sum >= 16)
+            {
+                int* bbuf = (int*)(buf + sum);
+                int type = bbuf[0];
+                int id = bbuf[1];
+                int x = bbuf[2];
+                int y = bbuf[3];
+
+                switch (type)
+                {
+                case 3:
+                    for (auto i = 0; i < s_move; ++i)
+                    {
+                        if (g_starmove[i]._id == id)
+                        {
+                            g_starmove[i]._x = x;
+                            g_starmove[i]._y = y;
+                            sendBroadcast(&session, (char*)&g_starmove[i]);
+                            break;
+                        }
+                    }
+                    break;
+                }
+
+                sum += 16;
+            }
+        }
+    }
+
+    list<SESSION> temp = g_playerList;
+    for (auto iter = temp.begin(); iter != temp.end(); ++iter)
+    {
+        if (iter->_live == false)
+        {
+            DELETESTAR deleteStar;
+            deleteStar._type = 2;
+            deleteStar._id = iter->_id;
+            deleteStar._g = 0;
+            deleteStar._g2 = 0;
+
+            sendBroadcast(&(*iter), (char*)&deleteStar);
+
+            g_playerList.erase(iter);
         }
     }
 
     return 1;
 }
 
-int Render()
+int render()
 {
-    if (g_player._x == -1)
-    {
-        return 1;
-    }
 
-    Buffer_Clear();
 
-    for (auto i = 0; i < s_move; ++i)
-    {
-        if (g_starmove[i]._id == -1)
-        {
-            break;
-        }
-
-        bool isDelete = false;
-        for (auto j = 0; j < s_delete; ++j)
-        {
-            if (g_starmove[i]._id == g_deletestar[j]._id)
-            {
-                isDelete = true;
-                break;
-            }
-        }
-
-        if (!isDelete)
-        {
-            Sprite_Draw(g_starmove[i]._x, g_starmove[i]._y, L'*');
-        }
-    }
-
-    Buffer_Flip();
 
     return 1;
 }
