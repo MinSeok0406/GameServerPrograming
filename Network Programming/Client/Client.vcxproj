@@ -143,7 +143,13 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Window_SocketProgramming\Buffer.cpp" />
+    <ClCompile Include="..\Window_SocketProgramming\Console.cpp" />
     <ClCompile Include="ClientMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Window_SocketProgramming\Buffer.h" />
+    <ClInclude Include="..\Window_SocketProgramming\Console.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

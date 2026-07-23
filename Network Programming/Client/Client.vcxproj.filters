@@ -2,5 +2,24 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="ClientMain.cpp" />
+    <ClCompile Include="..\Window_SocketProgramming\Buffer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Window_SocketProgramming\Console.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Util">
+      <UniqueIdentifier>{e4c99fcd-c8d0-4787-a4e5-6e6ea46c8f66}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Window_SocketProgramming\Buffer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Window_SocketProgramming\Console.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

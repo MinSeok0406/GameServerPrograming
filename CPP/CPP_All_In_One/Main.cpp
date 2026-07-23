@@ -9,25 +9,20 @@
 #include <string>
 #include <stack>
 #include <queue>
+#include <list>
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-int n, c;
-vector<pair<int, int>> v;
-map<int, int> mp;
-map<int, int> firstmp;
-
-bool comp(pair<int, int> a, pair<int, int> b)
+struct DATA
 {
-    if (a.second == b.second)
-    {
-        return firstmp[a.first] < firstmp[b.first];
-    }
+    int _x;
+    int _y;
+    int _z;
+};
 
-    return a.second > b.second;
-}
+list<DATA> li;
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -36,35 +31,8 @@ int wmain(int argc, WCHAR* argv[])
     cout.tie(NULL);
     timeBeginPeriod(1);
 
-    cin >> n >> c;
 
-    for (auto i = 0; i < n; ++i)
-    {
-        int k;
-        cin >> k;
-
-        if (firstmp.find(k) == firstmp.end())
-        {
-            firstmp[k] = i;
-        }
-        
-        mp[k]++;
-    }
-
-    for (auto i : mp)
-    {
-        v.push_back({ i.first, i.second });
-    }
-
-    sort(v.begin(), v.end(), comp);
-
-    for (auto i : v)
-    {
-        for (auto j = 0; j < i.second; ++j)
-        {
-            cout << i.first << " ";
-        }
-    }
+    
 
     return 0;
 }

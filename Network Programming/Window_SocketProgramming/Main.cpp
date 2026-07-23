@@ -16,13 +16,13 @@ using ll = long long;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT  47000
-#define BUFSIZE     160
+#define BUFSIZE     512
 #define CLIENT      100
 
 struct SESSION
 {
     SOCKET _sock;
-    wchar_t* _ip;
+    wchar_t _ip[INET_ADDRSTRLEN];
     short _port;
     bool _live;
     int _id;
@@ -69,12 +69,10 @@ STARMOVE g_starmove[CLIENT];
 
 fd_set rset;
 SOCKET listen_sock;
-int useTime;
-DWORD tm;
 static int s_idalloc = 0;
 static int s_create = 0;
 static int s_move = 0;
-char buf[BUFSIZE * 4];
+char buf[BUFSIZE];
 
 void sendUnicast(SESSION* s, char* bbuf);      // Session에는 보낼 세션만을 넣어야함
 void sendBroadcast(SESSION* s, char* bbuf);    // Session에는 보내지 않을 세션을 넣어야함
@@ -103,7 +101,7 @@ int wmain(int argc, WCHAR* argv[])
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -115,7 +113,7 @@ int wmain(int argc, WCHAR* argv[])
     int bindret = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
     if (bindret == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -123,31 +121,22 @@ int wmain(int argc, WCHAR* argv[])
     int nbioret = ioctlsocket(listen_sock, FIONBIO, &on);
     if (nbioret == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
     int listenret = listen(listen_sock, SOMAXCONN);
     if (listenret == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
-
-    tm = timeGetTime();
 
     while (true)
     {
         network();
 
         render();
-
-        useTime = (int)(timeGetTime() - tm);
-        if (useTime > 0 && useTime < 10)
-        {
-            Sleep(10 - useTime);
-        }
-        tm += 10;
     }
 
     closesocket(listen_sock);
@@ -161,7 +150,7 @@ void sendUnicast(SESSION* s, char* bbuf)
     int sendret = send(s->_sock, bbuf, 16, 0);
     if (sendret == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return;
     }
 }
@@ -190,7 +179,7 @@ int network()
     int selectret = select(0, &rset, NULL, NULL, NULL);
     if (selectret == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 0;
     }
 
@@ -204,7 +193,7 @@ int network()
         client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
         if (client_sock == INVALID_SOCKET)
         {
-            wprintf(L"%d\n", WSAGetLastError());
+            //wprintf(L"%d\n", WSAGetLastError());
             return 0;
         }
 
@@ -232,18 +221,22 @@ int network()
         g_createstar[s_create]._x = x;
         g_createstar[s_create]._y = y;
 
+        // 신규 유저에게 별 생성 위치 송신
         sendUnicast(&session, (char*)&g_createstar[s_create]);
 
-        for (auto i = 0; i < s_create; ++i)
+        // 신규 유저에게 다른 별들 위치 송신
+        for (auto i = 0; i < s_move; ++i)
         {
-            if (g_createstar[i]._id != session._id)
+            if (g_starmove[i]._id != session._id)
             {
-                sendUnicast(&session, (char*)&g_createstar[i]);
+                sendUnicast(&session, (char*)&g_starmove[i]);
             }
         }
 
+        // 신규 유저 등록
         g_playerList.push_back(session);
 
+        // 다른 유저에게 신규 유저 위치 알려주기
         sendBroadcast(&session, (char*)&g_createstar[s_create]);
         s_create++;
 
@@ -261,7 +254,7 @@ int network()
             int recvret = recv(session._sock, buf, sizeof(buf), 0);
             if (recvret == SOCKET_ERROR)
             {
-                wprintf(L"%d\n", WSAGetLastError());
+                //wprintf(L"%d\n", WSAGetLastError());
                 session._live = false;
                 continue;
             }
@@ -291,6 +284,8 @@ int network()
                         {
                             g_starmove[i]._x = x;
                             g_starmove[i]._y = y;
+                            session._x = x;
+                            session._y = y;
                             sendBroadcast(&session, (char*)&g_starmove[i]);
                             break;
                         }
@@ -303,8 +298,7 @@ int network()
         }
     }
 
-    list<SESSION> temp = g_playerList;
-    for (auto iter = temp.begin(); iter != temp.end(); ++iter)
+    for (auto iter = g_playerList.begin(); iter != g_playerList.end();)
     {
         if (iter->_live == false)
         {
@@ -316,7 +310,11 @@ int network()
 
             sendBroadcast(&(*iter), (char*)&deleteStar);
 
-            g_playerList.erase(iter);
+            iter = g_playerList.erase(iter);
+        }
+        else
+        {
+            ++iter;
         }
     }
 
@@ -325,8 +323,12 @@ int network()
 
 int render()
 {
-
-
+    Buffer_Clear();
+    for (auto& session : g_playerList)
+    {
+        Sprite_Draw(session._x, session._y, L'*');
+    }
+    Buffer_Flip();
 
     return 1;
 }
