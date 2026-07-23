@@ -16,8 +16,23 @@ using ll = long long;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT  47000
-#define BUFSIZE     512
+#define BUFSIZE     160
 #define CLIENT      100
+
+DWORD tick = timeGetTime();
+void FPS()
+{
+    static int cnt;
+
+    if (timeGetTime() - tick > 1000)
+    {
+        printf("FPS : %d\n", cnt);
+        cnt = 0;
+        tick += 1000;
+    }
+
+    cnt++;
+}
 
 struct SESSION
 {
@@ -135,16 +150,18 @@ int main(int argc, CHAR* argv[])
 
     while (true)
     {
+        FPS();
+
         network();
 
         render();
 
         useTime = (int)(timeGetTime() - tm);
-        if (useTime > 0 && useTime < 50)
+        if (useTime < 10)
         {
-            Sleep(50 - useTime);
+            Sleep(10 - useTime);
         }
-        tm += 50;
+        tm += 10;
     }
 
     closesocket(listen_sock);
@@ -220,7 +237,7 @@ int network()
         sendUnicast(&session, (char*)&g_idalloc[s_idalloc]);
         s_idalloc++;
 
-        int x = rand() % dfSCREEN_WIDTH;
+        int x = rand() % (dfSCREEN_WIDTH - 1);
         int y = rand() % dfSCREEN_HEIGHT;
         session._x = x;
         session._y = y;

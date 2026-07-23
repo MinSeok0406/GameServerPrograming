@@ -74,7 +74,7 @@ DWORD tm;
 static int s_create = 0;
 static int s_delete = 0;
 static int s_move = 0;
-char buf[BUFSIZE * 4];
+char buf[BUFSIZE];
 
 int inputMove();
 int networkLogic();
@@ -151,9 +151,13 @@ int wmain(int argc, WCHAR* argv[])
         Render();
 
         useTime = (int)(timeGetTime() - tm);
-        if (useTime > 0 && useTime < 10)
+        if (useTime < 10)
         {
             Sleep(10 - useTime);
+        }
+        else if (useTime > 100)
+        {
+            useTime = timeGetTime();
         }
         tm += 10;
     }
@@ -316,12 +320,12 @@ int networkLogic()
         {
             int* bbuf = (int*)(buf + sum);
             int type = bbuf[0];
-
-            bool isCreate = true;
-            bool isMove = true;
             int id = bbuf[1];
             int x = bbuf[2];
             int y = bbuf[3];
+
+            bool isCreate = true;
+            bool isMove = true;
             switch (type)
             {
             case 0:
