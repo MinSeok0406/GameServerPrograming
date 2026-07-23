@@ -2,7 +2,7 @@
 #include "Buffer.h"
 #include "Console.h"
 
-wchar_t szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
+char szScreenBuffer[dfSCREEN_HEIGHT][dfSCREEN_WIDTH];
 
 void Buffer_Flip(void)
 {
@@ -10,14 +10,14 @@ void Buffer_Flip(void)
     for (iCnt = 0; iCnt < dfSCREEN_HEIGHT; ++iCnt)
     {
         cs_MoveCursor(0, iCnt);
-        wprintf(szScreenBuffer[iCnt]);
+        printf(szScreenBuffer[iCnt]);
     }
 }
 
 void Buffer_Clear(void)
 {
     int iCnt;
-    wmemset(szScreenBuffer[0], L' ', dfSCREEN_WIDTH * dfSCREEN_HEIGHT);
+    memset(szScreenBuffer[0], ' ', dfSCREEN_WIDTH * dfSCREEN_HEIGHT);
 
     for (iCnt = 0; iCnt < dfSCREEN_HEIGHT; ++iCnt)
     {
@@ -25,7 +25,7 @@ void Buffer_Clear(void)
     }
 }
 
-void Sprite_Draw(int iX, int iY, wchar_t chSprite)
+void Sprite_Draw(int iX, int iY, char chSprite)
 {
     if (iX < 0 || iY < 0 || iX >= dfSCREEN_WIDTH || iY >= dfSCREEN_HEIGHT)
     {

@@ -23,7 +23,7 @@ struct SESSION
 {
     SOCKET _sock;
     wchar_t _ip[INET_ADDRSTRLEN];
-    short _port;
+    unsigned short _port;
     bool _live;
     int _id;
     int _x;
@@ -69,6 +69,8 @@ STARMOVE g_starmove[CLIENT];
 
 fd_set rset;
 SOCKET listen_sock;
+int useTime;
+DWORD tm;
 static int s_idalloc = 0;
 static int s_create = 0;
 static int s_move = 0;
@@ -79,11 +81,8 @@ void sendBroadcast(SESSION* s, char* bbuf);    // Session에는 보내지 않을
 int network();
 int render();
 
-int wmain(int argc, WCHAR* argv[])
+int main(int argc, CHAR* argv[])
 {
-    _setmode(_fileno(stdout), _O_U16TEXT);
-    _setmode(_fileno(stdin), _O_U16TEXT);
-
     timeBeginPeriod(1);
     srand(unsigned int(time(nullptr)));
     cs_Initial();
@@ -132,11 +131,20 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
+    tm = timeGetTime();
+
     while (true)
     {
         network();
 
         render();
+
+        useTime = (int)(timeGetTime() - tm);
+        if (useTime > 0 && useTime < 50)
+        {
+            Sleep(50 - useTime);
+        }
+        tm += 50;
     }
 
     closesocket(listen_sock);
@@ -326,7 +334,7 @@ int render()
     Buffer_Clear();
     for (auto& session : g_playerList)
     {
-        Sprite_Draw(session._x, session._y, L'*');
+        Sprite_Draw(session._x, session._y, '*');
     }
     Buffer_Flip();
 
