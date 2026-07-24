@@ -18,50 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="client4.cpp" />
-    <ClCompile Include="client5_Close.cpp" />
-    <ClCompile Include="client5_FixedByte.cpp" />
-    <ClCompile Include="client5_FixedVariable.cpp" />
-    <ClCompile Include="client5_Variable.cpp" />
-    <ClCompile Include="Console.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Practice3_Client.cpp" />
-    <ClCompile Include="Practice3_Server.cpp" />
-    <ClCompile Include="Practice5_1.cpp" />
-    <ClCompile Include="Practice5_2.cpp" />
-    <ClCompile Include="Practice5_3.cpp" />
-    <ClCompile Include="Practice5_4.cpp" />
-    <ClCompile Include="Practice6_6.cpp" />
-    <ClCompile Include="Practice8_2.cpp" />
-    <ClCompile Include="Practice8_3.cpp" />
-    <ClCompile Include="Procademy2_1.cpp" />
-    <ClCompile Include="SelectClient11.cpp" />
-    <ClCompile Include="SelectServer11.cpp" />
-    <ClCompile Include="server4.cpp" />
-    <ClCompile Include="server5_Close.cpp" />
-    <ClCompile Include="server5_FixedByte.cpp" />
-    <ClCompile Include="server5_FixedVariable.cpp" />
-    <ClCompile Include="server5_Variable.cpp" />
-    <ClCompile Include="server6_Event.cpp" />
-    <ClCompile Include="server6_ThreadTCP.cpp" />
-    <ClCompile Include="UDPBrodcastClient8.cpp" />
-    <ClCompile Include="UDPBrodcastServer8.cpp" />
-    <ClCompile Include="UDPClient8.cpp" />
-    <ClCompile Include="UDPServer8.cpp" />
-    <ClCompile Include="WSAAsyncSelectClient11.cpp" />
-    <ClCompile Include="WSAAsyncSelectServer11.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Buffer.h" />
-    <ClInclude Include="Console.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{e0b44168-bb00-48b8-914b-a238debd954b}</ProjectGuid>
-    <RootNamespace>WindowSocketProgramming</RootNamespace>
+    <ProjectGuid>{e8b22472-ed5d-456d-b4ec-9addf181e9d8}</ProjectGuid>
+    <RootNamespace>RingBuffer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -154,7 +115,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -175,12 +135,18 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RingBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RingBuffer.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

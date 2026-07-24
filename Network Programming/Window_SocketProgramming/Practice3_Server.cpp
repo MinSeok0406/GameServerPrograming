@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <time.h>
 #include <fcntl.h>
@@ -358,4 +358,4 @@ int render()
     Buffer_Flip();
 
     return 1;
-}
+}*/
