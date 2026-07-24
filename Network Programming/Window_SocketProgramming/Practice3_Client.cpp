@@ -1,5 +1,4 @@
-﻿/*#define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
+﻿/*#include <iostream>
 #include <time.h>
 #include <fcntl.h>
 #include <io.h>
@@ -7,16 +6,16 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 #include <vector>
-#include "Console.h"
 #include "Buffer.h"
+#include "Console.h"
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-wchar_t SERVERIP[INET_ADDRSTRLEN];
-#define SERVERPORT  3000
+char SERVERIP[INET_ADDRSTRLEN];
+#define SERVERPORT  47000
 #define BUFSIZE     160
 #define CLIENT      1000
 
@@ -75,7 +74,7 @@ DWORD tm;
 static int s_create = 0;
 static int s_delete = 0;
 static int s_move = 0;
-char buf[BUFSIZE * 4];
+char buf[BUFSIZE];
 
 int inputMove();
 int networkLogic();
@@ -83,9 +82,6 @@ int Render();
 
 int wmain(int argc, WCHAR* argv[])
 {
-    _setmode(_fileno(stdout), _O_U16TEXT);
-    _setmode(_fileno(stdin), _O_U16TEXT);
-
     timeBeginPeriod(1);
     srand(unsigned int(time(nullptr)));
     cs_Initial();
@@ -100,21 +96,19 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    wprintf(L"접속할 IP 주소를 입력해주세요 : ");
-    fgetws(SERVERIP, INET_ADDRSTRLEN, stdin);
+    printf("접속할 IP 주소를 입력해주세요 : ");
+    fgets(SERVERIP, INET_ADDRSTRLEN, stdin);
 
-    int len = (int)wcslen(SERVERIP);
+    int len = (int)strlen(SERVERIP);
     if (SERVERIP[len - 1] == '\n')
     {
         SERVERIP[len - 1] = '\0';
     }
 
-
-
     server_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (server_sock == INVALID_SOCKET)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -122,12 +116,13 @@ int wmain(int argc, WCHAR* argv[])
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(SERVERPORT);
-    InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
+    inet_pton(AF_INET, SERVERIP, &serveraddr.sin_addr);
+    //InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
 
     retval = connect(server_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -135,7 +130,7 @@ int wmain(int argc, WCHAR* argv[])
     retval = ioctlsocket(server_sock, FIONBIO, &on);
     if (retval == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -156,7 +151,7 @@ int wmain(int argc, WCHAR* argv[])
         Render();
 
         useTime = (int)(timeGetTime() - tm);
-        if (useTime > 0 && useTime < 10)
+        if (useTime < 10)
         {
             Sleep(10 - useTime);
         }
@@ -275,7 +270,7 @@ int inputMove()
                 retval = send(server_sock, (char*)&g_starmove[i], sizeof(STARMOVE), 0);
                 if (retval == SOCKET_ERROR)
                 {
-                    wprintf(L"%d\n", WSAGetLastError());
+                    //wprintf(L"%d\n", WSAGetLastError());
                     return 0;
                 }
 
@@ -297,7 +292,7 @@ int networkLogic()
     retval = select(0, &rset, NULL, NULL, &t);
     if (retval == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        //wprintf(L"%d\n", WSAGetLastError());
         return 0;
     }
 
@@ -306,7 +301,7 @@ int networkLogic()
         retval = recv(server_sock, buf, sizeof(buf), 0);
         if (retval == SOCKET_ERROR)
         {
-            wprintf(L"%d\n", WSAGetLastError());
+            //wprintf(L"%d\n", WSAGetLastError());
             return 0;
         }
         else if (retval == 0)
@@ -321,12 +316,12 @@ int networkLogic()
         {
             int* bbuf = (int*)(buf + sum);
             int type = bbuf[0];
-
-            bool isCreate;
-            bool isMove;
             int id = bbuf[1];
             int x = bbuf[2];
             int y = bbuf[3];
+
+            bool isCreate = true;
+            bool isMove = true;
             switch (type)
             {
             case 0:
@@ -334,8 +329,6 @@ int networkLogic()
                 g_idalloc._id = id;
                 break;
             case 1:
-                isCreate = true;
-                isMove = true;
                 for (auto i = 0; i < s_create; ++i)
                 {
                     if (g_createstar[i]._id == id)
@@ -380,8 +373,14 @@ int networkLogic()
                     {
                         g_starmove[i]._x = x;
                         g_starmove[i]._y = y;
+                        isMove = false;
                         break;
                     }
+                }
+
+                if (isMove)
+                {
+                    g_starmove[s_move++] = { 3, id, x, y };
                 }
 
                 break;
@@ -422,7 +421,7 @@ int Render()
 
         if (!isDelete)
         {
-            Sprite_Draw(g_starmove[i]._x, g_starmove[i]._y, L'*');
+            Sprite_Draw(g_starmove[i]._x, g_starmove[i]._y, '*');
         }
     }
 

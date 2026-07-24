@@ -38,7 +38,7 @@ struct SESSION
 {
     SOCKET _sock;
     wchar_t _ip[INET_ADDRSTRLEN];
-    unsigned short _port;
+    u_short _port;
     bool _live;
     int _id;
     int _x;
@@ -80,14 +80,16 @@ struct STARMOVE
 list<SESSION> g_playerList;
 IDALLOC g_idalloc[CLIENT];
 CREATESTAR g_createstar[CLIENT];
+DELETESTAR g_deletestar[CLIENT];
 STARMOVE g_starmove[CLIENT];
 
 fd_set rset;
 SOCKET listen_sock;
-int useTime;
+u_int useTime;
 DWORD tm;
 static int s_idalloc = 0;
 static int s_create = 0;
+static int s_delete = 0;
 static int s_move = 0;
 char buf[BUFSIZE];
 
@@ -104,6 +106,7 @@ int main(int argc, CHAR* argv[])
 
     memset(g_idalloc, -1, sizeof(g_idalloc));
     memset(g_createstar, -1, sizeof(g_createstar));
+    memset(g_deletestar, -1, sizeof(g_deletestar));
     memset(g_starmove, -1, sizeof(g_starmove));
 
     WSADATA wsaData;
@@ -150,13 +153,11 @@ int main(int argc, CHAR* argv[])
 
     while (true)
     {
-        FPS();
-
         network();
 
         render();
 
-        useTime = (int)(timeGetTime() - tm);
+        useTime = timeGetTime() - tm;
         if (useTime < 10)
         {
             Sleep(10 - useTime);
@@ -252,7 +253,7 @@ int network()
         // 신규 유저에게 다른 별들 위치 송신
         for (auto i = 0; i < s_move; ++i)
         {
-            if (g_starmove[i]._id != session._id)
+            if (g_deletestar[i]._id == -1 && (g_starmove[i]._id != session._id))
             {
                 sendUnicast(&session, (char*)&g_starmove[i]);
             }
@@ -327,13 +328,13 @@ int network()
     {
         if (iter->_live == false)
         {
-            DELETESTAR deleteStar;
-            deleteStar._type = 2;
-            deleteStar._id = iter->_id;
-            deleteStar._g = 0;
-            deleteStar._g2 = 0;
+            g_deletestar[s_delete]._type = 2;
+            g_deletestar[s_delete]._id = iter->_id;
+            g_deletestar[s_delete]._g = 0;
+            g_deletestar[s_delete]._g2 = 0;
 
-            sendBroadcast(&(*iter), (char*)&deleteStar);
+            sendBroadcast(&(*iter), (char*)&g_deletestar[s_delete]);
+            s_delete++;
 
             iter = g_playerList.erase(iter);
         }
@@ -349,6 +350,7 @@ int network()
 int render()
 {
     Buffer_Clear();
+    FPS();
     for (auto& session : g_playerList)
     {
         Sprite_Draw(session._x, session._y, '*');

@@ -5,6 +5,7 @@
 #include <time.h>
 #include <fcntl.h>
 #include <io.h>
+#include <process.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
@@ -17,26 +18,25 @@ using ll = long long;
 
 #define SERVERPORT  47000
 #define BUFSIZE     512
-#define WM_SOCKET   (WM_USER+1)
 
 struct SOCKETINFO
 {
+    WSAOVERLAPPED overlapped;
     SOCKET sock;
     char buf[BUFSIZE + 1];
-    int recvbytes;
-    int sendbytes;
-    bool recvdelayed;
-    SOCKETINFO* next;
+    int recvBytes;
+    int sendBytes;
+    WSABUF wsabuf;
 };
 
-SOCKETINFO* SocketInfoList;
+int nTotalSockets = 0;
+SOCKETINFO* socketInfoArray[WSA_MAXIMUM_WAIT_EVENTS];
+WSAEVENT eventArray[WSA_MAXIMUM_WAIT_EVENTS];
+CRITICAL_SECTION cs;
 
-LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
-void processSocketMessage(HWND, UINT, WPARAM, LPARAM);
-
-bool AddSocketInfo(SOCKET sock);
-SOCKETINFO* GetSocketInfo(SOCKET sock);
-void RemoveSocketInfo(SOCKET sock);
+u_int WINAPI workerThread(LPVOID arg);
+BOOL AddSocketInfo(SOCKET sock);
+void RemoveSocketInfo(int nIndex);
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -45,31 +45,7 @@ int wmain(int argc, WCHAR* argv[])
     timeBeginPeriod(1);
     srand(unsigned int(time(nullptr)));
 
-    int retval;
-
-    WNDCLASS wndclass;
-    wndclass.style = CS_HREDRAW | CS_VREDRAW;
-    wndclass.lpfnWndProc = wndProc;
-    wndclass.cbClsExtra = 0;
-    wndclass.cbWndExtra = 0;
-    wndclass.hInstance = NULL;
-    wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-    wndclass.lpszMenuName = NULL;
-    wndclass.lpszClassName = L"MyWndClass";
-    if (!RegisterClass(&wndclass))
-    {
-        return 1;
-    }
-
-    HWND hWnd = CreateWindow(L"MyWndClass", L"TCP 서버", WS_OVERLAPPEDWINDOW, 0, 0, 600, 200, NULL, NULL, NULL, NULL);
-    if (hWnd == NULL)
-    {
-        return 1;
-    }
-    ShowWindow(hWnd, SW_SHOWNORMAL);
-    UpdateWindow(hWnd);
+    InitializeCriticalSection(&cs);
 
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -80,211 +56,76 @@ int wmain(int argc, WCHAR* argv[])
     SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET)
     {
-        return 1;
+        wprintf(L"%d\n", WSAGetLastError());
+        return 0;
     }
 
     SOCKADDR_IN serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
-    serveraddr.sin_port = htons(SERVERPORT);
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-    if (retval == SOCKET_ERROR)
+    serveraddr.sin_port = htons(SERVERPORT);
+    int bindRet = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+    if (bindRet == SOCKET_ERROR)
     {
         wprintf(L"%d\n", WSAGetLastError());
-        return 1;
-    }
-    
-    retval = listen(listen_sock, SOMAXCONN);
-    if (retval == SOCKET_ERROR)
-    {
-        wprintf(L"%d\n", WSAGetLastError());
-        return 1;
-    }
-
-    retval = WSAAsyncSelect(listen_sock, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
-    if (retval == SOCKET_ERROR)
-    {
-        wprintf(L"%d\n", WSAGetLastError());
-        return 1;
-    }
-
-    MSG msg;
-    while (GetMessage(&msg, 0, 0, 0) > 0)
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    
-    WSACleanup();
-
-    return msg.wParam;
-}
-
-LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    switch (uMsg)
-    {
-    case WM_SOCKET:
-        processSocketMessage(hWnd, uMsg, wParam, lParam);
-        return 0;
-    case WM_DESTROY:
-        PostQuitMessage(0);
         return 0;
     }
 
-    return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
+    int listenRet = listen(listen_sock, SOMAXCONN);
+    if (listenRet == SOCKET_ERROR)
+    {
+        wprintf(L"%d\n", WSAGetLastError());
+        return 0;
+    }
 
-void processSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    int retval;
+    WSAEVENT hEvent = WSACreateEvent();
+    if (hEvent == WSA_INVALID_EVENT)
+    {
+        wprintf(L"%d\n", WSAGetLastError());
+        return 0;
+    }
+    eventArray[nTotalSockets++] = hEvent;
+
+    HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, workerThread, NULL, 0, NULL);
+    if (hThread == NULL)
+    {
+        return 0;
+    }
+    CloseHandle(hThread);
+
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
-    SOCKETINFO* ptr;
+    u_int recvbytes, flags;
 
-    if (WSAGETSELECTERROR(lParam))
+    while (true)
     {
-        RemoveSocketInfo(wParam);
-        return;
-    }
-
-    switch (WSAGETSELECTEVENT(lParam))
-    {
-    case FD_ACCEPT:
         addrlen = sizeof(clientaddr);
-        client_sock = accept(wParam, (SOCKADDR*)&clientaddr, &addrlen);
+        client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
         if (client_sock == INVALID_SOCKET)
         {
             wprintf(L"%d\n", WSAGetLastError());
-            return;
+            break;
         }
-
-        wprintf(L"\n[TCP 서버] 클라이언트 접속 : IP 주소=%hs, 포트 번호=%d\n",
-            inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-
-        AddSocketInfo(client_sock);
-        retval = WSAAsyncSelect(client_sock, hWnd, WM_SOCKET, FD_READ | FD_WRITE | FD_CLOSE);
-        if (retval == SOCKET_ERROR)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
-            RemoveSocketInfo(client_sock);
-        }
-        break;
-    case FD_READ:
-        ptr = GetSocketInfo(wParam);
-        if (ptr->recvbytes > 0)
-        {
-            ptr->recvdelayed = true;
-            return;
-        }
-
-        retval = recv(ptr->sock, ptr->buf, BUFSIZE, 0);
-        if (retval == SOCKET_ERROR)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
-            RemoveSocketInfo(wParam);
-            return;
-        }
-        ptr->recvbytes = retval;
-        ptr->buf[retval] = '\0';
-        addrlen = sizeof(clientaddr);
-        getpeername(wParam, (SOCKADDR*)&clientaddr, &addrlen);
-        wprintf(L"\n[TCP/%hs:%d] %hs\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port), ptr->buf);
-    case FD_WRITE:
-        ptr = GetSocketInfo(wParam);
-        if (ptr->recvbytes <= ptr->sendbytes)
-        {
-            return;
-        }
-
-        retval = send(ptr->sock, ptr->buf + ptr->sendbytes, ptr->recvbytes - ptr->sendbytes, 0);
-        if (retval == SOCKET_ERROR)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
-            RemoveSocketInfo(wParam);
-            return;
-        }
-
-        ptr->sendbytes += retval;
-        if (ptr->recvbytes == ptr->sendbytes)
-        {
-            ptr->recvbytes = ptr->sendbytes = 0;
-            if (ptr->recvdelayed)
-            {
-                ptr->recvdelayed = false;
-                PostMessage(hWnd, WM_SOCKET, wParam, FD_READ);
-            }
-        }
-        break;
-    case FD_CLOSE:
-        RemoveSocketInfo(wParam);
-        break;
     }
+    
+    closesocket(listen_sock);
+    WSACleanup();
+
+    return 1;
 }
 
-bool AddSocketInfo(SOCKET sock)
+u_int WINAPI workerThread(LPVOID arg)
 {
-    SOCKETINFO* ptr = new SOCKETINFO;
-    if (ptr == NULL)
-    {
-        wprintf(L"[오류] 메모리가 부족합니다.\n");
-        return false;
-    }
-
-    ptr->sock = sock;
-    ptr->recvbytes = 0;
-    ptr->sendbytes = 0;
-    ptr->recvdelayed = false;
-    ptr->next = SocketInfoList;
-    SocketInfoList = ptr;
-
-    return true;
+    return 0;
 }
 
-SOCKETINFO* GetSocketInfo(SOCKET sock)
+BOOL AddSocketInfo(SOCKET sock)
 {
-    SOCKETINFO* ptr = SocketInfoList;
-    while (ptr)
-    {
-        if (ptr->sock == sock)
-        {
-            return ptr;
-        }
-        ptr = ptr->next;
-    }
-
-    return nullptr;
+    return 0;
 }
 
-void RemoveSocketInfo(SOCKET sock)
+void RemoveSocketInfo(int nIndex)
 {
-    SOCKADDR_IN clientaddr;
-    int addrlen = sizeof(clientaddr);
-    getpeername(sock, (SOCKADDR*)&clientaddr, &addrlen);
-    wprintf(L"\n[TCP 서버] 클라이언트 종료 : IP 주소=%hs, 포트 번호=%d\n",
-        inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-
-    SOCKETINFO* curr = SocketInfoList;
-    SOCKETINFO* prev = NULL;
-    while (curr)
-    {
-        if (curr->sock == sock)
-        {
-            if (prev)
-            {
-                prev->next = curr->next;
-            }
-            else
-            {
-                SocketInfoList = curr->next;
-            }
-            closesocket(curr->sock);
-            delete curr;
-            return;
-        }
-        prev = curr;
-        curr = curr->next;
-    }
 }
