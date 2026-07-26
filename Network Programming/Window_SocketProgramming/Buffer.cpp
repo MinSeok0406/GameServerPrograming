@@ -21,13 +21,13 @@ void Buffer_Clear(void)
 
     for (iCnt = 0; iCnt < dfSCREEN_HEIGHT; ++iCnt)
     {
-        szScreenBuffer[iCnt][dfSCREEN_WIDTH - 1] = L'\0';
+        szScreenBuffer[iCnt][dfSCREEN_WIDTH - 1] = '\0';
     }
 }
 
 void Sprite_Draw(int iX, int iY, char chSprite)
 {
-    if (iX < 0 || iY < 0 || iX >= dfSCREEN_WIDTH || iY >= dfSCREEN_HEIGHT)
+    if (iX < 0 || iY < 0 || iX >= dfSCREEN_WIDTH - 1 || iY >= dfSCREEN_HEIGHT)
     {
         return;
     }

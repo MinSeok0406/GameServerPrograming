@@ -39,7 +39,6 @@ struct SESSION
     SOCKET _sock;
     wchar_t _ip[INET_ADDRSTRLEN];
     u_short _port;
-    bool _live;
     int _id;
     int _x;
     int _y;
@@ -78,20 +77,17 @@ struct STARMOVE
 };
 
 list<SESSION> g_playerList;
-IDALLOC g_idalloc[CLIENT];
-CREATESTAR g_createstar[CLIENT];
-DELETESTAR g_deletestar[CLIENT];
-STARMOVE g_starmove[CLIENT];
+list<IDALLOC> g_idalloc;
+list<CREATESTAR> g_createstar;
+list<DELETESTAR> g_deletestar;
+list<STARMOVE> g_starmove;
 
 fd_set rset;
 SOCKET listen_sock;
 u_int useTime;
 DWORD tm;
-static int s_idalloc = 0;
-static int s_create = 0;
-static int s_delete = 0;
-static int s_move = 0;
 char buf[BUFSIZE];
+static int s_id = 0;
 
 void sendUnicast(SESSION* s, char* bbuf);      // Session에는 보낼 세션만을 넣어야함
 void sendBroadcast(SESSION* s, char* bbuf);    // Session에는 보내지 않을 세션을 넣어야함
@@ -103,11 +99,6 @@ int main(int argc, CHAR* argv[])
     timeBeginPeriod(1);
     srand(unsigned int(time(nullptr)));
     cs_Initial();
-
-    memset(g_idalloc, -1, sizeof(g_idalloc));
-    memset(g_createstar, -1, sizeof(g_createstar));
-    memset(g_deletestar, -1, sizeof(g_deletestar));
-    memset(g_starmove, -1, sizeof(g_starmove));
 
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
@@ -228,34 +219,29 @@ int network()
         InetNtop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
         wcscpy(session._ip, addr);
         session._port = ntohs(clientaddr.sin_port);
-        session._live = true;
-        session._id = s_idalloc;
-        g_idalloc[s_idalloc]._type = 0;
-        g_idalloc[s_idalloc]._id = s_idalloc;
-        g_idalloc[s_idalloc]._g = 0;
-        g_idalloc[s_idalloc]._g2 = 0;
+        session._id = s_id;
+        IDALLOC idalloc { 0, s_id, 0, 0 };
+        g_idalloc.push_back(idalloc);
 
-        sendUnicast(&session, (char*)&g_idalloc[s_idalloc]);
-        s_idalloc++;
+        sendUnicast(&session, (char*)&idalloc);
+        s_id++;
 
         int x = rand() % (dfSCREEN_WIDTH - 1);
         int y = rand() % dfSCREEN_HEIGHT;
         session._x = x;
         session._y = y;
-        g_createstar[s_create]._type = 1;
-        g_createstar[s_create]._id = session._id;
-        g_createstar[s_create]._x = x;
-        g_createstar[s_create]._y = y;
+        CREATESTAR createstar { 1, session._id, session._x, session._y };
+        g_createstar.push_back(createstar);
 
         // 신규 유저에게 별 생성 위치 송신
-        sendUnicast(&session, (char*)&g_createstar[s_create]);
+        sendUnicast(&session, (char*)&createstar);
 
         // 신규 유저에게 다른 별들 위치 송신
-        for (auto i = 0; i < s_move; ++i)
+        for (auto& starmove : g_starmove)
         {
-            if (g_deletestar[i]._id == -1 && (g_starmove[i]._id != session._id))
+            if (starmove._id != session._id)
             {
-                sendUnicast(&session, (char*)&g_starmove[i]);
+                sendUnicast(&session, (char*)&starmove);
             }
         }
 
@@ -263,14 +249,10 @@ int network()
         g_playerList.push_back(session);
 
         // 다른 유저에게 신규 유저 위치 알려주기
-        sendBroadcast(&session, (char*)&g_createstar[s_create]);
-        s_create++;
+        sendBroadcast(&session, (char*)&createstar);
 
-        g_starmove[s_move]._type = 3;
-        g_starmove[s_move]._id = session._id;
-        g_starmove[s_move]._x = session._x;
-        g_starmove[s_move]._y = session._y;
-        s_move++;
+        STARMOVE starmove { 3, session._id, session._x, session._y };
+        g_starmove.push_back(starmove);
     }
 
     for (auto& session : g_playerList)
@@ -281,12 +263,16 @@ int network()
             if (recvret == SOCKET_ERROR)
             {
                 printf("%d\n", WSAGetLastError());
-                session._live = false;
+                DELETESTAR deletestar { 2, session._id, 0, 0 };
+                sendBroadcast(&session, (char*)&deletestar);
+                g_deletestar.push_back(deletestar);
                 continue;
             }
             else if (recvret == 0)
             {
-                session._live = false;
+                DELETESTAR deletestar { 2, session._id, 0, 0 };
+                sendBroadcast(&session, (char*)&deletestar);
+                g_deletestar.push_back(deletestar);
                 continue;
             }
 
@@ -304,15 +290,15 @@ int network()
                 switch (type)
                 {
                 case 3:
-                    for (auto i = 0; i < s_move; ++i)
+                    for (auto& starmove : g_starmove)
                     {
-                        if (g_starmove[i]._id == id)
+                        if (starmove._id == id)
                         {
-                            g_starmove[i]._x = x;
-                            g_starmove[i]._y = y;
+                            starmove._x = x;
+                            starmove._y = y;
                             session._x = x;
                             session._y = y;
-                            sendBroadcast(&session, (char*)&g_starmove[i]);
+                            sendBroadcast(&session, (char*)&starmove);
                             break;
                         }
                     }
@@ -324,19 +310,71 @@ int network()
         }
     }
 
-    for (auto iter = g_playerList.begin(); iter != g_playerList.end();)
+    for (auto iter = g_deletestar.begin(); iter != g_deletestar.end();)
     {
-        if (iter->_live == false)
+        bool deletePlayer = false;
+        // 플레이어 삭제
+        for (auto msIter = g_playerList.begin(); msIter != g_playerList.end();)
         {
-            g_deletestar[s_delete]._type = 2;
-            g_deletestar[s_delete]._id = iter->_id;
-            g_deletestar[s_delete]._g = 0;
-            g_deletestar[s_delete]._g2 = 0;
+            if (msIter->_id == iter->_id)
+            {
+                msIter = g_playerList.erase(msIter);
+                deletePlayer = true;
+                break;
+            }
+            else
+            {
+                ++msIter;
+            }
+        }
 
-            sendBroadcast(&(*iter), (char*)&g_deletestar[s_delete]);
-            s_delete++;
+        // 여러 리스트에서 이 아이디를 가진 오브젝트 삭제
+        for (auto msIter = g_idalloc.begin(); msIter != g_idalloc.end();)
+        {
+            if (msIter->_id == iter->_id)
+            {
+                msIter = g_idalloc.erase(msIter);
+                deletePlayer = true;
+                break;
+            }
+            else
+            {
+                ++msIter;
+            }
+        }
 
-            iter = g_playerList.erase(iter);
+        for (auto msIter = g_createstar.begin(); msIter != g_createstar.end();)
+        {
+            if (msIter->_id == iter->_id)
+            {
+                msIter = g_createstar.erase(msIter);
+                deletePlayer = true;
+                break;
+            }
+            else
+            {
+                ++msIter;
+            }
+        }
+
+        for (auto msIter = g_starmove.begin(); msIter != g_starmove.end();)
+        {
+            if (msIter->_id == iter->_id)
+            {
+                msIter = g_starmove.erase(msIter);
+                deletePlayer = true;
+                break;
+            }
+            else
+            {
+                ++msIter;
+            }
+        }
+
+
+        if (deletePlayer)
+        {
+            iter = g_deletestar.erase(iter);
         }
         else
         {

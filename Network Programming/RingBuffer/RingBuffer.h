@@ -16,7 +16,11 @@ public:
 
 private:
 	char* buf;
+	int totalSize;
 	int size;
 	char* writePos;
 	char* readPos;
+
+	RingBuffer(const RingBuffer& rb) = delete;
+	RingBuffer& operator=(const RingBuffer& rb) = delete;
 };

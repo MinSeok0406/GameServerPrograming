@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="RingBuffer.vcxproj" />
+  <Project Path="RingBuffer.vcxproj" Id="e8b22472-ed5d-456d-b4ec-9addf181e9d8" />
 </Solution>

@@ -146,6 +146,7 @@
     <ClCompile Include="..\Window_SocketProgramming\Buffer.cpp" />
     <ClCompile Include="..\Window_SocketProgramming\Console.cpp" />
     <ClCompile Include="ClientMain.cpp" />
+    <ClCompile Include="DummyClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Window_SocketProgramming\Buffer.h" />

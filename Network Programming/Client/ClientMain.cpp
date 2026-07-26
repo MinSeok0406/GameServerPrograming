@@ -1,11 +1,11 @@
-﻿#include <iostream>
+﻿/*#include <iostream>
 #include <time.h>
 #include <fcntl.h>
 #include <io.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
-#include <vector>
+#include <list>
 #include "Buffer.h"
 #include "Console.h"
 using namespace std;
@@ -14,7 +14,7 @@ using ll = long long;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-char SERVERIP[INET_ADDRSTRLEN];
+wchar_t SERVERIP[INET_ADDRSTRLEN];
 #define SERVERPORT  3000
 #define BUFSIZE     160
 #define CLIENT      1000
@@ -59,21 +59,17 @@ struct STARMOVE
 };
 
 Player g_player(-1, -1, -1);
-IDALLOC g_idalloc(0, 0, 0, 0);
-CREATESTAR g_createstar[CLIENT];
-DELETESTAR g_deletestar[CLIENT];
-STARMOVE g_starmove[CLIENT];
+list<IDALLOC> g_idalloc;
+list<CREATESTAR> g_createstar;
+list<DELETESTAR> g_deletestar;
+list<STARMOVE> g_starmove;
 
 fd_set rset;
 timeval t;
 SOCKET server_sock;
-int retval;
 int recvByte;
 int useTime;
 DWORD tm;
-static int s_create = 0;
-static int s_delete = 0;
-static int s_move = 0;
 char buf[BUFSIZE];
 
 int inputMove();
@@ -86,10 +82,6 @@ int wmain(int argc, WCHAR* argv[])
     srand(unsigned int(time(nullptr)));
     cs_Initial();
 
-    memset(g_createstar, -1, sizeof(g_createstar));
-    memset(g_deletestar, -1, sizeof(g_deletestar));
-    memset(g_starmove, -1, sizeof(g_starmove));
-
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
     {
@@ -97,9 +89,9 @@ int wmain(int argc, WCHAR* argv[])
     }
 
     printf("접속할 IP 주소를 입력해주세요 : ");
-    fgets(SERVERIP, INET_ADDRSTRLEN, stdin);
+    fgetws(SERVERIP, INET_ADDRSTRLEN, stdin);
 
-    int len = (int)strlen(SERVERIP);
+    int len = (int)wcslen(SERVERIP);
     if (SERVERIP[len - 1] == '\n')
     {
         SERVERIP[len - 1] = '\0';
@@ -108,7 +100,7 @@ int wmain(int argc, WCHAR* argv[])
     server_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (server_sock == INVALID_SOCKET)
     {
-        //wprintf(L"%d\n", WSAGetLastError());
+        wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -116,21 +108,20 @@ int wmain(int argc, WCHAR* argv[])
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(SERVERPORT);
-    inet_pton(AF_INET, SERVERIP, &serveraddr.sin_addr);
-    //InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
+    InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
 
-    retval = connect(server_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-    if (retval == SOCKET_ERROR)
+    int connectRet = connect(server_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+    if (connectRet == SOCKET_ERROR)
     {
-        //wprintf(L"%d\n", WSAGetLastError());
+        wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
     u_long on = 1;
-    retval = ioctlsocket(server_sock, FIONBIO, &on);
-    if (retval == SOCKET_ERROR)
+    int nonblkRet = ioctlsocket(server_sock, FIONBIO, &on);
+    if (nonblkRet == SOCKET_ERROR)
     {
-        //wprintf(L"%d\n", WSAGetLastError());
+        wprintf(L"%d\n", WSAGetLastError());
         return 1;
     }
 
@@ -185,7 +176,7 @@ int inputMove()
     }
     else if (GetAsyncKeyState(VK_UP) && GetAsyncKeyState(VK_RIGHT))
     {
-        if (g_player._x + 2 == dfSCREEN_WIDTH || g_player._y - 1 == -1)
+        if (g_player._x + 1 == dfSCREEN_WIDTH - 1 || g_player._y - 1 == -1)
         {
             return 1;
         }
@@ -196,7 +187,7 @@ int inputMove()
     }
     else if (GetAsyncKeyState(VK_RIGHT) && GetAsyncKeyState(VK_DOWN))
     {
-        if (g_player._x + 2 == dfSCREEN_WIDTH || g_player._y + 1 == dfSCREEN_HEIGHT)
+        if (g_player._x + 1 == dfSCREEN_WIDTH - 1 || g_player._y + 1 == dfSCREEN_HEIGHT)
         {
             return 1;
         }
@@ -238,7 +229,7 @@ int inputMove()
     }
     else if (GetAsyncKeyState(VK_RIGHT))
     {
-        if (g_player._x + 2 == dfSCREEN_WIDTH)
+        if (g_player._x + 1 == dfSCREEN_WIDTH - 1)
         {
             return 1;
         }
@@ -260,17 +251,17 @@ int inputMove()
     if (flag)
     {
         // send
-        for (auto i = 0; i < s_move; ++i)
+        for (auto& starmove : g_starmove)
         {
-            if (g_starmove[i]._id == g_player._id)
+            if (starmove._id == g_player._id)
             {
-                g_starmove[i]._x = g_player._x;
-                g_starmove[i]._y = g_player._y;
+                starmove._x = g_player._x;
+                starmove._y = g_player._y;
 
-                retval = send(server_sock, (char*)&g_starmove[i], sizeof(STARMOVE), 0);
-                if (retval == SOCKET_ERROR)
+                int sendRet = send(server_sock, (char*)&starmove, sizeof(STARMOVE), 0);
+                if (sendRet == SOCKET_ERROR)
                 {
-                    //wprintf(L"%d\n", WSAGetLastError());
+                    wprintf(L"%d\n", WSAGetLastError());
                     return 0;
                 }
 
@@ -289,27 +280,27 @@ int networkLogic()
     t.tv_sec = 0;
     t.tv_usec = 1000;
 
-    retval = select(0, &rset, NULL, NULL, &t);
-    if (retval == SOCKET_ERROR)
+    int selectRet = select(0, &rset, NULL, NULL, &t);
+    if (selectRet == SOCKET_ERROR)
     {
-        //wprintf(L"%d\n", WSAGetLastError());
+        wprintf(L"%d\n", WSAGetLastError());
         return 0;
     }
 
     if (FD_ISSET(server_sock, &rset))
     {
-        retval = recv(server_sock, buf, sizeof(buf), 0);
-        if (retval == SOCKET_ERROR)
+        int recvRet = recv(server_sock, buf, sizeof(buf), 0);
+        if (recvRet == SOCKET_ERROR)
         {
-            //wprintf(L"%d\n", WSAGetLastError());
+            wprintf(L"%d\n", WSAGetLastError());
             return 0;
         }
-        else if (retval == 0)
+        else if (recvRet == 0)
         {
             return 0;
         }
 
-        recvByte = retval;
+        recvByte = recvRet;
         int sum = 0;
 
         while (recvByte - sum >= 16)
@@ -320,43 +311,17 @@ int networkLogic()
             int x = bbuf[2];
             int y = bbuf[3];
 
-            bool isCreate = true;
-            bool isMove = true;
+            bool moveAdd = true;
             switch (type)
             {
             case 0:
                 g_player._id = id;
-                g_idalloc._id = id;
+                g_idalloc.push_back({ 0, id, 0, 0 });
                 break;
             case 1:
-                for (auto i = 0; i < s_create; ++i)
-                {
-                    if (g_createstar[i]._id == id)
-                    {
-                        isCreate = false;
-                        break;
-                    }
-                }
-
-                for (auto i = 0; i < s_move; ++i)
-                {
-                    if (g_starmove[i]._id == id)
-                    {
-                        isMove = false;
-                        break;
-                    }
-                }
-
-                if (isCreate)
-                {
-                    g_createstar[s_create++] = { 1, id, x, y };
-                }
-
-                if (isMove)
-                {
-                    g_starmove[s_move++] = { 3, id, x, y };
-                }
-
+                // 내 캐릭터 + 다른 유저 위치 받아오기
+                g_createstar.push_back({ 1, id, x, y });
+                g_starmove.push_back({ 3, id, x, y });
                 if (id == g_player._id)
                 {
                     g_player._x = x;
@@ -364,29 +329,58 @@ int networkLogic()
                 }
                 break;
             case 2:
-                g_deletestar[s_delete++] = { 2, id, 0, 0 };
+                g_deletestar.push_back({ 2, id, 0, 0 });
                 break;
             case 3:
-                for (auto i = 0; i < s_move; ++i)
+                // 기존 유저 위치 수정
+                for (auto& starmove : g_starmove)
                 {
-                    if (g_starmove[i]._id == id)
+                    if (starmove._id == id)
                     {
-                        g_starmove[i]._x = x;
-                        g_starmove[i]._y = y;
-                        isMove = false;
+                        starmove._x = x;
+                        starmove._y = y;
+                        moveAdd = false;
                         break;
                     }
                 }
 
-                if (isMove)
+                // 신규 유저 들어왔다면...
+                if (moveAdd)
                 {
-                    g_starmove[s_move++] = { 3, id, x, y };
+                    g_starmove.push_back({ 3, id, x, y });
                 }
-
                 break;
             }
 
             sum += 16;
+        }
+    }
+
+    // 다른 유저 접속 종료 시 삭제
+    for (auto iter = g_deletestar.begin(); iter != g_deletestar.end();)
+    {
+        bool isDelete = false;
+        for (auto smIter = g_starmove.begin(); smIter != g_starmove.end();)
+        {
+            if (smIter->_id == iter->_id)
+            {
+                smIter = g_starmove.erase(smIter);
+                isDelete = true;
+                break;
+            }
+            else
+            {
+               ++smIter;
+            }
+        }
+
+        if (isDelete)
+        {
+            iter = g_deletestar.erase(iter);
+        }
+        else
+        {
+            ++iter;
         }
     }
 
@@ -402,30 +396,12 @@ int Render()
 
     Buffer_Clear();
 
-    for (auto i = 0; i < s_move; ++i)
+    for (auto& starmove : g_starmove)
     {
-        if (g_starmove[i]._id == -1)
-        {
-            break;
-        }
-
-        bool isDelete = false;
-        for (auto j = 0; j < s_delete; ++j)
-        {
-            if (g_starmove[i]._id == g_deletestar[j]._id)
-            {
-                isDelete = true;
-                break;
-            }
-        }
-
-        if (!isDelete)
-        {
-            Sprite_Draw(g_starmove[i]._x, g_starmove[i]._y, '*');
-        }
+        Sprite_Draw(starmove._x, starmove._y, '*');
     }
 
     Buffer_Flip();
 
     return 1;
-}
+}*/
