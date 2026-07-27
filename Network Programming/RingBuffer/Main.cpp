@@ -26,7 +26,7 @@ int wmain()
 	memset(inbuf, 0, sizeof(inbuf));
 	memset(outbuf, 0, sizeof(outbuf));
 
-	int size = strlen(buf);
+	int size = (int)strlen(buf);
 	int sum = 0;
 	int recvByte = 0;
 

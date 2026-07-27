@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Network Programming\RingBuffer\x64\Release\RingBuffer.exe</FullPath>
+      <FullPath>C:\GameServerPrograming\Network Programming\RingBuffer\x64\Release\RingBuffer.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

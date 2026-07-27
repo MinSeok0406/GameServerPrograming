@@ -1,4 +1,4 @@
-﻿#include <iostream>
+﻿/*#include <iostream>
 #include <time.h>
 #include <fcntl.h>
 #include <io.h>
@@ -426,4 +426,4 @@ int Render(int index)
     Buffer_Flip();
 
     return 1;
-}
+}*/

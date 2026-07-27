@@ -4,7 +4,7 @@
 
 RingBuffer::RingBuffer() : buf(nullptr), size(0), totalSize(0), writePos(nullptr), readPos(nullptr)
 {
-	
+
 }
 
 RingBuffer::RingBuffer(int pBufferSize)
@@ -36,29 +36,30 @@ int RingBuffer::GetFreeSize()
 int RingBuffer::Enqueue(const char* chpData, int pSize)
 {
 	int inputSize = pSize;
-	
+
 	if (pSize > GetFreeSize())
 	{
 		return 0;
 	}
 
 	size += pSize;
+	const char* pdata = chpData;
 
 	// WritePos 경계면 이동
 	if (writePos + pSize > &buf[totalSize])
 	{
 		int offset = (int)(&buf[totalSize] - writePos);
 		pSize -= offset;
-		memcpy(writePos, chpData, offset);
-		chpData += offset;
+		memcpy(writePos, pdata, offset);
+		pdata += offset;
 		writePos = &buf[0];
 
-		memcpy(writePos, chpData, pSize);
+		memcpy(writePos, pdata, pSize);
 		writePos += pSize;
 	}
 	else
 	{
-		memcpy(writePos, chpData, pSize);
+		memcpy(writePos, pdata, pSize);
 		writePos += pSize;
 	}
 
@@ -168,7 +169,7 @@ int RingBuffer::MoveRear(int pSize)
 	{
 		writePos += pSize;
 	}
-	
+
 	return pSize;
 }
 

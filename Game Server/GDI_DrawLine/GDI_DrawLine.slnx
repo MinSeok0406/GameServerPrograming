@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="GDI_DrawLine.vcxproj" />
+  <Project Path="GDI_DrawLine.vcxproj" Id="bb8bad83-6d05-4b91-aec7-4f216a22596e" />
 </Solution>
