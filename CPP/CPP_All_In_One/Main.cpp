@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include <process.h>
 #include <Windows.h>
+#include <functional>
 #include <vector>
 #include <algorithm>
 #include <map>
@@ -15,14 +16,7 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-struct DATA
-{
-    int _x;
-    int _y;
-    int _z;
-};
 
-list<DATA> li;
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -30,7 +24,6 @@ int wmain(int argc, WCHAR* argv[])
     cin.tie(NULL);
     cout.tie(NULL);
     timeBeginPeriod(1);
-
 
     
 
