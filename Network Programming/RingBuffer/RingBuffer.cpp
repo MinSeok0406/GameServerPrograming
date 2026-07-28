@@ -1,10 +1,11 @@
 ﻿#include <cstdlib>
 #include <cstring>
+#include <algorithm>
 #include "RingBuffer.h"
 
 RingBuffer::RingBuffer() : buf(nullptr), size(0), totalSize(0), writePos(nullptr), readPos(nullptr)
 {
-	
+
 }
 
 RingBuffer::RingBuffer(int pBufferSize)
@@ -36,7 +37,7 @@ int RingBuffer::GetFreeSize()
 int RingBuffer::Enqueue(const char* chpData, int pSize)
 {
 	int inputSize = pSize;
-	
+
 	if (pSize > GetFreeSize())
 	{
 		return 0;
@@ -55,11 +56,13 @@ int RingBuffer::Enqueue(const char* chpData, int pSize)
 
 		memcpy(writePos, chpData, pSize);
 		writePos += pSize;
+		*writePos = '\0';
 	}
 	else
 	{
 		memcpy(writePos, chpData, pSize);
 		writePos += pSize;
+		*writePos = '\0';
 	}
 
 	return inputSize;
@@ -88,12 +91,14 @@ int RingBuffer::Dequeue(char* chpDest, int pSize)
 		memcpy(chpDest, readPos, pSize);
 		chpDest += pSize;
 		readPos += pSize;
+		*readPos = '\0';
 	}
 	else
 	{
 		memcpy(chpDest, readPos, pSize);
 		chpDest += pSize;
 		readPos += pSize;
+		*readPos = '\0';
 	}
 
 	return outputSize;
@@ -115,18 +120,18 @@ int RingBuffer::Peek(char* chpDest, int pSize)
 	{
 		int offset = (int)(&buf[totalSize] - read);
 		pSize -= offset;
-		memcpy(chpDest, read, offset);
-		chpDest += offset;
+		memcpy(dest, read, offset);
+		dest += offset;
 		read = &buf[0];
 
-		memcpy(chpDest, read, pSize);
-		chpDest += pSize;
+		memcpy(dest, read, pSize);
+		dest += pSize;
 		read += pSize;
 	}
 	else
 	{
-		memcpy(chpDest, read, pSize);
-		chpDest += pSize;
+		memcpy(dest, read, pSize);
+		dest += pSize;
 		read += pSize;
 	}
 
@@ -136,18 +141,19 @@ int RingBuffer::Peek(char* chpDest, int pSize)
 void RingBuffer::ClearBuffer()
 {
 	memset(buf, 0, totalSize);
+	size = 0;
 	writePos = &buf[0];
 	readPos = &buf[0];
 }
 
 int RingBuffer::DirectEnqueueSize()
 {
-	return GetFreeSize();
+	return std::min(GetFreeSize(), (int)(&buf[totalSize] - writePos));
 }
 
 int RingBuffer::DirectDequeueSize()
 {
-	return GetUseSize();
+	return std::min(GetUseSize(), (int)(&buf[totalSize] - readPos));
 }
 
 int RingBuffer::MoveRear(int pSize)
@@ -156,6 +162,8 @@ int RingBuffer::MoveRear(int pSize)
 	{
 		return 0;
 	}
+
+	size += pSize;
 
 	if (writePos + pSize > &buf[totalSize])
 	{
@@ -168,7 +176,7 @@ int RingBuffer::MoveRear(int pSize)
 	{
 		writePos += pSize;
 	}
-	
+
 	return pSize;
 }
 
@@ -178,6 +186,8 @@ int RingBuffer::MoveFront(int pSize)
 	{
 		return 0;
 	}
+
+	size -= pSize;
 
 	if (readPos + pSize > &buf[totalSize])
 	{

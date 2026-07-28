@@ -52,6 +52,7 @@
     <ClCompile Include="UDPServer8.cpp" />
     <ClCompile Include="WSAAsyncSelectClient11.cpp" />
     <ClCompile Include="WSAAsyncSelectServer11.cpp" />
+    <ClCompile Include="WSAAsyncSelectServer11_RingBufferAdd.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />

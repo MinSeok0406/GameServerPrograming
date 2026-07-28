@@ -153,6 +153,10 @@ int main(int argc, CHAR* argv[])
         {
             Sleep(10 - useTime);
         }
+        else
+        {
+            useTime = timeGetTime();
+        }
         tm += 10;
     }
 
@@ -167,8 +171,14 @@ void sendUnicast(SESSION* s, char* bbuf)
     int sendret = send(s->_sock, bbuf, 16, 0);
     if (sendret == SOCKET_ERROR)
     {
-        printf("%d\n", WSAGetLastError());
-        return;
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
+        {
+            return;
+        }
+        else
+        {
+            printf("%d\n", WSAGetLastError());
+        }
     }
 }
 
@@ -196,8 +206,15 @@ int network()
     int selectret = select(0, &rset, NULL, NULL, NULL);
     if (selectret == SOCKET_ERROR)
     {
-        printf("%d\n", WSAGetLastError());
-        return 0;
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
+        {
+            return 0;
+        }
+        else
+        {
+            printf("%d\n", WSAGetLastError());
+            return 0;
+        }
     }
 
     if (FD_ISSET(listen_sock, &rset))
@@ -208,10 +225,17 @@ int network()
         int addrlen = sizeof(clientaddr);
 
         client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-        if (client_sock == INVALID_SOCKET)
+        if (client_sock == SOCKET_ERROR)
         {
-            printf("%d\n", WSAGetLastError());
-            return 0;
+            if (WSAGetLastError() == WSAEWOULDBLOCK)
+            {
+                return 0;
+            }
+            else
+            {
+                printf("%d\n", WSAGetLastError());
+                return 0;
+            }
         }
 
         session._sock = client_sock;
@@ -262,14 +286,23 @@ int network()
             int recvret = recv(session._sock, buf, sizeof(buf), 0);
             if (recvret == SOCKET_ERROR)
             {
-                printf("%d\n", WSAGetLastError());
-                DELETESTAR deletestar { 2, session._id, 0, 0 };
-                sendBroadcast(&session, (char*)&deletestar);
-                g_deletestar.push_back(deletestar);
+                if (WSAGetLastError() == WSAEWOULDBLOCK)
+                {
+                    continue;
+                }
+                else
+                {
+                    printf("%d\n", WSAGetLastError());
+                    DELETESTAR deletestar { 2, session._id, 0, 0 };
+                    sendBroadcast(&session, (char*)&deletestar);
+                    g_deletestar.push_back(deletestar);
+                }
+
                 continue;
             }
             else if (recvret == 0)
             {
+                printf("%d\n", WSAGetLastError());
                 DELETESTAR deletestar { 2, session._id, 0, 0 };
                 sendBroadcast(&session, (char*)&deletestar);
                 g_deletestar.push_back(deletestar);

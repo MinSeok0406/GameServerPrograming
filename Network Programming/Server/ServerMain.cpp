@@ -24,7 +24,8 @@ using ll = long long;
 struct SOCKETINFO
 {
     SOCKET sock;
-    RingBuffer bufferQueue{ BUFSIZE };
+    RingBuffer sendQueue { BUFSIZE };
+    RingBuffer recvQueue { BUFSIZE };
     SOCKETINFO* next;
 };
 
@@ -36,8 +37,6 @@ void processSocketMessage(HWND, UINT, WPARAM, LPARAM);
 bool AddSocketInfo(SOCKET sock);
 SOCKETINFO* GetSocketInfo(SOCKET sock);
 void RemoveSocketInfo(SOCKET sock);
-
-int sendsize = SENDSIZE;
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -119,7 +118,7 @@ int wmain(int argc, WCHAR* argv[])
 
     WSACleanup();
 
-    return msg.wParam;
+    return (int)msg.wParam;
 }
 
 LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -139,9 +138,12 @@ LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void processSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    char buf[BUFSIZE] = { 0, };
-    int peekRet;
+    char sendbuf[BUFSIZE];
+    char recvbuf[BUFSIZE];
+    int peekRet = 0;
     int retval;
+    int sendQ;
+    int recvQ;
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
@@ -178,44 +180,76 @@ void processSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case FD_READ:
         ptr = GetSocketInfo(wParam);
 
-        retval = recv(ptr->sock, buf, BUFSIZE, 0);
+        if (ptr->sendQueue.GetUseSize() > 0)
+        {
+            wprintf(L"sendQueue 중에 접속 종료\n");
+            return;
+        }
+
+        retval = recv(ptr->sock, recvbuf, BUFSIZE, 0);
         if (retval == SOCKET_ERROR)
         {
             if (WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 wprintf(L"%d\n", WSAGetLastError());
                 RemoveSocketInfo(wParam);
-                return;
             }
+            return;
+        }
+        else if (retval == 0)
+        {
+            RemoveSocketInfo(wParam);
+            return;
         }
 
-        ptr->bufferQueue.Enqueue(buf, (int)strlen(buf));
+        recvbuf[retval] = '\0';
+        recvQ = ptr->recvQueue.Enqueue(recvbuf, retval);
+        if (recvQ == 0)
+        {
+            // 수신 링 버퍼큐가 다 찬 상황
+            wprintf(L"%d\n", WSAGetLastError());
+            return;
+        }
+
+        ptr->recvQueue.Dequeue(sendbuf, retval);
+        ptr->sendQueue.Enqueue(sendbuf, retval);
+        // 받은 데이터 recvQueue에 담아놓기
+        // 일정이상 모이면 한 번에 담기
+
     case FD_WRITE:
         ptr = GetSocketInfo(wParam);
 
-        peekRet = ptr->bufferQueue.Peek(buf, sendsize);
-        retval = send(ptr->sock, buf, peekRet, 0);
+        if (ptr->sendQueue.GetUseSize() == 0)
+        {
+            wprintf(L"sendQueue 다 해서 종료\n");
+            return;
+        }
+
+        // Peek 확인 후 보낼 데이터 담기
+        sendQ = ptr->sendQueue.Peek(sendbuf, (int)strlen(sendbuf));
+
+        retval = send(ptr->sock, sendbuf, sendQ, 0);
         if (retval == SOCKET_ERROR)
         {
             if (WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 wprintf(L"%d\n", WSAGetLastError());
                 RemoveSocketInfo(wParam);
-                return;
             }
+            return;
         }
 
-        if (peekRet == retval)
+        // 보낼 데이터 다 보냈으면 정리
+        if (sendQ == retval)
         {
-            ptr->bufferQueue.Dequeue(buf, sendsize);
-            sendsize = SENDSIZE;
+            ptr->sendQueue.Dequeue(sendbuf, sendQ);
             PostMessage(hWnd, WM_SOCKET, wParam, FD_READ);
         }
         else
         {
-            ptr->bufferQueue.MoveFront(retval);
-            sendsize -= retval;
+            ptr->sendQueue.MoveFront(retval);
         }
+
         break;
     case FD_CLOSE:
         RemoveSocketInfo(wParam);

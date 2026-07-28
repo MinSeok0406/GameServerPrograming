@@ -22,6 +22,8 @@ char g_Tile[GRID_HEIGHT][GRID_WIDTH];
 bool g_bErase = false;
 bool g_bDrag = false;
 int GRID_SIZE = 16;
+double g_offsetX = 0.0;
+double g_offsetY = 0.0;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -29,6 +31,7 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+bool ScreenToTile(int xPos, int yPos, int* outTileX, int* outTileY);
 void RenderGrid(HDC hdc);
 void RenderObstacle(HDC hdc);
 
@@ -145,17 +148,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
         g_bDrag = true;
         {
-            int xPos = GET_X_LPARAM(lParam);
-            int yPos = GET_Y_LPARAM(lParam);
-            int iTileX = xPos / GRID_SIZE;
-            int iTileY = yPos / GRID_SIZE;
-            if (g_Tile[iTileY][iTileX] == 1)
+            int iTileX;
+            int iTileY;
+            if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
             {
-                g_bErase = true;
-            }
-            else
-            {
-                g_bErase = false;
+                g_bErase = (g_Tile[iTileY][iTileX] == 1);
             }
         }
         break;
@@ -164,6 +161,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_MOUSEWHEEL:
         {
+            POINT pt;
+            pt.x = GET_X_LPARAM(lParam);
+            pt.y = GET_Y_LPARAM(lParam);
+            ScreenToClient(hWnd, &pt);
+
+            double worldX = pt.x / (double)GRID_SIZE + g_offsetX;
+            double worldY = pt.y / (double)GRID_SIZE + g_offsetY;
+
             short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
             // 휠 위로 이동
             if (zDelta > 0)
@@ -178,6 +183,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     GRID_SIZE = 16;
                 }
             }
+
+            g_offsetX = worldX - pt.x / (double)GRID_SIZE;
+            g_offsetY = worldY - pt.y / (double)GRID_SIZE;
+
             InvalidateRect(hWnd, NULL, true);
         }
         break;
@@ -185,14 +194,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (g_bDrag)
             {
-                int xPos = GET_X_LPARAM(lParam);
-                int yPos = GET_Y_LPARAM(lParam);
+                int iTileX;
+                int iTileY;
 
-                int iTileX = xPos / GRID_SIZE;
-                int iTileY = yPos / GRID_SIZE;
-
-                g_Tile[iTileY][iTileX] = !g_bErase;
-                InvalidateRect(hWnd, NULL, true);
+                if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
+                {
+                    g_Tile[iTileY][iTileX] = !g_bErase;
+                    InvalidateRect(hWnd, NULL, true);
+                }
             }
         }
         break;
@@ -240,23 +249,37 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
+bool ScreenToTile(int xPos, int yPos, int* outTileX, int* outTileY)
+{
+    int tileX = (int)floor(xPos / (double)GRID_SIZE + g_offsetX);
+    int tileY = (int)floor(yPos / (double)GRID_SIZE + g_offsetY);
+
+    if (tileX < 0 || tileX >= GRID_WIDTH || tileY < 0 || tileY >= GRID_HEIGHT)
+    {
+        return false;
+    }
+
+    *outTileX = tileX;
+    *outTileY = tileY;
+    return true;
+}
+
 void RenderGrid(HDC hdc)
 {
-    int iX = 0;
-    int iY = 0;
     HPEN hOldPen = (HPEN)SelectObject(hdc, g_hGridPen);
+
     for (int iCntW = 0; iCntW <= GRID_WIDTH; ++iCntW)
     {
-        MoveToEx(hdc, iX, 0, NULL);
-        LineTo(hdc, iX, GRID_HEIGHT * GRID_SIZE);
-        iX += GRID_SIZE;
+        int iX = (int)((iCntW - g_offsetX) * GRID_SIZE);
+        MoveToEx(hdc, iX, (int)((0 - g_offsetY) * GRID_SIZE), NULL);
+        LineTo(hdc, iX, (int)((GRID_HEIGHT - g_offsetY) * GRID_SIZE));
     }
 
     for (int iCntH = 0; iCntH <= GRID_HEIGHT; ++iCntH)
     {
-        MoveToEx(hdc, 0, iY, NULL);
-        LineTo(hdc, GRID_WIDTH * GRID_SIZE, iY);
-        iY += GRID_SIZE;
+        int iY = (int)((iCntH - g_offsetY) * GRID_SIZE);
+        MoveToEx(hdc, (int)((0 - g_offsetX) * GRID_SIZE), iY, NULL);
+        LineTo(hdc, (int)((GRID_WIDTH - g_offsetX) * GRID_SIZE), iY);
     }
     SelectObject(hdc, hOldPen);
 }
@@ -270,12 +293,12 @@ void RenderObstacle(HDC hdc)
 
     for (int iCntW = 0; iCntW < GRID_WIDTH; ++iCntW)
     {
-        for (int iCntH = 0; iCntH <= GRID_HEIGHT; ++iCntH)
+        for (int iCntH = 0; iCntH < GRID_HEIGHT; ++iCntH)
         {
             if (g_Tile[iCntH][iCntW])
             {
-                iX = iCntW * GRID_SIZE;
-                iY = iCntH * GRID_SIZE;
+                iX = (int)((iCntW - g_offsetX) * GRID_SIZE);
+                iY = (int)((iCntH - g_offsetY) * GRID_SIZE);
                 Rectangle(hdc, iX, iY, iX + GRID_SIZE + 2, iY + GRID_SIZE + 2);
             }
         }

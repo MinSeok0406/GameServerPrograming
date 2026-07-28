@@ -297,7 +297,7 @@ int network()
                     sendBroadcast(&session, (char*)&deletestar);
                     g_deletestar.push_back(deletestar);
                 }
-                
+
                 continue;
             }
             else if (recvret == 0)

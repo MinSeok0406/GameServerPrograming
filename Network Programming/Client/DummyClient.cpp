@@ -1,4 +1,4 @@
-﻿/*#include <iostream>
+﻿#include <iostream>
 #include <time.h>
 #include <fcntl.h>
 #include <io.h>
@@ -283,6 +283,10 @@ int inputMove(int index)
                 int sendRet = send(server_sock[index], (char*)&starmove, sizeof(STARMOVE), 0);
                 if (sendRet == SOCKET_ERROR)
                 {
+                    if (WSAGetLastError() == WSAEWOULDBLOCK)
+                    {
+                        return 1;
+                    }
                     wprintf(L"%d\n", WSAGetLastError());
                     return 0;
                 }
@@ -314,6 +318,10 @@ int networkLogic(int index)
         int recvRet = recv(server_sock[index], buf, sizeof(buf), 0);
         if (recvRet == SOCKET_ERROR)
         {
+            if (WSAGetLastError() == WSAEWOULDBLOCK)
+            {
+                return 1;
+            }
             wprintf(L"%d\n", WSAGetLastError());
             return 0;
         }
@@ -426,4 +434,4 @@ int Render(int index)
     Buffer_Flip();
 
     return 1;
-}*/
+}
