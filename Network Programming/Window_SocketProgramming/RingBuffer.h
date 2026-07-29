@@ -18,8 +18,8 @@ public:
 	int		DirectDequeueSize();						// 버퍼 포인터로 외부에서 한방에 읽고, 쓸 수 있는 길이.
 	int		MoveRear(int pSize);						// 원하는 길이만큼 읽기위치 에서 삭제 / 쓰기 위치 이동
 	int		MoveFront(int pSize);						// 원하는 길이만큼 읽기위치 에서 삭제 / 쓰기 위치 이동
-	char*	GetFrontBufferPtr();						// 버퍼의 WritePos 포인터 얻음.
-	char*	GetRearBufferPtr();							// 버퍼의 RearPos 포인터 얻음.
+	char*	GetFrontBufferPtr();						// 버퍼의 RearPos 포인터 얻음.
+	char*	GetRearBufferPtr();							// 버퍼의 WritePos 포인터 얻음.
 
 private:
 	char* buf;

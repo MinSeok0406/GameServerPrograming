@@ -1,40 +1,7 @@
-﻿  Buffer.cpp
-  client4.cpp
-  client5_Close.cpp
-  client5_FixedByte.cpp
-  client5_FixedVariable.cpp
-  client5_Variable.cpp
-  Console.cpp
-  Main.cpp
-  Practice3_Client.cpp
-  Practice3_Server.cpp
-  Practice5_1.cpp
-  Practice5_2.cpp
-  Practice5_3.cpp
-  Practice5_4.cpp
-  Practice6_6.cpp
-  Practice8_2.cpp
-  Practice8_3.cpp
-  Procademy2_1.cpp
-  SelectClient11.cpp
-  SelectServer11.cpp
-  컴파일하고 있습니다...
-  server4.cpp
-  server5_Close.cpp
-  server5_FixedByte.cpp
-  server5_FixedVariable.cpp
-  server5_Variable.cpp
-  server6_Event.cpp
-  server6_ThreadTCP.cpp
-  UDPBrodcastClient8.cpp
-  UDPBrodcastServer8.cpp
-  UDPClient8.cpp
-  UDPServer8.cpp
-  WSAAsyncSelectClient11.cpp
-  WSAAsyncSelectServer11.cpp
-  WSAAsyncSelectServer11_RingBufferAdd.cpp
+﻿  Main.cpp
   코드를 생성하고 있습니다.
-  Previous IPDB was built with incompatible compiler, fall back to full compilation.
-  All 382 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  4 of 27 functions (14.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  Window_SocketProgramming.vcxproj -> C:\GamePrograming\Network Programming\Window_SocketProgramming\x64\Release\Window_SocketProgramming.exe
+  Window_SocketProgramming.vcxproj -> C:\GameServerPrograming\Network Programming\Window_SocketProgramming\x64\Release\Window_SocketProgramming.exe

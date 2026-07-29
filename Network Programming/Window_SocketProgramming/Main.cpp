@@ -1,432 +1,316 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
+#include <conio.h>
 #include <time.h>
-#include <fcntl.h>
-#include <io.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
-#include <list>
-#include "Console.h"
-#include "Buffer.h"
+#include <windowsx.h>
+#include <string>
+#include "RingBuffer.h"
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-#define SERVERPORT  3000
-#define BUFSIZE     160
-#define CLIENT      100
+#define SERVERPORT      25000
+#define BUFSIZE         512
+#define UM_NETWORK      (WM_USER+1)
 
-DWORD tick = timeGetTime();
-void FPS()
+struct stHEADER
 {
-    static int cnt;
-
-    if (timeGetTime() - tick > 1000)
-    {
-        printf("FPS : %d\n", cnt);
-        cnt = 0;
-        tick += 1000;
-    }
-
-    cnt++;
-}
-
-struct SESSION
-{
-    SOCKET _sock;
-    wchar_t _ip[INET_ADDRSTRLEN];
-    u_short _port;
-    int _id;
-    int _x;
-    int _y;
+    unsigned short _len;
 };
 
-struct IDALLOC
+#pragma pack(1)
+struct st_DRAW_PACKET
 {
-    int _type;
-    int _id;
-    int _g;
-    int _g2;
+    stHEADER _header;
+    int _startX;
+    int _startY;
+    int _endX;
+    int _endY;
 };
 
-struct CREATESTAR
-{
-    int _type;
-    int _id;
-    int _x;
-    int _y;
-};
+void procRecv(HWND hWnd);
+void procSend();
+void sendPacket(st_DRAW_PACKET* packet, int size);
+LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
+void processSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-struct DELETESTAR
-{
-    int _type;
-    int _id;
-    int _g;
-    int _g2;
-};
+bool g_connect = false;
+bool g_bClick = false;
+HPEN g_hPen;
+int g_iOldX;
+int g_iOldY;
 
-struct STARMOVE
-{
-    int _type;
-    int _id;
-    int _x;
-    int _y;
-};
+wchar_t g_serverIP[INET_ADDRSTRLEN];
+SOCKET g_clientsock;
+SOCKADDR_IN g_clientaddr;
+RingBuffer sendQ{ BUFSIZE };
+RingBuffer recvQ{ BUFSIZE };
 
-list<SESSION> g_playerList;
-list<IDALLOC> g_idalloc;
-list<CREATESTAR> g_createstar;
-list<DELETESTAR> g_deletestar;
-list<STARMOVE> g_starmove;
-
-fd_set rset;
-SOCKET listen_sock;
-u_int useTime;
-DWORD tm;
-char buf[BUFSIZE];
-static int s_id = 0;
-
-void sendUnicast(SESSION* s, char* bbuf);      // Session에는 보낼 세션만을 넣어야함
-void sendBroadcast(SESSION* s, char* bbuf);    // Session에는 보내지 않을 세션을 넣어야함
-int network();
-int render();
-
-int main(int argc, CHAR* argv[])
+int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
     srand(unsigned int(time(nullptr)));
-    cs_Initial();
 
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    WNDCLASS wndclass;
+    wndclass.style = CS_HREDRAW | CS_VREDRAW;
+    wndclass.lpfnWndProc = wndProc;
+    wndclass.cbClsExtra = 0;
+    wndclass.cbWndExtra = 0;
+    wndclass.hInstance = NULL;
+    wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wndclass.lpszMenuName = NULL;
+    wndclass.lpszClassName = L"MyWndClass";
+    if (!RegisterClass(&wndclass))
     {
         return 1;
     }
 
-    listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (listen_sock == INVALID_SOCKET)
+    HWND hWnd = CreateWindow(L"MyWndClass", L"DrawLine", WS_OVERLAPPEDWINDOW, 0, 0, 1280, 720, NULL, NULL, NULL, NULL);
+    if (hWnd == NULL)
     {
-        printf("%d\n", WSAGetLastError());
+        return 1;
+    }
+    ShowWindow(hWnd, SW_SHOWNORMAL);
+    UpdateWindow(hWnd);
+
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+    {
         return 1;
     }
 
-    SOCKADDR_IN serveraddr;
-    memset(&serveraddr, 0, sizeof(serveraddr));
-    serveraddr.sin_family = AF_INET;
-    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serveraddr.sin_port = htons(SERVERPORT);
-    int bindret = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-    if (bindret == SOCKET_ERROR)
+    fgetws(g_serverIP, 100, stdin);
+    int len = (int)wcslen(g_serverIP);
+    g_serverIP[len - 1] = '\0';
+
+    g_clientaddr.sin_family = AF_INET;
+    g_clientaddr.sin_port = htons(SERVERPORT);
+    InetPton(AF_INET, g_serverIP, &g_clientaddr.sin_addr);
+
+    MSG msg;
+    while (GetMessage(&msg, 0, 0, 0) > 0)
     {
-        printf("%d\n", WSAGetLastError());
-        return 1;
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
 
-    u_long on = 1;
-    int nbioret = ioctlsocket(listen_sock, FIONBIO, &on);
-    if (nbioret == SOCKET_ERROR)
+    WSACleanup();
+
+    return (int)msg.wParam;
+}
+
+void procRecv(HWND hWnd)
+{
+    if (recvQ.GetFreeSize() < sizeof(st_DRAW_PACKET))
     {
-        printf("%d\n", WSAGetLastError());
-        return 1;
+        return;
     }
 
-    int listenret = listen(listen_sock, SOMAXCONN);
-    if (listenret == SOCKET_ERROR)
+    int recvRet = recv(g_clientsock, recvQ.GetRearBufferPtr(), recvQ.DirectEnqueueSize(), 0);
+    if (recvRet == SOCKET_ERROR)
     {
-        printf("%d\n", WSAGetLastError());
-        return 1;
+        if (WSAGetLastError() != EWOULDBLOCK)
+        {
+            printf("%d\n", WSAGetLastError());
+            return;
+        }
+    }
+    else if (recvRet == 0)
+    {
+        return;
     }
 
-    tm = timeGetTime();
+    recvQ.MoveRear(recvRet);
 
     while (true)
     {
-        network();
-
-        render();
-
-        useTime = timeGetTime() - tm;
-        if (useTime < 10)
+        if (recvQ.GetUseSize() < sizeof(st_DRAW_PACKET))
         {
-            Sleep(10 - useTime);
+            break;
         }
-        else
+
+        char buf[BUFSIZE];
+        int peekRet = recvQ.Peek(buf, sizeof(st_DRAW_PACKET));
+
+        // 멀티쓰레드를 위한 코드
+        if (peekRet != sizeof(st_DRAW_PACKET))
         {
-            useTime = timeGetTime();
+            __debugbreak();
         }
-        tm += 10;
+
+        recvQ.MoveRear(peekRet);
+
+        stHEADER* header = (stHEADER*)buf;
+        if (header->_len != 16)
+        {
+            __debugbreak();
+        }
+
+        int* bbuf = (int*)(buf + 2);
+
+        int startX = buf[0];
+        int startY = buf[1];
+        int endX = buf[2];
+        int endY = buf[3];
+
+        HDC hdc = GetDC(hWnd);
+        HPEN hPenOld = (HPEN)SelectObject(hdc, g_hPen);
+        MoveToEx(hdc, startX, startY, NULL);
+        LineTo(hdc, endX, endY);
+        SelectObject(hdc, hPenOld);
+        ReleaseDC(hWnd, hdc);
+    }
+}
+
+void procSend()
+{
+    while (true)
+    {
+        if (sendQ.GetUseSize() < sizeof(st_DRAW_PACKET))
+        {
+            break;
+        }
+
+        int sendRet = send(g_clientsock, sendQ.GetFrontBufferPtr(), sendQ.DirectDequeueSize(), 0);
+        if (sendRet == SOCKET_ERROR)
+        {
+            if (WSAGetLastError() != EWOULDBLOCK)
+            {
+                printf("%d\n", WSAGetLastError());
+                break;
+            }
+        }
+    }
+}
+
+void sendPacket(st_DRAW_PACKET* packet, int size)
+{
+    if (sendQ.GetFreeSize() < sizeof(st_DRAW_PACKET))
+    {
+        __debugbreak();
     }
 
-    closesocket(listen_sock);
-    WSACleanup();
+    int sendQRet = sendQ.Enqueue((char*)packet, size);
 
+    procSend();
+}
+
+LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    int AsyncRet = 0;
+    int connectRet = 0;
+
+    switch (uMsg)
+    {
+    case WM_CREATE:
+        g_hPen = CreatePen(PS_SOLID, rand() % 20, RGB(rand() % 255, rand() % 255, rand() % 255));
+        g_clientsock = socket(AF_INET, SOCK_STREAM, 0);
+        if (g_clientsock == INVALID_SOCKET)
+        {
+            printf("%d\n", WSAGetLastError());
+            break;
+        }
+
+        AsyncRet = WSAAsyncSelect(g_clientsock, hWnd, UM_NETWORK, FD_READ | FD_WRITE | FD_CONNECT | FD_CLOSE);
+        if (AsyncRet == SOCKET_ERROR)
+        {
+            printf("%d\n", WSAGetLastError());
+            break;
+        }
+
+        connectRet = connect(g_clientsock, (SOCKADDR*)&g_clientaddr, sizeof(g_clientaddr));
+        if (connectRet == SOCKET_ERROR)
+        {
+            if (WSAGetLastError() != EWOULDBLOCK)
+            {
+                printf("%d\n", WSAGetLastError());
+                break;
+            }
+        }
+        break;
+    case WM_RBUTTONDOWN:
+        if (g_hPen != NULL)
+        {
+            DeleteObject(g_hPen);
+            g_hPen = CreatePen(PS_SOLID, rand() % 20, RGB(rand() % 255, rand() % 255, rand() % 255));
+        }
+        break;
+    case WM_LBUTTONDOWN:
+        g_bClick = true;
+        break;
+    case WM_LBUTTONUP:
+        g_bClick = false;
+        break;
+    case WM_MOUSEMOVE:
+    {
+        if (!g_connect)
+        {
+            break;
+        }
+        
+        int xPos = GET_X_LPARAM(lParam);
+        int yPos = GET_Y_LPARAM(lParam);
+        if (g_bClick)
+        {
+            HDC hdc = GetDC(hWnd);
+            HPEN hPenOld = (HPEN)SelectObject(hdc, g_hPen);
+            MoveToEx(hdc, g_iOldX, g_iOldY, NULL);
+            LineTo(hdc, xPos, yPos);
+            SelectObject(hdc, hPenOld);
+            ReleaseDC(hWnd, hdc);
+        }
+
+        st_DRAW_PACKET drawPacket{ 16, g_iOldX, g_iOldY, xPos, yPos };
+
+        g_iOldX = xPos;
+        g_iOldY = yPos;
+
+        sendPacket(&drawPacket, sizeof(st_DRAW_PACKET));
+
+        break;
+    }
+    case UM_NETWORK:
+        processSocketMessage(hWnd, uMsg, wParam, lParam);
+        break;
+    case WM_DESTROY:
+        DeleteObject(g_hPen);
+        PostQuitMessage(0);
+        break;
+    default:
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    }
     return 0;
 }
 
-void sendUnicast(SESSION* s, char* bbuf)
+void processSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    int sendret = send(s->_sock, bbuf, 16, 0);
-    if (sendret == SOCKET_ERROR)
+    if (WSAGETSELECTERROR(lParam))
     {
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
-        {
-            return;
-        }
-        else
-        {
-            printf("%d\n", WSAGetLastError());
-        }
-    }
-}
-
-void sendBroadcast(SESSION* s, char* bbuf)
-{
-    for (auto& session : g_playerList)
-    {
-        if (session._id != s->_id)
-        {
-            sendUnicast(&session, bbuf);
-        }
-    }
-}
-
-int network()
-{
-    FD_ZERO(&rset);
-    FD_SET(listen_sock, &rset);
-
-    for (auto& session : g_playerList)
-    {
-        FD_SET(session._sock, &rset);
+        closesocket(g_clientsock);
+        return;
     }
 
-    int selectret = select(0, &rset, NULL, NULL, NULL);
-    if (selectret == SOCKET_ERROR)
+    switch (WSAGETSELECTEVENT(lParam))
     {
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
-        {
-            return 0;
-        }
-        else
-        {
-            printf("%d\n", WSAGetLastError());
-            return 0;
-        }
+    case FD_CONNECT:
+        g_connect = true;
+        break;
+    case FD_CLOSE:
+        closesocket(g_clientsock);
+        break;
+    case FD_READ:
+        procRecv(hWnd);
+        break;
+    case FD_WRITE:
+        procSend();
+        break;
     }
-
-    if (FD_ISSET(listen_sock, &rset))
-    {
-        SESSION session = { 0, };
-        SOCKET client_sock;
-        SOCKADDR_IN clientaddr;
-        int addrlen = sizeof(clientaddr);
-
-        client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-        if (client_sock == SOCKET_ERROR)
-        {
-            if (WSAGetLastError() == WSAEWOULDBLOCK)
-            {
-                return 0;
-            }
-            else
-            {
-                printf("%d\n", WSAGetLastError());
-                return 0;
-            }
-        }
-
-        session._sock = client_sock;
-        wchar_t addr[INET_ADDRSTRLEN];
-        InetNtop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
-        wcscpy(session._ip, addr);
-        session._port = ntohs(clientaddr.sin_port);
-        session._id = s_id;
-        IDALLOC idalloc { 0, s_id, 0, 0 };
-        g_idalloc.push_back(idalloc);
-
-        sendUnicast(&session, (char*)&idalloc);
-        s_id++;
-
-        int x = rand() % (dfSCREEN_WIDTH - 1);
-        int y = rand() % dfSCREEN_HEIGHT;
-        session._x = x;
-        session._y = y;
-        CREATESTAR createstar { 1, session._id, session._x, session._y };
-        g_createstar.push_back(createstar);
-
-        // 신규 유저에게 별 생성 위치 송신
-        sendUnicast(&session, (char*)&createstar);
-
-        // 신규 유저에게 다른 별들 위치 송신
-        for (auto& starmove : g_starmove)
-        {
-            if (starmove._id != session._id)
-            {
-                sendUnicast(&session, (char*)&starmove);
-            }
-        }
-
-        // 신규 유저 등록
-        g_playerList.push_back(session);
-
-        // 다른 유저에게 신규 유저 위치 알려주기
-        sendBroadcast(&session, (char*)&createstar);
-
-        STARMOVE starmove { 3, session._id, session._x, session._y };
-        g_starmove.push_back(starmove);
-    }
-
-    for (auto& session : g_playerList)
-    {
-        if (FD_ISSET(session._sock, &rset))
-        {
-            int recvret = recv(session._sock, buf, sizeof(buf), 0);
-            if (recvret == SOCKET_ERROR)
-            {
-                if (WSAGetLastError() == WSAEWOULDBLOCK)
-                {
-                    continue;
-                }
-                else
-                {
-                    printf("%d\n", WSAGetLastError());
-                    DELETESTAR deletestar { 2, session._id, 0, 0 };
-                    sendBroadcast(&session, (char*)&deletestar);
-                    g_deletestar.push_back(deletestar);
-                }
-
-                continue;
-            }
-            else if (recvret == 0)
-            {
-                printf("%d\n", WSAGetLastError());
-                DELETESTAR deletestar { 2, session._id, 0, 0 };
-                sendBroadcast(&session, (char*)&deletestar);
-                g_deletestar.push_back(deletestar);
-                continue;
-            }
-
-            int recvByte = recvret;
-            int sum = 0;
-
-            while (recvByte - sum >= 16)
-            {
-                int* bbuf = (int*)(buf + sum);
-                int type = bbuf[0];
-                int id = bbuf[1];
-                int x = bbuf[2];
-                int y = bbuf[3];
-
-                switch (type)
-                {
-                case 3:
-                    for (auto& starmove : g_starmove)
-                    {
-                        if (starmove._id == id)
-                        {
-                            starmove._x = x;
-                            starmove._y = y;
-                            session._x = x;
-                            session._y = y;
-                            sendBroadcast(&session, (char*)&starmove);
-                            break;
-                        }
-                    }
-                    break;
-                }
-
-                sum += 16;
-            }
-        }
-    }
-
-    for (auto iter = g_deletestar.begin(); iter != g_deletestar.end();)
-    {
-        bool deletePlayer = false;
-        // 플레이어 삭제
-        for (auto msIter = g_playerList.begin(); msIter != g_playerList.end();)
-        {
-            if (msIter->_id == iter->_id)
-            {
-                msIter = g_playerList.erase(msIter);
-                deletePlayer = true;
-                break;
-            }
-            else
-            {
-                ++msIter;
-            }
-        }
-
-        // 여러 리스트에서 이 아이디를 가진 오브젝트 삭제
-        for (auto msIter = g_idalloc.begin(); msIter != g_idalloc.end();)
-        {
-            if (msIter->_id == iter->_id)
-            {
-                msIter = g_idalloc.erase(msIter);
-                deletePlayer = true;
-                break;
-            }
-            else
-            {
-                ++msIter;
-            }
-        }
-
-        for (auto msIter = g_createstar.begin(); msIter != g_createstar.end();)
-        {
-            if (msIter->_id == iter->_id)
-            {
-                msIter = g_createstar.erase(msIter);
-                deletePlayer = true;
-                break;
-            }
-            else
-            {
-                ++msIter;
-            }
-        }
-
-        for (auto msIter = g_starmove.begin(); msIter != g_starmove.end();)
-        {
-            if (msIter->_id == iter->_id)
-            {
-                msIter = g_starmove.erase(msIter);
-                deletePlayer = true;
-                break;
-            }
-            else
-            {
-                ++msIter;
-            }
-        }
-
-
-        if (deletePlayer)
-        {
-            iter = g_deletestar.erase(iter);
-        }
-        else
-        {
-            ++iter;
-        }
-    }
-
-    return 1;
-}
-
-int render()
-{
-    Buffer_Clear();
-    //FPS();
-    for (auto& session : g_playerList)
-    {
-        Sprite_Draw(session._x, session._y, '*');
-    }
-    Buffer_Flip();
-
-    return 1;
 }

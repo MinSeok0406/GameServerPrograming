@@ -101,6 +101,9 @@
     <ClCompile Include="WSAAsyncSelectServer11_RingBufferAdd.cpp">
       <Filter>챕터11</Filter>
     </ClCompile>
+    <ClCompile Include="..\RingBuffer\RingBuffer.cpp">
+      <Filter>프로카데미과제\RingBuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">
@@ -136,6 +139,9 @@
     <Filter Include="프로카데미과제\3주차">
       <UniqueIdentifier>{1ef18f22-0ce7-440e-874d-fcb4dbf9d391}</UniqueIdentifier>
     </Filter>
+    <Filter Include="프로카데미과제\RingBuffer">
+      <UniqueIdentifier>{d551c874-84e9-455c-943f-bc4c762d924c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h">
@@ -143,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>프로카데미과제\3주차</Filter>
+    </ClInclude>
+    <ClInclude Include="..\RingBuffer\RingBuffer.h">
+      <Filter>프로카데미과제\RingBuffer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

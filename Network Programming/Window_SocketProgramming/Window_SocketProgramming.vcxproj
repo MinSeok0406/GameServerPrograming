@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\RingBuffer\RingBuffer.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="client4.cpp" />
     <ClCompile Include="client5_Close.cpp" />
@@ -55,6 +56,7 @@
     <ClCompile Include="WSAAsyncSelectServer11_RingBufferAdd.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\RingBuffer\RingBuffer.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Console.h" />
   </ItemGroup>
