@@ -145,12 +145,15 @@
   <ItemGroup>
     <ClCompile Include="..\Window_SocketProgramming\Buffer.cpp" />
     <ClCompile Include="..\Window_SocketProgramming\Console.cpp" />
+    <ClCompile Include="..\Window_SocketProgramming\RingBuffer.cpp" />
     <ClCompile Include="ClientMain.cpp" />
-    <ClCompile Include="DummyClient.cpp" />
+    <ClCompile Include="DummyClient_GDI.cpp" />
+    <ClCompile Include="DummyClient_Star.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Window_SocketProgramming\Buffer.h" />
     <ClInclude Include="..\Window_SocketProgramming\Console.h" />
+    <ClInclude Include="..\Window_SocketProgramming\RingBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,11 +8,22 @@
     <ClCompile Include="..\Window_SocketProgramming\Console.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="DummyClient.cpp" />
+    <ClCompile Include="DummyClient_Star.cpp">
+      <Filter>DummyClient</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyClient_GDI.cpp">
+      <Filter>DummyClient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Window_SocketProgramming\RingBuffer.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Util">
       <UniqueIdentifier>{e4c99fcd-c8d0-4787-a4e5-6e6ea46c8f66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DummyClient">
+      <UniqueIdentifier>{5142fcb8-127a-4c69-89e3-afb1bad3be12}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -20,6 +31,9 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="..\Window_SocketProgramming\Console.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Window_SocketProgramming\RingBuffer.h">
       <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>

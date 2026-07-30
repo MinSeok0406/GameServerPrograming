@@ -36,106 +36,72 @@ int RingBuffer::GetFreeSize()
 
 int RingBuffer::Enqueue(const char* chpData, int pSize)
 {
-	int inputSize = pSize;
-
 	if (pSize > GetFreeSize())
 	{
 		return 0;
 	}
 
-	size += pSize;
-
-	// WritePos 경계면 이동
-	if (writePos + pSize > &buf[totalSize])
+	int remainSize = DirectEnqueueSize();
+	// readPos 경계면 이동
+	if (pSize <= remainSize)
 	{
-		int offset = (int)(&buf[totalSize] - writePos);
-		pSize -= offset;
-		memcpy(writePos, chpData, offset);
-		chpData += offset;
-		writePos = &buf[0];
-
-		memcpy(writePos, chpData, pSize);
-		writePos += pSize;
-		*writePos = '\0';
+		memcpy(readPos, chpData, pSize);
 	}
 	else
 	{
-		memcpy(writePos, chpData, pSize);
-		writePos += pSize;
-		*writePos = '\0';
+		memcpy(readPos, chpData, remainSize);
+		memcpy(&buf[0], chpData + remainSize, pSize - remainSize);
 	}
 
-	return inputSize;
+	MoveRear(pSize);
+
+	return pSize;
 }
 
 int RingBuffer::Dequeue(char* chpDest, int pSize)
 {
-	int outputSize = pSize;
-
 	if (pSize > GetUseSize())
 	{
 		return 0;
 	}
 
-	size -= pSize;
-
-	// readPos 경계면 이동
-	if (readPos + pSize > &buf[totalSize])
+	int remainSize = DirectDequeueSize();
+	// writePos 경계면 이동
+	if (pSize <= remainSize)
 	{
-		int offset = (int)(&buf[totalSize] - readPos);
-		pSize -= offset;
-		memcpy(chpDest, readPos, offset);
-		chpDest += offset;
-		readPos = &buf[0];
-
-		memcpy(chpDest, readPos, pSize);
-		chpDest += pSize;
-		readPos += pSize;
-		*readPos = '\0';
+		memcpy(chpDest, writePos, pSize);
 	}
 	else
 	{
-		memcpy(chpDest, readPos, pSize);
-		chpDest += pSize;
-		readPos += pSize;
-		*readPos = '\0';
+		memcpy(chpDest, writePos, remainSize);
+		memcpy(chpDest + remainSize, &buf[0], pSize - remainSize);
 	}
 
-	return outputSize;
+	MoveFront(pSize);
+
+	return pSize;
 }
 
 int RingBuffer::Peek(char* chpDest, int pSize)
 {
-	char* read = readPos;
-	char* dest = chpDest;
-	int outputSize = pSize;
-
 	if (pSize > GetUseSize())
 	{
 		return 0;
 	}
 
-	// readPos 경계면 넘어감
-	if (read + pSize > &buf[totalSize])
+	int remainSize = DirectDequeueSize();
+	// writePos 경계면 이동
+	if (pSize <= remainSize)
 	{
-		int offset = (int)(&buf[totalSize] - read);
-		pSize -= offset;
-		memcpy(dest, read, offset);
-		dest += offset;
-		read = &buf[0];
-
-		memcpy(dest, read, pSize);
-		dest += pSize;
-		read += pSize;
+		memcpy(chpDest, writePos, pSize);
 	}
 	else
 	{
-		memcpy(dest, read, pSize);
-		dest += pSize;
-		read += pSize;
+		memcpy(chpDest, writePos, remainSize);
+		memcpy(chpDest + remainSize, &buf[0], pSize - remainSize);
 	}
 
-	return outputSize;
+	return pSize;
 }
 
 void RingBuffer::ClearBuffer()
@@ -146,14 +112,18 @@ void RingBuffer::ClearBuffer()
 	readPos = &buf[0];
 }
 
+// 링 버퍼의 경계를 넘어갈 때, 두 값을 더해서 크기 자체는 맞지만 버퍼는 경계를 넘어서
+// 이후의 값도 쓰거나 읽을 수 있다. 이 부분은 오류가 되기 때문에 고쳐야 함
 int RingBuffer::DirectEnqueueSize()
 {
-	return std::min(GetFreeSize(), (int)(&buf[totalSize] - writePos));
+	int enqueueSize = (int)(&buf[totalSize] - readPos);
+	return std::min(GetFreeSize(), enqueueSize);
 }
 
 int RingBuffer::DirectDequeueSize()
 {
-	return std::min(GetUseSize(), (int)(&buf[totalSize] - readPos));
+	int dequeueSize = (int)(&buf[totalSize] - writePos);
+	return std::min(GetUseSize(), dequeueSize);
 }
 
 int RingBuffer::MoveRear(int pSize)
@@ -163,21 +133,20 @@ int RingBuffer::MoveRear(int pSize)
 		return 0;
 	}
 
+	int commitSize = pSize;
 	size += pSize;
 
-	if (writePos + pSize > &buf[totalSize])
+	int moveSize = (int)(&buf[totalSize] - readPos);
+	if (pSize >= moveSize)
 	{
-		int offset = (int)(&buf[totalSize] - writePos);
-		pSize -= offset;
-		writePos = &buf[0];
-		writePos += pSize;
+		readPos = &buf[0] + (pSize - moveSize);
 	}
 	else
 	{
-		writePos += pSize;
+		readPos += pSize;
 	}
 
-	return pSize;
+	return commitSize;
 }
 
 int RingBuffer::MoveFront(int pSize)
@@ -187,29 +156,28 @@ int RingBuffer::MoveFront(int pSize)
 		return 0;
 	}
 
+	int commitSize = pSize;
 	size -= pSize;
 
-	if (readPos + pSize > &buf[totalSize])
+	int moveSize = (int)(&buf[totalSize] - writePos);
+	if (pSize >= moveSize)
 	{
-		int offset = (int)(&buf[totalSize] - readPos);
-		pSize -= offset;
-		readPos = &buf[0];
-		readPos += pSize;
+		writePos = &buf[0] + (pSize - moveSize);
 	}
 	else
 	{
-		readPos += pSize;
+		writePos += pSize;
 	}
 
-	return pSize;
+	return commitSize;
 }
 
 char* RingBuffer::GetFrontBufferPtr()
 {
-	return readPos;
+	return writePos;
 }
 
 char* RingBuffer::GetRearBufferPtr()
 {
-	return writePos;
+	return readPos;
 }

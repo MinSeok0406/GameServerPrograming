@@ -1,13 +1,12 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
-#include <conio.h>
 #include <time.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
 #include <windowsx.h>
-#include <string>
+#include <list>
 #include "RingBuffer.h"
 using namespace std;
 using ll = long long;
@@ -18,6 +17,10 @@ using ll = long long;
 #define SERVERPORT      25000
 #define BUFSIZE         512
 #define UM_NETWORK      (WM_USER+1)
+#define TIMER_ID        1
+#define TIMER_INTERVAL  1   // ms. 1초에 하나씩 긋고 전송
+#define HEIGHT          720
+#define WEIGHT          1280
 
 struct stHEADER
 {
@@ -40,6 +43,7 @@ void sendPacket(st_DRAW_PACKET* packet, int size);
 LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
 void processSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void gdi_Drawing(HWND hWnd, int startX, int startY, int endX, int endY);
+void generateAndSendLine(HWND hWnd);
 
 bool g_connect = false;
 bool g_bClick = false;
@@ -50,8 +54,8 @@ int g_iOldY;
 wchar_t g_serverIP[INET_ADDRSTRLEN];
 SOCKET g_clientsock;
 SOCKADDR_IN g_clientaddr;
-RingBuffer sendQ{ BUFSIZE };
-RingBuffer recvQ{ BUFSIZE };
+RingBuffer sendQ { BUFSIZE };
+RingBuffer recvQ { BUFSIZE };
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -89,7 +93,7 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    HWND hWnd = CreateWindow(L"MyWndClass", L"DrawLine", WS_OVERLAPPEDWINDOW, 0, 0, 1280, 720, NULL, NULL, NULL, NULL);
+    HWND hWnd = CreateWindow(L"MyWndClass", L"DrawLine", WS_OVERLAPPEDWINDOW, 0, 0, WEIGHT, HEIGHT, NULL, NULL, NULL, NULL);
     if (hWnd == NULL)
     {
         return 1;
@@ -204,6 +208,24 @@ void sendPacket(st_DRAW_PACKET* packet, int size)
     procSend();
 }
 
+void generateAndSendLine(HWND hWnd)
+{
+    if (!g_connect)
+    {
+        return;
+    }
+
+    int xPos = rand() % WEIGHT;
+    int yPos = rand() % HEIGHT;
+    gdi_Drawing(hWnd, g_iOldX, g_iOldY, xPos, yPos);
+
+    st_DRAW_PACKET drawPacket { 16, g_iOldX, g_iOldY, xPos, yPos };
+    sendPacket(&drawPacket, sizeof(st_DRAW_PACKET));
+
+    g_iOldX = xPos;
+    g_iOldY = yPos;
+}
+
 LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     int AsyncRet = 0;
@@ -242,45 +264,20 @@ LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 return -1;
             }
         }
-        break;
-    case WM_RBUTTONDOWN:
-        if (g_hPen != NULL)
-        {
-            DeleteObject(g_hPen);
-            g_hPen = CreatePen(PS_SOLID, rand() % 10, RGB(rand() % 255, rand() % 255, rand() % 255));
-        }
-        break;
-    case WM_LBUTTONDOWN:
-        g_bClick = true;
-        break;
-    case WM_LBUTTONUP:
-        g_bClick = false;
-        break;
-    case WM_MOUSEMOVE:
-    {
-        if (!g_connect)
-        {
-            break;
-        }
-        
-        int xPos = GET_X_LPARAM(lParam);
-        int yPos = GET_Y_LPARAM(lParam);
-        if (g_bClick)
-        {
-            gdi_Drawing(hWnd, g_iOldX, g_iOldY, xPos, yPos);
 
-            st_DRAW_PACKET drawPacket { 16, g_iOldX, g_iOldY, xPos, yPos };
-            sendPacket(&drawPacket, sizeof(st_DRAW_PACKET));
-        }
-        g_iOldX = xPos;
-        g_iOldY = yPos;
-
+        SetTimer(hWnd, TIMER_ID, TIMER_INTERVAL, NULL);
         break;
-    }
+    case WM_TIMER:
+        if (wParam == TIMER_ID)
+        {
+            generateAndSendLine(hWnd);
+        }
+        break;
     case UM_NETWORK:
         processSocketMessage(hWnd, uMsg, wParam, lParam);
         break;
     case WM_DESTROY:
+        KillTimer(hWnd, TIMER_ID);
         DeleteObject(g_hPen);
         closesocket(g_clientsock);
         PostQuitMessage(0);

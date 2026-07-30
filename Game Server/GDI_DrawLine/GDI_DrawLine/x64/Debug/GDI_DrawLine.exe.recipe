@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GameServerPrograming\Game Server\GDI_DrawLine\x64\Debug\GDI_DrawLine.exe</FullPath>
+      <FullPath>C:\GamePrograming\Game Server\GDI_DrawLine\x64\Debug\GDI_DrawLine.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

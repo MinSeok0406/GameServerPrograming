@@ -1,4 +1,6 @@
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Buffer.cpp;C:\GamePrograming\Network Programming\Client\x64\Release\Buffer.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Console.cpp;C:\GamePrograming\Network Programming\Client\x64\Release\Console.obj
+C:\GamePrograming\Network Programming\Window_SocketProgramming\RingBuffer.cpp;C:\GamePrograming\Network Programming\Client\x64\Release\RingBuffer.obj
 C:\GamePrograming\Network Programming\Client\ClientMain.cpp;C:\GamePrograming\Network Programming\Client\x64\Release\ClientMain.obj
-C:\GamePrograming\Network Programming\Client\DummyClient.cpp;C:\GamePrograming\Network Programming\Client\x64\Release\DummyClient.obj
+C:\GamePrograming\Network Programming\Client\DummyClient_GDI.cpp;C:\GamePrograming\Network Programming\Client\x64\Release\DummyClient_GDI.obj
+C:\GamePrograming\Network Programming\Client\DummyClient_Star.cpp;C:\GamePrograming\Network Programming\Client\x64\Release\DummyClient_Star.obj
