@@ -21,13 +21,15 @@ public:
 	char*	GetFrontBufferPtr();						// 버퍼의 WritePos 포인터 얻음.
 	char*	GetRearBufferPtr();							// 버퍼의 RearPos 포인터 얻음.
 
+	RingBuffer(const RingBuffer& rb) = default;
+	RingBuffer& operator=(const RingBuffer& rb) = default;
+	RingBuffer(RingBuffer&& rb) = default;
+	RingBuffer& operator=(RingBuffer&& rb) = default;
+
 private:
 	char* buf;
 	int totalSize;
 	int size;
 	char* writePos;
 	char* readPos;
-
-	RingBuffer(const RingBuffer& rb) = delete;
-	RingBuffer& operator=(const RingBuffer& rb) = delete;
 };

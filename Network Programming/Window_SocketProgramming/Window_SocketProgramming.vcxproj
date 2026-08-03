@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -27,6 +27,7 @@
     <ClCompile Include="client5_FixedVariable.cpp" />
     <ClCompile Include="client5_Variable.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="GDI_Client.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Practice3_Client.cpp" />
     <ClCompile Include="Practice3_Server.cpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="server5_Variable.cpp" />
     <ClCompile Include="server6_Event.cpp" />
     <ClCompile Include="server6_ThreadTCP.cpp" />
+    <ClCompile Include="ServerMain.cpp" />
     <ClCompile Include="UDPBrodcastClient8.cpp" />
     <ClCompile Include="UDPBrodcastServer8.cpp" />
     <ClCompile Include="UDPClient8.cpp" />
@@ -59,6 +61,7 @@
     <ClInclude Include="..\RingBuffer\RingBuffer.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Protocol.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

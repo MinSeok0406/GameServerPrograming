@@ -104,6 +104,12 @@
     <ClCompile Include="..\RingBuffer\RingBuffer.cpp">
       <Filter>프로카데미과제\RingBuffer</Filter>
     </ClCompile>
+    <ClCompile Include="GDI_Client.cpp">
+      <Filter>프로카데미과제\4주차</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerMain.cpp">
+      <Filter>프로카데미과제\5주차</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">
@@ -142,6 +148,12 @@
     <Filter Include="프로카데미과제\RingBuffer">
       <UniqueIdentifier>{d551c874-84e9-455c-943f-bc4c762d924c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="프로카데미과제\4주차">
+      <UniqueIdentifier>{257a3585-9727-43fe-a483-41b66d646077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="프로카데미과제\5주차">
+      <UniqueIdentifier>{6964d709-aa3b-4162-8a6d-ab3516c2b131}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h">
@@ -152,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="..\RingBuffer\RingBuffer.h">
       <Filter>프로카데미과제\RingBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol.h">
+      <Filter>프로카데미과제\5주차</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

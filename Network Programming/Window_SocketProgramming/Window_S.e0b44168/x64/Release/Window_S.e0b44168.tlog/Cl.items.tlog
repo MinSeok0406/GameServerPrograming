@@ -6,6 +6,7 @@ C:\GamePrograming\Network Programming\Window_SocketProgramming\client5_FixedByte
 C:\GamePrograming\Network Programming\Window_SocketProgramming\client5_FixedVariable.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\client5_FixedVariable.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\client5_Variable.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\client5_Variable.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Console.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\Console.obj
+C:\GamePrograming\Network Programming\Window_SocketProgramming\GDI_Client.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\GDI_Client.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Main.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\Main.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Practice3_Client.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\Practice3_Client.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Practice3_Server.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\Practice3_Server.obj
@@ -26,6 +27,7 @@ C:\GamePrograming\Network Programming\Window_SocketProgramming\server5_FixedVari
 C:\GamePrograming\Network Programming\Window_SocketProgramming\server5_Variable.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\server5_Variable.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\server6_Event.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\server6_Event.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\server6_ThreadTCP.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\server6_ThreadTCP.obj
+C:\GamePrograming\Network Programming\Window_SocketProgramming\ServerMain.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\ServerMain.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\UDPBrodcastClient8.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\UDPBrodcastClient8.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\UDPBrodcastServer8.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\UDPBrodcastServer8.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\UDPClient8.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\UDPClient8.obj
