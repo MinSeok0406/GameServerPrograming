@@ -6,7 +6,13 @@
 #include <windowsx.h>
 #include "RingBuffer.h"
 
-#define BUFSIZE 1024
+#define ﻿dfNETWORK_PACKET_CODE      0x89
+#define dfRANGE_MOVE_TOP	       50
+#define dfRANGE_MOVE_LEFT	       10
+#define dfRANGE_MOVE_RIGHT	       630
+#define dfRANGE_MOVE_BOTTOM	       470
+#define dfERROR_RANGE		       50
+#define BUFSIZE                    5000
 
 struct st_HEADER
 {
@@ -27,6 +33,7 @@ struct st_SESSION
 
     unsigned int    _dwAction;
     unsigned char   _byDirection;
+    bool            _live;
 
     short           _shX;
     short           _shY;
