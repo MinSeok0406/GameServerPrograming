@@ -33,7 +33,6 @@ struct st_SESSION
 
     unsigned int    _dwAction;
     unsigned char   _byDirection;
-    bool            _live;
 
     short           _shX;
     short           _shY;

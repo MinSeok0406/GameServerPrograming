@@ -50,10 +50,20 @@ bool npfCreateCharacter(st_HEADER* header, st_SC_CREATE_MY_CHARACTER* packet,
     unsigned int id, unsigned char direction, short x, short y, char hp);
 bool npfCreateOtherCharacter(st_HEADER* header, st_SC_CREATE_OTHER_CHARACTER* packet,
     unsigned int id, unsigned char direction, short x, short y, char hp);
+bool npfDeleteCharacter(st_HEADER* header, st_SC_DELETE_CHARACTER* packet,
+    unsigned int id);
 bool npfMoveStart(st_HEADER* header, st_SC_MOVE_START* packet, unsigned int id,
     unsigned char direction, short x, short y);
 bool npfMoveStop(st_HEADER* header, st_SC_MOVE_STOP* packet, unsigned int id,
     unsigned char direction, short x, short y);
+bool npfAttack1(st_HEADER* header, st_SC_ATTACK1* packet, unsigned int id,
+    unsigned char direction, short x, short y);
+bool npfAttack2(st_HEADER* header, st_SC_ATTACK2* packet, unsigned int id,
+    unsigned char direction, short x, short y);
+bool npfAttack3(st_HEADER* header, st_SC_ATTACK3* packet, unsigned int id,
+    unsigned char direction, short x, short y);
+bool npfDamage(st_HEADER* header, st_SC_DAMAGE* packet, unsigned int attackID,
+    unsigned int damageID, char damageHP);
 
 
 int wmain(int argc, WCHAR* argv[])
@@ -116,18 +126,17 @@ int wmain(int argc, WCHAR* argv[])
 
 bool fcreateSession()
 {
-    st_SESSION createSession;
+    g_sessionList.emplace_back();
+    st_SESSION& createSession = g_sessionList.back();
     createSession._socket = g_clientSocket;
     createSession._dwSessionID = g_id++;
     InetNtop(AF_INET, &g_clientaddr.sin_addr, createSession._ip, sizeof(createSession._ip));
     createSession._port = htons(g_clientaddr.sin_port);
-    createSession._dwAction = dfPACKET_MOVE_DIR_LL;
-    createSession._byDirection = dfPACKET_MOVE_DIR_LL;
-    createSession._live = true;
+    createSession._dwAction = 8;
+    createSession._byDirection = dfPACKET_MOVE_DIR_RR;
     createSession._shX = (rand() % 600) + 15;
     createSession._shY = (rand() % 410) + 55;
     createSession._chHP = 100;
-    g_sessionList.push_back(createSession);
 
     st_HEADER header;
     st_SC_CREATE_MY_CHARACTER packet;
@@ -166,7 +175,6 @@ bool fcreateSession()
 bool fdisconnect(st_SESSION* session)
 {
     closesocket(session->_socket);
-    session->_live = false;
 
     return true;
 }
@@ -205,6 +213,7 @@ bool netProc_Recv(st_SESSION* session)
     }
     else if (recvRet == 0)
     {
+        session->_chHP = 0;
         return true;
     }
 
@@ -223,23 +232,20 @@ bool netProc_Recv(st_SESSION* session)
         {
             __debugbreak();
         }
-        session->_recvQ.MoveFront(peekRet);
 
         st_HEADER* header = (st_HEADER*)buf;
         if (header->_byCode != ﻿dfNETWORK_PACKET_CODE)
         {
-            if (session->_recvQ.GetUseSize() > header->_bySize)
-            {
-                session->_recvQ.MoveFront(header->_bySize);
-            }
-            
-            return false;
+            session->_recvQ.MoveFront(1);
+            continue;
         }
 
-        if (session->_recvQ.GetUseSize() < header->_bySize)
+        if (session->_recvQ.GetUseSize() < sizeof(st_HEADER) + header->_bySize)
         {
             return false;
         }
+
+        session->_recvQ.MoveFront(sizeof(st_HEADER));
 
         char packet[20];
         peekRet = session->_recvQ.Peek(packet, header->_bySize);
@@ -289,6 +295,7 @@ bool sendPacket_Unicast(st_SESSION* session, char* header, char* packet, int siz
 
     session->_sendQ.Enqueue(header, sizeof(st_HEADER));
     session->_sendQ.Enqueue(packet, size - sizeof(st_HEADER));
+    return true;
 }
 
 bool sendPacket_Broadcast(st_SESSION* session, char* header, char* packet, int size)
@@ -334,7 +341,7 @@ bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
     if (abs(movestart->_x - session->_shX) > dfERROR_RANGE ||
         abs(movestart->_y - session->_shY) > dfERROR_RANGE)
     {
-        fdisconnect(session);
+        session->_chHP = 0;
         printf("Don't move location!!\n");
         return false;
     }
@@ -360,7 +367,7 @@ bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
     st_HEADER header;
     st_SC_MOVE_START sendPacket;
     int len = sizeof(header) + sizeof(sendPacket);
-    npfMoveStart(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
+    npfMoveStart(&header, &sendPacket, session->_dwSessionID, movestart->_direction,
         session->_shX, session->_shY);
     sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
 
@@ -373,12 +380,12 @@ bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
     if (abs(movestop->_x - session->_shX) > dfERROR_RANGE ||
         abs(movestop->_y - session->_shY) > dfERROR_RANGE)
     {
-        fdisconnect(session);
+        session->_chHP;
         printf("Don't move location!!\n");
         return false;
     }
 
-    session->_dwAction = movestop->_direction;
+    session->_dwAction = dfPACKET_CS_MOVE_STOP;
 
     switch (movestop->_direction)
     {
@@ -408,21 +415,204 @@ bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
 
 bool netPacketProc_Attack1(st_SESSION* session, char* packet)
 {
+    // 개선 필요
+    // 공격 쿨타임
+    st_CS_ATTACK1* attacker = (st_CS_ATTACK1*)packet;
+    if (attacker->_direction != session->_byDirection ||
+        attacker->_x != session->_shX || attacker->_y != session->_shY)
+    {
+        session->_byDirection = attacker->_direction;
+        session->_shX = attacker->_x;
+        session->_shY = attacker->_y;
+    }
 
+    st_HEADER header;
+    st_SC_ATTACK1 sendPacket;
+    int len = sizeof(header) + sizeof(sendPacket);
+    npfAttack1(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
+        session->_shX, session->_shY);
+    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
 
+    for (auto& sessions : g_sessionList)
+    {
+        if (sessions._dwSessionID != session->_dwSessionID)
+        {
+            if (attacker->_direction == dfPACKET_MOVE_DIR_LL)
+            {
+                int minX = attacker->_x - 80;
+                int maxX = attacker->_x;
+                int minY = attacker->_y - 10;
+                int maxY = attacker->_y + 10;
+                if (sessions._shX >= minX && sessions._shX <= maxX &&
+                    sessions._shY >= minY && sessions._shY <= maxY)
+                {
+                    st_HEADER header;
+                    st_SC_DAMAGE sendPacket;
+                    int len = sizeof(header) + sizeof(sendPacket);
+                    sessions._chHP -= 1;
+                    npfDamage(&header, &sendPacket, session->_dwSessionID,
+                        sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
+                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                }
+            }
+            else if (attacker->_direction == dfPACKET_MOVE_DIR_RR)
+            {
+                int maxX = attacker->_x + 80;
+                int minX = attacker->_x;
+                int minY = attacker->_y - 10;
+                int maxY = attacker->_y + 10;
+                if (sessions._shX >= minX && sessions._shX <= maxX &&
+                    sessions._shY >= minY && sessions._shY <= maxY)
+                {
+                    st_HEADER header;
+                    st_SC_DAMAGE sendPacket;
+                    int len = sizeof(header) + sizeof(sendPacket);
+                    sessions._chHP -= 1;
+                    npfDamage(&header, &sendPacket, session->_dwSessionID,
+                        sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
+                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                }
+            }
+        }
+    }
+    
     return true;
 }
 
 bool netPacketProc_Attack2(st_SESSION* session, char* packet)
 {
+    // 개선 필요
+    // 공격 쿨타임
+    st_CS_ATTACK2* attacker = (st_CS_ATTACK2*)packet;
+    if (attacker->_direction != session->_byDirection ||
+        attacker->_x != session->_shX || attacker->_y != session->_shY)
+    {
+        session->_byDirection = attacker->_direction;
+        session->_shX = attacker->_x;
+        session->_shY = attacker->_y;
+    }
 
+    st_HEADER header;
+    st_SC_ATTACK2 sendPacket;
+    int len = sizeof(header) + sizeof(sendPacket);
+    npfAttack2(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
+        session->_shX, session->_shY);
+    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+
+    for (auto& sessions : g_sessionList)
+    {
+        if (sessions._dwSessionID != session->_dwSessionID)
+        {
+            if (attacker->_direction == dfPACKET_MOVE_DIR_LL)
+            {
+                int minX = attacker->_x - 90;
+                int maxX = attacker->_x;
+                int minY = attacker->_y - 10;
+                int maxY = attacker->_y + 10;
+                if (sessions._shX >= minX && sessions._shX <= maxX &&
+                    sessions._shY >= minY && sessions._shY <= maxY)
+                {
+                    st_HEADER header;
+                    st_SC_DAMAGE sendPacket;
+                    int len = sizeof(header) + sizeof(sendPacket);
+                    sessions._chHP -= 1;
+                    npfDamage(&header, &sendPacket, session->_dwSessionID,
+                        sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
+                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                }
+            }
+            else if (attacker->_direction == dfPACKET_MOVE_DIR_RR)
+            {
+                int maxX = attacker->_x + 90;
+                int minX = attacker->_x;
+                int minY = attacker->_y - 10;
+                int maxY = attacker->_y + 10;
+                if (sessions._shX >= minX && sessions._shX <= maxX &&
+                    sessions._shY >= minY && sessions._shY <= maxY)
+                {
+                    st_HEADER header;
+                    st_SC_DAMAGE sendPacket;
+                    int len = sizeof(header) + sizeof(sendPacket);
+                    sessions._chHP -= 1;
+                    npfDamage(&header, &sendPacket, session->_dwSessionID,
+                        sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
+                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                }
+            }
+        }
+    }
 
     return true;
 }
 
 bool netPacketProc_Attack3(st_SESSION* session, char* packet)
 {
+    // 개선 필요
+    // 공격 쿨타임
+    st_CS_ATTACK3* attacker = (st_CS_ATTACK3*)packet;
+    if (attacker->_direction != session->_byDirection ||
+        attacker->_x != session->_shX || attacker->_y != session->_shY)
+    {
+        session->_byDirection = attacker->_direction;
+        session->_shX = attacker->_x;
+        session->_shY = attacker->_y;
+    }
 
+    st_HEADER header;
+    st_SC_ATTACK3 sendPacket;
+    int len = sizeof(header) + sizeof(sendPacket);
+    npfAttack3(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
+        session->_shX, session->_shY);
+    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+
+    for (auto& sessions : g_sessionList)
+    {
+        if (sessions._dwSessionID != session->_dwSessionID)
+        {
+            if (attacker->_direction == dfPACKET_MOVE_DIR_LL)
+            {
+                int minX = attacker->_x - 100;
+                int maxX = attacker->_x;
+                int minY = attacker->_y - 20;
+                int maxY = attacker->_y + 20;
+                if (sessions._shX >= minX && sessions._shX <= maxX &&
+                    sessions._shY >= minY && sessions._shY <= maxY)
+                {
+                    st_HEADER header;
+                    st_SC_DAMAGE sendPacket;
+                    int len = sizeof(header) + sizeof(sendPacket);
+                    sessions._chHP -= 1;
+                    npfDamage(&header, &sendPacket, session->_dwSessionID,
+                        sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
+                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                }
+            }
+            else if (attacker->_direction == dfPACKET_MOVE_DIR_RR)
+            {
+                int maxX = attacker->_x + 100;
+                int minX = attacker->_x;
+                int minY = attacker->_y - 20;
+                int maxY = attacker->_y + 20;
+                if (sessions._shX >= minX && sessions._shX <= maxX &&
+                    sessions._shY >= minY && sessions._shY <= maxY)
+                {
+                    st_HEADER header;
+                    st_SC_DAMAGE sendPacket;
+                    int len = sizeof(header) + sizeof(sendPacket);
+                    sessions._chHP -= 1;
+                    npfDamage(&header, &sendPacket, session->_dwSessionID,
+                        sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
+                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                }
+            }
+        }
+    }
 
     return true;
 }
@@ -494,7 +684,109 @@ bool netIOProcess()
 bool Update()
 {
     // TODO
+    for (auto iter = g_sessionList.begin(); iter != g_sessionList.end();)
+    {
+        if (iter->_chHP <= 0)
+        {
+            // Character Delete 프로토콜 함수 브로드캐스팅
+            st_HEADER header;
+            st_SC_DELETE_CHARACTER sendPacket;
+            int len = sizeof(header) + sizeof(sendPacket);
+            npfDeleteCharacter(&header, &sendPacket, iter->_dwSessionID);
+            sendPacket_Broadcast(&(*iter), (char*)&header, (char*)&sendPacket, len);
 
+            fdisconnect(&(*iter));
+            iter = g_sessionList.erase(iter);
+        }
+        else
+        {
+            switch (iter->_dwAction)
+            {
+            case dfPACKET_MOVE_DIR_LL:
+                if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT)
+                {
+                    break;
+                }
+                iter->_shX -= 3;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            case dfPACKET_MOVE_DIR_LU:
+                if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT 
+                    || iter->_shY - 2 <= dfRANGE_MOVE_TOP)
+                {
+                    break;
+                }
+                iter->_shX -= 3;
+                iter->_shY -= 2;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            case dfPACKET_MOVE_DIR_UU:
+                if (iter->_shY - 2 <= dfRANGE_MOVE_TOP)
+                {
+                    break;
+                }
+                iter->_shY -= 2;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            case dfPACKET_MOVE_DIR_RU:
+                if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT
+                    || iter->_shY - 2 <= dfRANGE_MOVE_TOP)
+                {
+                    break;
+                }
+                iter->_shX += 3;
+                iter->_shY -= 2;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            case dfPACKET_MOVE_DIR_RR:
+                if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT)
+                {
+                    break;
+                }
+                iter->_shX += 3;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            case dfPACKET_MOVE_DIR_RD:
+                if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT
+                    || iter->_shY + 2 >= dfRANGE_MOVE_BOTTOM)
+                {
+                    break;
+                }
+                iter->_shX += 3;
+                iter->_shY += 2;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            case dfPACKET_MOVE_DIR_DD:
+                if (iter->_shY + 2 >= dfRANGE_MOVE_BOTTOM)
+                {
+                    break;
+                }
+                iter->_shY += 2;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            case dfPACKET_MOVE_DIR_LD:
+                if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT
+                    || iter->_shY + 2 >= dfRANGE_MOVE_BOTTOM)
+                {
+                    break;
+                }
+                iter->_shX -= 3;
+                iter->_shY += 2;
+                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
+                    iter->_byDirection, iter->_shX, iter->_shY);
+                break;
+            }
+
+            ++iter;
+        }
+    }
 
     int useTime = (int)(timeGetTime() - tick);
     if (useTime < 20)
@@ -540,6 +832,17 @@ bool npfCreateOtherCharacter(st_HEADER* header, st_SC_CREATE_OTHER_CHARACTER* pa
     return true;
 }
 
+bool npfDeleteCharacter(st_HEADER* header, st_SC_DELETE_CHARACTER* packet, unsigned int id)
+{
+    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
+    header->_bySize = sizeof(st_SC_DELETE_CHARACTER);
+    header->_byType = dfPACKET_SC_DELETE_CHARACTER;
+
+    packet->_id = id;
+
+    return true;
+}
+
 bool npfMoveStart(st_HEADER* header, st_SC_MOVE_START* packet, unsigned int id, unsigned char direction, short x, short y)
 {
     header->_byCode = ﻿dfNETWORK_PACKET_CODE;
@@ -564,6 +867,61 @@ bool npfMoveStop(st_HEADER* header, st_SC_MOVE_STOP* packet, unsigned int id, un
     packet->_direction = direction;
     packet->_x = x;
     packet->_y = y;
+
+    return true;
+}
+
+bool npfAttack1(st_HEADER* header, st_SC_ATTACK1* packet, unsigned int id, unsigned char direction, short x, short y)
+{
+    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
+    header->_bySize = sizeof(st_SC_ATTACK1);
+    header->_byType = dfPACKET_SC_ATTACK1;
+
+    packet->_id = id;
+    packet->_direction = direction;
+    packet->_x = x;
+    packet->_y = y;
+
+    return true;
+}
+
+bool npfAttack2(st_HEADER* header, st_SC_ATTACK2* packet, unsigned int id, unsigned char direction, short x, short y)
+{
+    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
+    header->_bySize = sizeof(st_SC_ATTACK2);
+    header->_byType = dfPACKET_SC_ATTACK2;
+
+    packet->_id = id;
+    packet->_direction = direction;
+    packet->_x = x;
+    packet->_y = y;
+
+    return true;
+}
+
+bool npfAttack3(st_HEADER* header, st_SC_ATTACK3* packet, unsigned int id, unsigned char direction, short x, short y)
+{
+    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
+    header->_bySize = sizeof(st_SC_ATTACK3);
+    header->_byType = dfPACKET_SC_ATTACK3;
+
+    packet->_id = id;
+    packet->_direction = direction;
+    packet->_x = x;
+    packet->_y = y;
+
+    return true;
+}
+
+bool npfDamage(st_HEADER* header, st_SC_DAMAGE* packet, unsigned int attackID, unsigned int damageID, char damageHP)
+{
+    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
+    header->_bySize = sizeof(st_SC_DAMAGE);
+    header->_byType = dfPACKET_SC_DAMAGE;
+
+    packet->_attackID = attackID;
+    packet->_damageID = damageID;
+    packet->_damageHP = damageHP;
 
     return true;
 }
