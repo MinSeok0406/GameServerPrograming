@@ -23,6 +23,8 @@ unsigned int tick;
 unsigned long g_updateTime = timeGetTime();
 const float c_move_speed_X = 150.0f;
 const float c_move_speed_Y = 100.0f;
+const float c_move_speed_DIAG_X = 150.0f * 0.8321f;
+const float c_move_speed_DIAG_Y = 150.0f * 0.8321f;
 
 static int g_id = 0;
 
@@ -119,7 +121,17 @@ int wmain(int argc, WCHAR* argv[])
     while (!g_bShutdown)
     {
         netIOProcess();
-        Update();
+        //Update();
+
+        // 컨텐츠만 프레임 관리
+        // 네트워크 바쁜 대기로 인해서 CPU를 8~10% 잡아 먹지만
+        // 그만큼 네트워크 반응성이 좋아서 게임이 부드럽게 진행되는 것 같음
+        int useTime = (int)(timeGetTime() - tick);
+        if (useTime >= 20)
+        {
+            Update();
+            tick += 20;
+        }
     }
 
     closesocket(g_listenSocket);
@@ -135,7 +147,7 @@ bool fcreateSession()
     createSession._socket = g_clientSocket;
     createSession._dwSessionID = g_id++;
     InetNtop(AF_INET, &g_clientaddr.sin_addr, createSession._ip, sizeof(createSession._ip));
-    createSession._port = htons(g_clientaddr.sin_port);
+    createSession._port = ntohs(g_clientaddr.sin_port);
     createSession._dwAction = 8;
     createSession._byDirection = dfPACKET_MOVE_DIR_RR;
     createSession._shX = (rand() % 600) + 15;
@@ -347,6 +359,10 @@ bool packetProc(st_SESSION* session, unsigned char packetType, char* packet)
 bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
 {
     st_CS_MOVE_START* movestart = (st_CS_MOVE_START*)packet;
+    printf("[MoveStart] client(%d,%d) server(%d,%d) diff(%d,%d)\n",
+        movestart->_x, movestart->_y, session->_shX, session->_shY,
+        movestart->_x - session->_shX, movestart->_y - session->_shY);
+
     if (abs(movestart->_x - session->_shX) > dfERROR_RANGE ||
         abs(movestart->_y - session->_shY) > dfERROR_RANGE)
     {
@@ -389,6 +405,11 @@ bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
 bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
 {
     st_CS_MOVE_STOP* movestop = (st_CS_MOVE_STOP*)packet;
+
+    printf("[MoveStart] client(%d,%d) server(%d,%d) diff(%d,%d)\n",
+        movestop->_x, movestop->_y, session->_shX, session->_shY,
+        movestop->_x - session->_shX, movestop->_y - session->_shY);
+
     if (abs(movestop->_x - session->_shX) > dfERROR_RANGE ||
         abs(movestop->_y - session->_shY) > dfERROR_RANGE)
     {
@@ -714,6 +735,8 @@ bool Update()
 
     int moveAmountX = (int)floor(c_move_speed_X * deltaSec);
     int moveAmountY = (int)floor(c_move_speed_Y * deltaSec);
+    int moveAmountDiagX = (int)floor(c_move_speed_DIAG_X * deltaSec);
+    int moveAmountDiagY = (int)floor(c_move_speed_DIAG_Y * deltaSec);
     
     for (auto iter = g_sessionList.begin(); iter != g_sessionList.end();)
     {
@@ -734,13 +757,13 @@ bool Update()
                 iter->_shX -= moveAmountX;
                 break;
             case dfPACKET_MOVE_DIR_LU:
-                if (iter->_shX - moveAmountX <= dfRANGE_MOVE_LEFT
-                    || iter->_shY - moveAmountY <= dfRANGE_MOVE_TOP)
+                if (iter->_shX - moveAmountDiagX <= dfRANGE_MOVE_LEFT
+                    || iter->_shY - moveAmountDiagY <= dfRANGE_MOVE_TOP)
                 {
                     break;
                 }
-                iter->_shX -= moveAmountX;
-                iter->_shY -= moveAmountY;
+                iter->_shX -= moveAmountDiagX;
+                iter->_shY -= moveAmountDiagY;
                 break;
             case dfPACKET_MOVE_DIR_UU:
                 if (iter->_shY - moveAmountY <= dfRANGE_MOVE_TOP)
@@ -750,13 +773,13 @@ bool Update()
                 iter->_shY -= moveAmountY;
                 break;
             case dfPACKET_MOVE_DIR_RU:
-                if (iter->_shX + moveAmountX >= dfRANGE_MOVE_RIGHT
-                    || iter->_shY - moveAmountY <= dfRANGE_MOVE_TOP)
+                if (iter->_shX + moveAmountDiagX >= dfRANGE_MOVE_RIGHT
+                    || iter->_shY - moveAmountDiagY <= dfRANGE_MOVE_TOP)
                 {
                     break;
                 }
-                iter->_shX += moveAmountX;
-                iter->_shY -= moveAmountY;
+                iter->_shX += moveAmountDiagX;
+                iter->_shY -= moveAmountDiagY;
                 break;
             case dfPACKET_MOVE_DIR_RR:
                 if (iter->_shX + moveAmountX >= dfRANGE_MOVE_RIGHT)
@@ -766,13 +789,13 @@ bool Update()
                 iter->_shX += moveAmountX;
                 break;
             case dfPACKET_MOVE_DIR_RD:
-                if (iter->_shX + moveAmountX >= dfRANGE_MOVE_RIGHT
-                    || iter->_shY + moveAmountY >= dfRANGE_MOVE_BOTTOM)
+                if (iter->_shX + moveAmountDiagX >= dfRANGE_MOVE_RIGHT
+                    || iter->_shY + moveAmountDiagY >= dfRANGE_MOVE_BOTTOM)
                 {
                     break;
                 }
-                iter->_shX += moveAmountX;
-                iter->_shY += moveAmountY;
+                iter->_shX += moveAmountDiagX;
+                iter->_shY += moveAmountDiagY;
                 break;
             case dfPACKET_MOVE_DIR_DD:
                 if (iter->_shY + moveAmountY >= dfRANGE_MOVE_BOTTOM)
@@ -782,13 +805,13 @@ bool Update()
                 iter->_shY += moveAmountY;
                 break;
             case dfPACKET_MOVE_DIR_LD:
-                if (iter->_shX - moveAmountX <= dfRANGE_MOVE_LEFT
-                    || iter->_shY + moveAmountY >= dfRANGE_MOVE_BOTTOM)
+                if (iter->_shX - moveAmountDiagX <= dfRANGE_MOVE_LEFT
+                    || iter->_shY + moveAmountDiagY >= dfRANGE_MOVE_BOTTOM)
                 {
                     break;
                 }
-                iter->_shX -= moveAmountX;
-                iter->_shY += moveAmountY;
+                iter->_shX -= moveAmountDiagX;
+                iter->_shY += moveAmountDiagY;
                 break;
             }
 
@@ -879,7 +902,8 @@ bool Update()
         }
     }
 
-    int useTime = (int)(timeGetTime() - tick);
+    // CPU가 거의 0에 수렴하도록 소스를 먹지 않는다
+    /*int useTime = (int)(timeGetTime() - tick);
     if (useTime < 20)
     {
         Sleep(20 - useTime);
@@ -888,7 +912,7 @@ bool Update()
     {
         tick = timeGetTime();
     }
-    tick += 20;
+    tick += 20;*/
 
     return true;
 }

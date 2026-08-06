@@ -19,6 +19,7 @@ struct st_USER
 {
     SOCKET          _sock;
     unsigned int    _id;
+    char            _name[20];
     wchar_t         _ip[INET_ADDRSTRLEN];
     unsigned short  _port;
     RingBuffer      _sendQ { SENDBUFSIZE };
@@ -29,12 +30,12 @@ struct st_USER
 struct st_SC_CREATE_USER
 {
     unsigned int _id;
-    char name[20];
+    char _name[20];
 };
 
 #define dfPACKET_SC_OTHER_USER      1
 struct st_SC_OTHER_USER
 {
     unsigned int _id;
-    char name[20];
+    char _name[20];
 };

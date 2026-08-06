@@ -3,6 +3,7 @@
 #include <iostream>
 #include <time.h>
 #include <list>
+#include <string>
 #include <algorithm>
 #include "Protocol.h"
 using namespace std;
@@ -31,6 +32,12 @@ bool netProc_Send(st_USER* user);
 bool netProc_Recv(st_USER* user);
 bool sendPacket_Unicast(st_USER* user, char* header, char* packet, int size);
 bool sendPacket_Broadcast(st_USER* user, char* header, char* packet, int size);
+
+// 네트워크 프로토콜 함수
+bool npf_SC_CREATE_USER(st_HEADER* header, st_SC_CREATE_USER* packet,
+    unsigned int id, char name[20], int nameSize);
+bool npf_SC_OTHER_USER(st_HEADER* header, st_SC_OTHER_USER* packet,
+    unsigned int id, char name[20], int nameSize);
 
 int wmain()
 {
@@ -170,10 +177,39 @@ bool netProc_Accept()
 
     g_userList.emplace_back();
     st_USER& createuser = g_userList.back();
-    createuser._id = s_id++;
+    createuser._id = s_id;
     createuser._sock = g_clientsocket;
+    string name = "User" + to_string(s_id);
+    memcpy(createuser._name, name.c_str(), sizeof(name.c_str()));
+    InetNtop(AF_INET, &clientaddr.sin_addr, createuser._ip, sizeof(createuser._ip));
+    createuser._port = ntohs(clientaddr.sin_port);
+    
+    // 신규 유저 정보 전송
+    st_HEADER header;
+    st_SC_CREATE_USER sendPacket;
+    int packetSize = sizeof(header) + sizeof(sendPacket);
+    npf_SC_CREATE_USER(&header, &sendPacket, createuser._id, createuser._name,
+        sizeof(createuser._name));
+    sendPacket_Unicast(&createuser, (char*)&header, (char*)&sendPacket, packetSize);
 
-    // 신규 유저 처리
+    
+    st_HEADER otherheader;
+    st_SC_OTHER_USER otherPacket;
+    int size = sizeof(otherheader) + sizeof(otherPacket);
+
+    // 기존 유저들에게 신규 유저 정보 전송
+    npf_SC_OTHER_USER(&header, &otherPacket, createuser._id, createuser._name, sizeof(createuser._name));
+    sendPacket_Broadcast(&createuser, (char*)&header, (char*)&sendPacket, packetSize);
+
+    // 신규 유저에게 기존 유저들 정보 전송
+    for (auto& users : g_userList)
+    {
+        if (users._id != createuser._id)
+        {
+            npf_SC_OTHER_USER(&header, &otherPacket, users._id, users._name, sizeof(users._name));
+            sendPacket_Unicast(&createuser, (char*)&otherheader, (char*)&otherPacket, size);
+        }
+    }
 
     return true;
 }
@@ -289,6 +325,28 @@ bool sendPacket_Broadcast(st_USER* user, char* header, char* packet, int size)
             sendPacket_Unicast(&users, header, packet, size);
         }
     }
+
+    return true;
+}
+
+bool npf_SC_CREATE_USER(st_HEADER* header, st_SC_CREATE_USER* packet, unsigned int id, char name[20], int nameSize)
+{
+    header->_packetsize = sizeof(st_SC_CREATE_USER);
+    header->_type = dfPACKET_SC_CREATE_USER;
+
+    packet->_id = id;
+    memcpy(packet->_name, name, nameSize);
+
+    return true;
+}
+
+bool npf_SC_OTHER_USER(st_HEADER* header, st_SC_OTHER_USER* packet, unsigned int id, char name[20], int nameSize)
+{
+    header->_packetsize = sizeof(st_SC_OTHER_USER);
+    header->_type = dfPACKET_SC_OTHER_USER;
+
+    packet->_id = id;
+    memcpy(packet->_name, name, nameSize);
 
     return true;
 }
