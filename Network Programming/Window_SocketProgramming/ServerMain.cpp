@@ -20,6 +20,10 @@ SOCKADDR_IN g_clientaddr;
 bool g_bShutdown = false;
 unsigned int tick;
 
+unsigned long g_updateTime = timeGetTime();
+const float c_move_speed_X = 150.0f;
+const float c_move_speed_Y = 100.0f;
+
 static int g_id = 0;
 
 // 세션 생성 및 삭제 함수
@@ -174,6 +178,11 @@ bool fcreateSession()
 
 bool fdisconnect(st_SESSION* session)
 {
+    st_HEADER header;
+    st_SC_DELETE_CHARACTER sendPacket;
+    int len = sizeof(header) + sizeof(sendPacket);
+    npfDeleteCharacter(&header, &sendPacket, session->_dwSessionID);
+    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
     closesocket(session->_socket);
 
     return true;
@@ -346,6 +355,9 @@ bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
         return false;
     }
 
+    printf("# PACKET_MOVESTART # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
+        movestart->_direction, movestart->_x, movestart->_y);
+
     session->_dwAction = movestart->_direction;
 
     switch (movestart->_direction)
@@ -384,6 +396,9 @@ bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
         printf("Don't move location!!\n");
         return false;
     }
+
+    printf("# PACKET_MOVESTOP # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
+        movestop->_direction, movestop->_x, movestop->_y);
 
     session->_dwAction = dfPACKET_CS_MOVE_STOP;
 
@@ -425,6 +440,9 @@ bool netPacketProc_Attack1(st_SESSION* session, char* packet)
         session->_shX = attacker->_x;
         session->_shY = attacker->_y;
     }
+
+    printf("# PACKET_ATTACK1 # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
+        attacker->_direction, attacker->_x, attacker->_y);
 
     st_HEADER header;
     st_SC_ATTACK1 sendPacket;
@@ -494,6 +512,9 @@ bool netPacketProc_Attack2(st_SESSION* session, char* packet)
         session->_shY = attacker->_y;
     }
 
+    printf("# PACKET_ATTACK2 # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
+        attacker->_direction, attacker->_x, attacker->_y);
+
     st_HEADER header;
     st_SC_ATTACK2 sendPacket;
     int len = sizeof(header) + sizeof(sendPacket);
@@ -561,6 +582,9 @@ bool netPacketProc_Attack3(st_SESSION* session, char* packet)
         session->_shX = attacker->_x;
         session->_shY = attacker->_y;
     }
+
+    printf("# PACKET_ATTACK3 # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
+        attacker->_direction, attacker->_x, attacker->_y);
 
     st_HEADER header;
     st_SC_ATTACK3 sendPacket;
@@ -683,18 +707,101 @@ bool netIOProcess()
 
 bool Update()
 {
-    // TODO
+    // 시간 단위
+    /*unsigned long now = timeGetTime();
+    float deltaSec = (now - g_updateTime) / 1000.0f;
+    g_updateTime = now;
+
+    int moveAmountX = (int)floor(c_move_speed_X * deltaSec);
+    int moveAmountY = (int)floor(c_move_speed_Y * deltaSec);
+    
     for (auto iter = g_sessionList.begin(); iter != g_sessionList.end();)
     {
         if (iter->_chHP <= 0)
         {
-            // Character Delete 프로토콜 함수 브로드캐스팅
-            st_HEADER header;
-            st_SC_DELETE_CHARACTER sendPacket;
-            int len = sizeof(header) + sizeof(sendPacket);
-            npfDeleteCharacter(&header, &sendPacket, iter->_dwSessionID);
-            sendPacket_Broadcast(&(*iter), (char*)&header, (char*)&sendPacket, len);
+            fdisconnect(&(*iter));
+            iter = g_sessionList.erase(iter);
+        }
+        else
+        {
+            switch (iter->_dwAction)
+            {
+            case dfPACKET_MOVE_DIR_LL:
+                if (iter->_shX - moveAmountX <= dfRANGE_MOVE_LEFT)
+                {
+                    break;
+                }
+                iter->_shX -= moveAmountX;
+                break;
+            case dfPACKET_MOVE_DIR_LU:
+                if (iter->_shX - moveAmountX <= dfRANGE_MOVE_LEFT
+                    || iter->_shY - moveAmountY <= dfRANGE_MOVE_TOP)
+                {
+                    break;
+                }
+                iter->_shX -= moveAmountX;
+                iter->_shY -= moveAmountY;
+                break;
+            case dfPACKET_MOVE_DIR_UU:
+                if (iter->_shY - moveAmountY <= dfRANGE_MOVE_TOP)
+                {
+                    break;
+                }
+                iter->_shY -= moveAmountY;
+                break;
+            case dfPACKET_MOVE_DIR_RU:
+                if (iter->_shX + moveAmountX >= dfRANGE_MOVE_RIGHT
+                    || iter->_shY - moveAmountY <= dfRANGE_MOVE_TOP)
+                {
+                    break;
+                }
+                iter->_shX += moveAmountX;
+                iter->_shY -= moveAmountY;
+                break;
+            case dfPACKET_MOVE_DIR_RR:
+                if (iter->_shX + moveAmountX >= dfRANGE_MOVE_RIGHT)
+                {
+                    break;
+                }
+                iter->_shX += moveAmountX;
+                break;
+            case dfPACKET_MOVE_DIR_RD:
+                if (iter->_shX + moveAmountX >= dfRANGE_MOVE_RIGHT
+                    || iter->_shY + moveAmountY >= dfRANGE_MOVE_BOTTOM)
+                {
+                    break;
+                }
+                iter->_shX += moveAmountX;
+                iter->_shY += moveAmountY;
+                break;
+            case dfPACKET_MOVE_DIR_DD:
+                if (iter->_shY + moveAmountY >= dfRANGE_MOVE_BOTTOM)
+                {
+                    break;
+                }
+                iter->_shY += moveAmountY;
+                break;
+            case dfPACKET_MOVE_DIR_LD:
+                if (iter->_shX - moveAmountX <= dfRANGE_MOVE_LEFT
+                    || iter->_shY + moveAmountY >= dfRANGE_MOVE_BOTTOM)
+                {
+                    break;
+                }
+                iter->_shX -= moveAmountX;
+                iter->_shY += moveAmountY;
+                break;
+            }
 
+            ++iter;
+        }
+    }*/
+
+
+    // 프레임 단위
+    for (auto iter = g_sessionList.begin(); iter != g_sessionList.end();)
+    {
+        if (iter->_chHP <= 0)
+        {
             fdisconnect(&(*iter));
             iter = g_sessionList.erase(iter);
         }
@@ -708,8 +815,6 @@ bool Update()
                     break;
                 }
                 iter->_shX -= 3;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             case dfPACKET_MOVE_DIR_LU:
                 if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT 
@@ -719,8 +824,6 @@ bool Update()
                 }
                 iter->_shX -= 3;
                 iter->_shY -= 2;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             case dfPACKET_MOVE_DIR_UU:
                 if (iter->_shY - 2 <= dfRANGE_MOVE_TOP)
@@ -728,8 +831,6 @@ bool Update()
                     break;
                 }
                 iter->_shY -= 2;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             case dfPACKET_MOVE_DIR_RU:
                 if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT
@@ -739,8 +840,6 @@ bool Update()
                 }
                 iter->_shX += 3;
                 iter->_shY -= 2;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             case dfPACKET_MOVE_DIR_RR:
                 if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT)
@@ -748,8 +847,6 @@ bool Update()
                     break;
                 }
                 iter->_shX += 3;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             case dfPACKET_MOVE_DIR_RD:
                 if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT
@@ -759,8 +856,6 @@ bool Update()
                 }
                 iter->_shX += 3;
                 iter->_shY += 2;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             case dfPACKET_MOVE_DIR_DD:
                 if (iter->_shY + 2 >= dfRANGE_MOVE_BOTTOM)
@@ -768,8 +863,6 @@ bool Update()
                     break;
                 }
                 iter->_shY += 2;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             case dfPACKET_MOVE_DIR_LD:
                 if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT
@@ -779,8 +872,6 @@ bool Update()
                 }
                 iter->_shX -= 3;
                 iter->_shY += 2;
-                printf("ID : %d  Direction : %c  X : %d  Y : %d\n", iter->_dwSessionID,
-                    iter->_byDirection, iter->_shX, iter->_shY);
                 break;
             }
 
@@ -795,7 +886,7 @@ bool Update()
     }
     else if (useTime > 100)
     {
-        useTime = timeGetTime();
+        tick = timeGetTime();
     }
     tick += 20;
 
