@@ -121,17 +121,29 @@ int wmain(int argc, WCHAR* argv[])
     while (!g_bShutdown)
     {
         netIOProcess();
-        //Update();
+        Update();
 
         // 컨텐츠만 프레임 관리
         // 네트워크 바쁜 대기로 인해서 CPU를 8~10% 잡아 먹지만
         // 그만큼 네트워크 반응성이 좋아서 게임이 부드럽게 진행되는 것 같음
-        int useTime = (int)(timeGetTime() - tick);
+        /*int useTime = (int)(timeGetTime() - tick);
         if (useTime >= 20)
         {
             Update();
             tick += 20;
+        }*/
+
+        // CPU가 거의 0에 수렴하도록 소스를 먹지 않는다
+        int useTime = (int)(timeGetTime() - tick);
+        if (useTime < 20)
+        {
+            Sleep(20 - useTime);
         }
+        else if (useTime > 100)
+        {
+            tick = timeGetTime();
+        }
+        tick += 20;
     }
 
     closesocket(g_listenSocket);
@@ -359,9 +371,6 @@ bool packetProc(st_SESSION* session, unsigned char packetType, char* packet)
 bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
 {
     st_CS_MOVE_START* movestart = (st_CS_MOVE_START*)packet;
-    printf("[MoveStart] client(%d,%d) server(%d,%d) diff(%d,%d)\n",
-        movestart->_x, movestart->_y, session->_shX, session->_shY,
-        movestart->_x - session->_shX, movestart->_y - session->_shY);
 
     if (abs(movestart->_x - session->_shX) > dfERROR_RANGE ||
         abs(movestart->_y - session->_shY) > dfERROR_RANGE)
@@ -370,9 +379,6 @@ bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
         printf("Don't move location!!\n");
         return false;
     }
-
-    printf("# PACKET_MOVESTART # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
-        movestart->_direction, movestart->_x, movestart->_y);
 
     session->_dwAction = movestart->_direction;
 
@@ -406,10 +412,6 @@ bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
 {
     st_CS_MOVE_STOP* movestop = (st_CS_MOVE_STOP*)packet;
 
-    printf("[MoveStart] client(%d,%d) server(%d,%d) diff(%d,%d)\n",
-        movestop->_x, movestop->_y, session->_shX, session->_shY,
-        movestop->_x - session->_shX, movestop->_y - session->_shY);
-
     if (abs(movestop->_x - session->_shX) > dfERROR_RANGE ||
         abs(movestop->_y - session->_shY) > dfERROR_RANGE)
     {
@@ -417,9 +419,6 @@ bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
         printf("Don't move location!!\n");
         return false;
     }
-
-    printf("# PACKET_MOVESTOP # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
-        movestop->_direction, movestop->_x, movestop->_y);
 
     session->_dwAction = dfPACKET_CS_MOVE_STOP;
 
@@ -461,9 +460,6 @@ bool netPacketProc_Attack1(st_SESSION* session, char* packet)
         session->_shX = attacker->_x;
         session->_shY = attacker->_y;
     }
-
-    printf("# PACKET_ATTACK1 # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
-        attacker->_direction, attacker->_x, attacker->_y);
 
     st_HEADER header;
     st_SC_ATTACK1 sendPacket;
@@ -533,9 +529,6 @@ bool netPacketProc_Attack2(st_SESSION* session, char* packet)
         session->_shY = attacker->_y;
     }
 
-    printf("# PACKET_ATTACK2 # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
-        attacker->_direction, attacker->_x, attacker->_y);
-
     st_HEADER header;
     st_SC_ATTACK2 sendPacket;
     int len = sizeof(header) + sizeof(sendPacket);
@@ -603,9 +596,6 @@ bool netPacketProc_Attack3(st_SESSION* session, char* packet)
         session->_shX = attacker->_x;
         session->_shY = attacker->_y;
     }
-
-    printf("# PACKET_ATTACK3 # SessionID:%d / Direction:%d / X:%d / Y:%d\n", session->_dwSessionID,
-        attacker->_direction, attacker->_x, attacker->_y);
 
     st_HEADER header;
     st_SC_ATTACK3 sendPacket;
@@ -901,18 +891,6 @@ bool Update()
             ++iter;
         }
     }
-
-    // CPU가 거의 0에 수렴하도록 소스를 먹지 않는다
-    /*int useTime = (int)(timeGetTime() - tick);
-    if (useTime < 20)
-    {
-        Sleep(20 - useTime);
-    }
-    else if (useTime > 100)
-    {
-        tick = timeGetTime();
-    }
-    tick += 20;*/
 
     return true;
 }
