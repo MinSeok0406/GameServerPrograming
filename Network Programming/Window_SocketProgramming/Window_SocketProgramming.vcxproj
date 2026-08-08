@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\RingBuffer\RingBuffer.cpp" />
+    <ClCompile Include="..\SerializationBuffer\SerializationBuffer.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="client4.cpp" />
     <ClCompile Include="client5_Close.cpp" />
@@ -59,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\RingBuffer\RingBuffer.h" />
+    <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Protocol.h" />

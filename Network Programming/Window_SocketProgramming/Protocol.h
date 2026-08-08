@@ -4,6 +4,7 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 #include <windowsx.h>
+#include "SerializationBuffer.h"
 #include "RingBuffer.h"
 
 #define ﻿dfNETWORK_PACKET_CODE      0x89

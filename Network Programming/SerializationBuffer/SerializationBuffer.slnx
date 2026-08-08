@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="SerializationBuffer.vcxproj" />
+  <Project Path="SerializationBuffer.vcxproj" Id="738dc34b-3845-4f9f-9d29-0a7ec5c400d4" />
 </Solution>

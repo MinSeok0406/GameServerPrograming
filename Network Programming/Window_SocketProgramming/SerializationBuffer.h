@@ -15,7 +15,7 @@ public:
 	int getBufferSize() { return _buffersize; }					// 버퍼 사이즈 얻기.
 	int getDataSize() { return _usesize; }						// 현재 사용중인 사이즈 얻기.
 
-	char* getBufferPtr() { return _buffer + _readpos; }					// 버퍼 포인터 얻기.
+	char* getBufferPtr() { return _buffer; }					// 버퍼 포인터 얻기.
 	int moveWritePos(int size);									// 버퍼 Pos 감소.
 	int moveReadPos(int size);									// 버퍼 Pos 증가.
 

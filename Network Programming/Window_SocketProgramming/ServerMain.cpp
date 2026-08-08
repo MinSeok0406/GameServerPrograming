@@ -36,40 +36,39 @@ bool fdisconnect(st_SESSION* session);
 bool netProc_Accept();
 bool netProc_Recv(st_SESSION* session);
 bool netProc_Send(st_SESSION* session);
-bool sendPacket_Unicast(st_SESSION* session, char* header, char* packet, int size);
-bool sendPacket_Broadcast(st_SESSION* session, char* header, char* packet, int size);
-bool packetProc(st_SESSION* session, unsigned char packetType, char* packet);
+bool sendPacket_Unicast(st_SESSION* session, SerializationBuffer* packet);
+bool sendPacket_Broadcast(st_SESSION* session, SerializationBuffer* packet);
+bool packetProc(st_SESSION* session, unsigned char packetType, SerializationBuffer* packet);
 
 // 컨텐츠 함수
-bool netPacketProc_MoveStart(st_SESSION* session, char* packet);
-bool netPacketProc_MoveStop(st_SESSION* session, char* packet);
-bool netPacketProc_Attack1(st_SESSION* session, char* packet);
-bool netPacketProc_Attack2(st_SESSION* session, char* packet);
-bool netPacketProc_Attack3(st_SESSION* session, char* packet);
+bool netPacketProc_MoveStart(st_SESSION* session, SerializationBuffer* packet);
+bool netPacketProc_MoveStop(st_SESSION* session, SerializationBuffer* packet);
+bool netPacketProc_Attack1(st_SESSION* session, SerializationBuffer* packet);
+bool netPacketProc_Attack2(st_SESSION* session, SerializationBuffer* packet);
+bool netPacketProc_Attack3(st_SESSION* session, SerializationBuffer* packet);
 
 // 전체적인 게임 함수
 bool netIOProcess();
 bool Update();
 
 // 네트워크 프로토콜 함수
-bool npfCreateCharacter(st_HEADER* header, st_SC_CREATE_MY_CHARACTER* packet,
-    unsigned int id, unsigned char direction, short x, short y, char hp);
-bool npfCreateOtherCharacter(st_HEADER* header, st_SC_CREATE_OTHER_CHARACTER* packet,
-    unsigned int id, unsigned char direction, short x, short y, char hp);
-bool npfDeleteCharacter(st_HEADER* header, st_SC_DELETE_CHARACTER* packet,
-    unsigned int id);
-bool npfMoveStart(st_HEADER* header, st_SC_MOVE_START* packet, unsigned int id,
-    unsigned char direction, short x, short y);
-bool npfMoveStop(st_HEADER* header, st_SC_MOVE_STOP* packet, unsigned int id,
-    unsigned char direction, short x, short y);
-bool npfAttack1(st_HEADER* header, st_SC_ATTACK1* packet, unsigned int id,
-    unsigned char direction, short x, short y);
-bool npfAttack2(st_HEADER* header, st_SC_ATTACK2* packet, unsigned int id,
-    unsigned char direction, short x, short y);
-bool npfAttack3(st_HEADER* header, st_SC_ATTACK3* packet, unsigned int id,
-    unsigned char direction, short x, short y);
-bool npfDamage(st_HEADER* header, st_SC_DAMAGE* packet, unsigned int attackID,
-    unsigned int damageID, char damageHP);
+bool npfCreateCharacter(SerializationBuffer* packet, unsigned int id,
+    unsigned char direction, short x, short y, char hp);
+bool npfCreateOtherCharacter(SerializationBuffer* packet, unsigned int id,
+    unsigned char direction, short x, short y, char hp);
+bool npfDeleteCharacter(SerializationBuffer* packet, unsigned int id);
+bool npfMoveStart(SerializationBuffer* packet, unsigned int id, unsigned char direction,
+    short x, short y);
+bool npfMoveStop(SerializationBuffer* packet, unsigned int id, unsigned char direction,
+    short x, short y);
+bool npfAttack1(SerializationBuffer* packet, unsigned int id, unsigned char direction,
+    short x, short y);
+bool npfAttack2(SerializationBuffer* packet, unsigned int id, unsigned char direction,
+    short x, short y);
+bool npfAttack3(SerializationBuffer* packet, unsigned int id, unsigned char direction,
+    short x, short y);
+bool npfDamage(SerializationBuffer* packet, unsigned int attackID, unsigned int damageID,
+    char damageHP);
 
 
 int wmain(int argc, WCHAR* argv[])
@@ -166,24 +165,17 @@ bool fcreateSession()
     createSession._shY = (rand() % 410) + 55;
     createSession._chHP = 100;
 
-    st_HEADER header;
-    st_SC_CREATE_MY_CHARACTER packet;
-    int len = sizeof(header) + sizeof(packet);
-
-    npfCreateCharacter(&header, &packet, createSession._dwSessionID, createSession._byDirection,
+    SerializationBuffer packet;
+    npfCreateCharacter(&packet, createSession._dwSessionID, createSession._byDirection,
         createSession._shX, createSession._shY, createSession._chHP);
 
     // 신규 유저에게 위치 전송
-    sendPacket_Unicast(&createSession, (char*)&header, (char*)&packet, len);
-
-    st_HEADER otherheader;
-    st_SC_CREATE_OTHER_CHARACTER otherpacket;
-    int otherlen = sizeof(otherheader) + sizeof(otherpacket);
+    sendPacket_Unicast(&createSession, &packet);
 
     // 기존 유저들에게 신규 유저 위치 보내기
-    npfCreateOtherCharacter(&otherheader, &otherpacket, createSession._dwSessionID, createSession._byDirection,
+    npfCreateOtherCharacter(&packet, createSession._dwSessionID, createSession._byDirection,
         createSession._shX, createSession._shY, createSession._chHP);
-    sendPacket_Broadcast(&createSession, (char*)&otherheader, (char*)&otherpacket, otherlen);
+    sendPacket_Broadcast(&createSession, &packet);
 
     // 신규 유저에게 기존 유저 위치들 전송
     for (auto& session : g_sessionList)
@@ -191,9 +183,9 @@ bool fcreateSession()
         if (session._dwSessionID != createSession._dwSessionID)
         {
             // 세션 많아지면 개선 필요
-            npfCreateOtherCharacter(&otherheader, &otherpacket, session._dwSessionID,
+            npfCreateOtherCharacter(&packet, session._dwSessionID,
                 session._byDirection, session._shX, session._shY, session._chHP);
-            sendPacket_Unicast(&createSession, (char*)&otherheader, (char*)&otherpacket, otherlen);
+            sendPacket_Unicast(&createSession, &packet);
         }
     }
 
@@ -202,11 +194,9 @@ bool fcreateSession()
 
 bool fdisconnect(st_SESSION* session)
 {
-    st_HEADER header;
-    st_SC_DELETE_CHARACTER sendPacket;
-    int len = sizeof(header) + sizeof(sendPacket);
-    npfDeleteCharacter(&header, &sendPacket, session->_dwSessionID);
-    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+    SerializationBuffer packet;
+    npfDeleteCharacter(&packet, session->_dwSessionID);
+    sendPacket_Broadcast(session, &packet);
     closesocket(session->_socket);
 
     return true;
@@ -280,15 +270,15 @@ bool netProc_Recv(st_SESSION* session)
 
         session->_recvQ.MoveFront(sizeof(st_HEADER));
 
-        char packet[20];
-        peekRet = session->_recvQ.Peek(packet, header->_bySize);
+        SerializationBuffer packet;
+        peekRet = session->_recvQ.Peek(packet.getBufferPtr(), header->_bySize);
         if (peekRet != header->_bySize)
         {
             __debugbreak();
         }
         session->_recvQ.MoveFront(peekRet);
 
-        packetProc(session, header->_byType, packet);
+        packetProc(session, header->_byType, &packet);
     }
 
     return true;
@@ -319,32 +309,38 @@ bool netProc_Send(st_SESSION* session)
     }
 }
 
-bool sendPacket_Unicast(st_SESSION* session, char* header, char* packet, int size)
+bool sendPacket_Unicast(st_SESSION* session, SerializationBuffer* packet)
 {
-    if (session->_sendQ.GetFreeSize() < size)
+    if (session->_sendQ.GetFreeSize() < packet->getDataSize())
     {
         return false;
     }
 
-    session->_sendQ.Enqueue(header, sizeof(st_HEADER));
-    session->_sendQ.Enqueue(packet, size - sizeof(st_HEADER));
+    int size = packet->getDataSize();
+    int enqueueRet = session->_sendQ.Enqueue(packet->getBufferPtr(), size);
+    if (enqueueRet != size)
+    {
+        session->_sendQ.Dequeue(packet->getBufferPtr(), enqueueRet);
+        return false;
+    }
+
     return true;
 }
 
-bool sendPacket_Broadcast(st_SESSION* session, char* header, char* packet, int size)
+bool sendPacket_Broadcast(st_SESSION* session, SerializationBuffer* packet)
 {
     for (auto& sessions : g_sessionList)
     {
         if (sessions._dwSessionID != session->_dwSessionID)
         {
-            sendPacket_Unicast(&sessions, header, packet, size);
+            sendPacket_Unicast(&sessions, packet);
         }
     }
 
     return true;
 }
 
-bool packetProc(st_SESSION* session, unsigned char packetType, char* packet)
+bool packetProc(st_SESSION* session, unsigned char packetType, SerializationBuffer* packet)
 {
     switch (packetType)
     {
@@ -368,21 +364,25 @@ bool packetProc(st_SESSION* session, unsigned char packetType, char* packet)
     return true;
 }
 
-bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
+bool netPacketProc_MoveStart(st_SESSION* session, SerializationBuffer* packet)
 {
-    st_CS_MOVE_START* movestart = (st_CS_MOVE_START*)packet;
+    unsigned int id;
+    unsigned char direction;
+    short x;
+    short y;
 
-    if (abs(movestart->_x - session->_shX) > dfERROR_RANGE ||
-        abs(movestart->_y - session->_shY) > dfERROR_RANGE)
+    *packet >> id >> direction >> x >> y;
+
+    if (abs(x - session->_shX) > dfERROR_RANGE || abs(y - session->_shY) > dfERROR_RANGE)
     {
         session->_chHP = 0;
         printf("Don't move location!!\n");
         return false;
     }
 
-    session->_dwAction = movestart->_direction;
+    session->_dwAction = direction;
 
-    switch (movestart->_direction)
+    switch (direction)
     {
     case dfPACKET_MOVE_DIR_RR:
     case dfPACKET_MOVE_DIR_RU:
@@ -395,25 +395,26 @@ bool netPacketProc_MoveStart(st_SESSION* session, char* packet)
         session->_byDirection = dfPACKET_MOVE_DIR_LL;
         break;
     }
-    session->_shX = movestart->_x;
-    session->_shY = movestart->_y;
+    session->_shX = x;
+    session->_shY = y;
 
-    st_HEADER header;
-    st_SC_MOVE_START sendPacket;
-    int len = sizeof(header) + sizeof(sendPacket);
-    npfMoveStart(&header, &sendPacket, session->_dwSessionID, movestart->_direction,
-        session->_shX, session->_shY);
-    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+    SerializationBuffer sendPacket;
+    npfMoveStart(&sendPacket, session->_dwSessionID, direction, session->_shX, session->_shY);
+    sendPacket_Broadcast(session, &sendPacket);
 
     return true;
 }
 
-bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
+bool netPacketProc_MoveStop(st_SESSION* session, SerializationBuffer* packet)
 {
-    st_CS_MOVE_STOP* movestop = (st_CS_MOVE_STOP*)packet;
+    unsigned int id;
+    unsigned char direction;
+    short x;
+    short y;
 
-    if (abs(movestop->_x - session->_shX) > dfERROR_RANGE ||
-        abs(movestop->_y - session->_shY) > dfERROR_RANGE)
+    *packet >> id >> direction >> x >> y;
+
+    if (abs(x - session->_shX) > dfERROR_RANGE || abs(y - session->_shY) > dfERROR_RANGE)
     {
         session->_chHP;
         printf("Don't move location!!\n");
@@ -422,7 +423,7 @@ bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
 
     session->_dwAction = dfPACKET_CS_MOVE_STOP;
 
-    switch (movestop->_direction)
+    switch (direction)
     {
     case dfPACKET_MOVE_DIR_RR:
     case dfPACKET_MOVE_DIR_RU:
@@ -435,79 +436,73 @@ bool netPacketProc_MoveStop(st_SESSION* session, char* packet)
         session->_byDirection = dfPACKET_MOVE_DIR_LL;
         break;
     }
-    session->_shX = movestop->_x;
-    session->_shY = movestop->_y;
+    session->_shX = x;
+    session->_shY = y;
 
-    st_HEADER header;
-    st_SC_MOVE_STOP sendPacket;
-    int len = sizeof(header) + sizeof(sendPacket);
-    npfMoveStop(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
+    SerializationBuffer sendPacket;
+    npfMoveStop(&sendPacket, session->_dwSessionID, session->_byDirection,
         session->_shX, session->_shY);
-    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+    sendPacket_Broadcast(session, &sendPacket);
 
     return true;
 }
 
-bool netPacketProc_Attack1(st_SESSION* session, char* packet)
+bool netPacketProc_Attack1(st_SESSION* session, SerializationBuffer* packet)
 {
     // 개선 필요
     // 공격 쿨타임
-    st_CS_ATTACK1* attacker = (st_CS_ATTACK1*)packet;
-    if (attacker->_direction != session->_byDirection ||
-        attacker->_x != session->_shX || attacker->_y != session->_shY)
+    unsigned int id;
+    unsigned char direction;
+    short x;
+    short y;
+
+    *packet >> id >> direction >> x >> y;
+
+    if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
     {
-        session->_byDirection = attacker->_direction;
-        session->_shX = attacker->_x;
-        session->_shY = attacker->_y;
+        session->_byDirection = direction;
+        session->_shX = x;
+        session->_shY = y;
     }
 
-    st_HEADER header;
-    st_SC_ATTACK1 sendPacket;
-    int len = sizeof(header) + sizeof(sendPacket);
-    npfAttack1(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
-        session->_shX, session->_shY);
-    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+    SerializationBuffer sendPacket;
+    npfAttack1(&sendPacket, session->_dwSessionID, session->_byDirection, session->_shX, session->_shY);
+    sendPacket_Broadcast(session, &sendPacket);
 
     for (auto& sessions : g_sessionList)
     {
         if (sessions._dwSessionID != session->_dwSessionID)
         {
-            if (attacker->_direction == dfPACKET_MOVE_DIR_LL)
+            if (direction == dfPACKET_MOVE_DIR_LL)
             {
-                int minX = attacker->_x - 80;
-                int maxX = attacker->_x;
-                int minY = attacker->_y - 10;
-                int maxY = attacker->_y + 10;
+                int minX = x - 80;
+                int maxX = x;
+                int minY = y - 10;
+                int maxY = y + 10;
                 if (sessions._shX >= minX && sessions._shX <= maxX &&
                     sessions._shY >= minY && sessions._shY <= maxY)
                 {
-                    st_HEADER header;
-                    st_SC_DAMAGE sendPacket;
-                    int len = sizeof(header) + sizeof(sendPacket);
+                    SerializationBuffer sendPacket;
                     sessions._chHP -= 1;
-                    npfDamage(&header, &sendPacket, session->_dwSessionID,
-                        sessions._dwSessionID, sessions._chHP);
-                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
-                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                    npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, &sendPacket);
+                    sendPacket_Broadcast(session, &sendPacket);
                 }
             }
-            else if (attacker->_direction == dfPACKET_MOVE_DIR_RR)
+            else if (direction == dfPACKET_MOVE_DIR_RR)
             {
-                int maxX = attacker->_x + 80;
-                int minX = attacker->_x;
-                int minY = attacker->_y - 10;
-                int maxY = attacker->_y + 10;
+                int maxX = x + 80;
+                int minX = x;
+                int minY = y - 10;
+                int maxY = y + 10;
                 if (sessions._shX >= minX && sessions._shX <= maxX &&
                     sessions._shY >= minY && sessions._shY <= maxY)
                 {
-                    st_HEADER header;
-                    st_SC_DAMAGE sendPacket;
-                    int len = sizeof(header) + sizeof(sendPacket);
+                    SerializationBuffer sendPacket;
                     sessions._chHP -= 1;
-                    npfDamage(&header, &sendPacket, session->_dwSessionID,
-                        sessions._dwSessionID, sessions._chHP);
-                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
-                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                    npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, &sendPacket);
+                    sendPacket_Broadcast(session, &sendPacket);
                 }
             }
         }
@@ -516,66 +511,62 @@ bool netPacketProc_Attack1(st_SESSION* session, char* packet)
     return true;
 }
 
-bool netPacketProc_Attack2(st_SESSION* session, char* packet)
+bool netPacketProc_Attack2(st_SESSION* session, SerializationBuffer* packet)
 {
     // 개선 필요
     // 공격 쿨타임
-    st_CS_ATTACK2* attacker = (st_CS_ATTACK2*)packet;
-    if (attacker->_direction != session->_byDirection ||
-        attacker->_x != session->_shX || attacker->_y != session->_shY)
+    unsigned int id;
+    unsigned char direction;
+    short x;
+    short y;
+
+    *packet >> id >> direction >> x >> y;
+
+    if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
     {
-        session->_byDirection = attacker->_direction;
-        session->_shX = attacker->_x;
-        session->_shY = attacker->_y;
+        session->_byDirection = direction;
+        session->_shX = x;
+        session->_shY = y;
     }
 
-    st_HEADER header;
-    st_SC_ATTACK2 sendPacket;
-    int len = sizeof(header) + sizeof(sendPacket);
-    npfAttack2(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
-        session->_shX, session->_shY);
-    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+    SerializationBuffer sendPacket;
+    npfAttack2(&sendPacket, session->_dwSessionID, session->_byDirection, session->_shX, session->_shY);
+    sendPacket_Broadcast(session, &sendPacket);
 
     for (auto& sessions : g_sessionList)
     {
         if (sessions._dwSessionID != session->_dwSessionID)
         {
-            if (attacker->_direction == dfPACKET_MOVE_DIR_LL)
+            if (direction == dfPACKET_MOVE_DIR_LL)
             {
-                int minX = attacker->_x - 90;
-                int maxX = attacker->_x;
-                int minY = attacker->_y - 10;
-                int maxY = attacker->_y + 10;
+                int minX = x - 90;
+                int maxX = x;
+                int minY = y - 10;
+                int maxY = y + 10;
                 if (sessions._shX >= minX && sessions._shX <= maxX &&
                     sessions._shY >= minY && sessions._shY <= maxY)
                 {
-                    st_HEADER header;
-                    st_SC_DAMAGE sendPacket;
-                    int len = sizeof(header) + sizeof(sendPacket);
+                    SerializationBuffer sendPacket;
                     sessions._chHP -= 1;
-                    npfDamage(&header, &sendPacket, session->_dwSessionID,
-                        sessions._dwSessionID, sessions._chHP);
-                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
-                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                    npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, &sendPacket);
+                    sendPacket_Broadcast(session, &sendPacket);
                 }
             }
-            else if (attacker->_direction == dfPACKET_MOVE_DIR_RR)
+            else if (direction == dfPACKET_MOVE_DIR_RR)
             {
-                int maxX = attacker->_x + 90;
-                int minX = attacker->_x;
-                int minY = attacker->_y - 10;
-                int maxY = attacker->_y + 10;
+                int maxX = x + 90;
+                int minX = x;
+                int minY = y - 10;
+                int maxY = y + 10;
                 if (sessions._shX >= minX && sessions._shX <= maxX &&
                     sessions._shY >= minY && sessions._shY <= maxY)
                 {
-                    st_HEADER header;
-                    st_SC_DAMAGE sendPacket;
-                    int len = sizeof(header) + sizeof(sendPacket);
+                    SerializationBuffer sendPacket;
                     sessions._chHP -= 1;
-                    npfDamage(&header, &sendPacket, session->_dwSessionID,
-                        sessions._dwSessionID, sessions._chHP);
-                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
-                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                    npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, &sendPacket);
+                    sendPacket_Broadcast(session, &sendPacket);
                 }
             }
         }
@@ -584,66 +575,62 @@ bool netPacketProc_Attack2(st_SESSION* session, char* packet)
     return true;
 }
 
-bool netPacketProc_Attack3(st_SESSION* session, char* packet)
+bool netPacketProc_Attack3(st_SESSION* session, SerializationBuffer* packet)
 {
     // 개선 필요
     // 공격 쿨타임
-    st_CS_ATTACK3* attacker = (st_CS_ATTACK3*)packet;
-    if (attacker->_direction != session->_byDirection ||
-        attacker->_x != session->_shX || attacker->_y != session->_shY)
+    unsigned int id;
+    unsigned char direction;
+    short x;
+    short y;
+
+    *packet >> id >> direction >> x >> y;
+
+    if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
     {
-        session->_byDirection = attacker->_direction;
-        session->_shX = attacker->_x;
-        session->_shY = attacker->_y;
+        session->_byDirection = direction;
+        session->_shX = x;
+        session->_shY = y;
     }
 
-    st_HEADER header;
-    st_SC_ATTACK3 sendPacket;
-    int len = sizeof(header) + sizeof(sendPacket);
-    npfAttack3(&header, &sendPacket, session->_dwSessionID, session->_byDirection,
-        session->_shX, session->_shY);
-    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+    SerializationBuffer sendPacket;
+    npfAttack3(&sendPacket, session->_dwSessionID, session->_byDirection, session->_shX, session->_shY);
+    sendPacket_Broadcast(session, &sendPacket);
 
     for (auto& sessions : g_sessionList)
     {
         if (sessions._dwSessionID != session->_dwSessionID)
         {
-            if (attacker->_direction == dfPACKET_MOVE_DIR_LL)
+            if (direction == dfPACKET_MOVE_DIR_LL)
             {
-                int minX = attacker->_x - 100;
-                int maxX = attacker->_x;
-                int minY = attacker->_y - 20;
-                int maxY = attacker->_y + 20;
+                int minX = x - 100;
+                int maxX = x;
+                int minY = y - 20;
+                int maxY = y + 20;
                 if (sessions._shX >= minX && sessions._shX <= maxX &&
                     sessions._shY >= minY && sessions._shY <= maxY)
                 {
-                    st_HEADER header;
-                    st_SC_DAMAGE sendPacket;
-                    int len = sizeof(header) + sizeof(sendPacket);
+                    SerializationBuffer sendPacket;
                     sessions._chHP -= 1;
-                    npfDamage(&header, &sendPacket, session->_dwSessionID,
-                        sessions._dwSessionID, sessions._chHP);
-                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
-                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                    npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, &sendPacket);
+                    sendPacket_Broadcast(session, &sendPacket);
                 }
             }
-            else if (attacker->_direction == dfPACKET_MOVE_DIR_RR)
+            else if (direction == dfPACKET_MOVE_DIR_RR)
             {
-                int maxX = attacker->_x + 100;
-                int minX = attacker->_x;
-                int minY = attacker->_y - 20;
-                int maxY = attacker->_y + 20;
+                int maxX = x + 100;
+                int minX = x;
+                int minY = y - 20;
+                int maxY = y + 20;
                 if (sessions._shX >= minX && sessions._shX <= maxX &&
                     sessions._shY >= minY && sessions._shY <= maxY)
                 {
-                    st_HEADER header;
-                    st_SC_DAMAGE sendPacket;
-                    int len = sizeof(header) + sizeof(sendPacket);
+                    SerializationBuffer sendPacket;
                     sessions._chHP -= 1;
-                    npfDamage(&header, &sendPacket, session->_dwSessionID,
-                        sessions._dwSessionID, sessions._chHP);
-                    sendPacket_Unicast(session, (char*)&header, (char*)&sendPacket, len);
-                    sendPacket_Broadcast(session, (char*)&header, (char*)&sendPacket, len);
+                    npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+                    sendPacket_Unicast(session, &sendPacket);
+                    sendPacket_Broadcast(session, &sendPacket);
                 }
             }
         }
@@ -895,126 +882,153 @@ bool Update()
     return true;
 }
 
-bool npfCreateCharacter(st_HEADER* header, st_SC_CREATE_MY_CHARACTER* packet, unsigned int id, unsigned char direction, short x, short y, char hp)
+bool npfCreateCharacter(SerializationBuffer* packet, unsigned int id, unsigned char direction, short x, short y, char hp)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_CREATE_MY_CHARACTER);
-    header->_byType = dfPACKET_SC_CREATE_MY_CHARACTER;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_CREATE_MY_CHARACTER);
+    header._byType = dfPACKET_SC_CREATE_MY_CHARACTER;
 
-    packet->_id = id;
-    packet->_direction = direction;
-    packet->_x = x;
-    packet->_y = y;
-    packet->_hp = hp;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    *packet << direction;
+    *packet << x;
+    *packet << y;
+    *packet << hp;
 
     return true;
 }
 
-bool npfCreateOtherCharacter(st_HEADER* header, st_SC_CREATE_OTHER_CHARACTER* packet, unsigned int id, unsigned char direction, short x, short y, char hp)
+bool npfCreateOtherCharacter(SerializationBuffer* packet, unsigned int id, unsigned char direction, short x, short y, char hp)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_CREATE_OTHER_CHARACTER);
-    header->_byType = dfPACKET_SC_CREATE_OTHER_CHARACTER;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_CREATE_OTHER_CHARACTER);
+    header._byType = dfPACKET_SC_CREATE_OTHER_CHARACTER;
 
-    packet->_id = id;
-    packet->_direction = direction;
-    packet->_x = x;
-    packet->_y = y;
-    packet->_hp = hp;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    *packet << direction;
+    *packet << x;
+    *packet << y;
+    *packet << hp;
 
     return true;
 }
 
-bool npfDeleteCharacter(st_HEADER* header, st_SC_DELETE_CHARACTER* packet, unsigned int id)
+bool npfDeleteCharacter(SerializationBuffer* packet, unsigned int id)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_DELETE_CHARACTER);
-    header->_byType = dfPACKET_SC_DELETE_CHARACTER;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_DELETE_CHARACTER);
+    header._byType = dfPACKET_SC_DELETE_CHARACTER;
 
-    packet->_id = id;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
 
     return true;
 }
 
-bool npfMoveStart(st_HEADER* header, st_SC_MOVE_START* packet, unsigned int id, unsigned char direction, short x, short y)
+bool npfMoveStart(SerializationBuffer* packet, unsigned int id, unsigned char direction, short x, short y)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_MOVE_START);
-    header->_byType = dfPACKET_SC_MOVE_START;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_MOVE_START);
+    header._byType = dfPACKET_SC_MOVE_START;
 
-    packet->_id = id;
-    packet->_direction = direction;
-    packet->_x = x;
-    packet->_y = y;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    *packet << direction;
+    *packet << x;
+    *packet << y;
 
     return true;
 }
 
-bool npfMoveStop(st_HEADER* header, st_SC_MOVE_STOP* packet, unsigned int id, unsigned char direction, short x, short y)
+bool npfMoveStop(SerializationBuffer* packet, unsigned int id, unsigned char direction, short x, short y)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_MOVE_STOP);
-    header->_byType = dfPACKET_SC_MOVE_STOP;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_MOVE_STOP);
+    header._byType = dfPACKET_SC_MOVE_STOP;
 
-    packet->_id = id;
-    packet->_direction = direction;
-    packet->_x = x;
-    packet->_y = y;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    *packet << direction;
+    *packet << x;
+    *packet << y;
 
     return true;
 }
 
-bool npfAttack1(st_HEADER* header, st_SC_ATTACK1* packet, unsigned int id, unsigned char direction, short x, short y)
+bool npfAttack1(SerializationBuffer* packet, unsigned int id, unsigned char direction, short x, short y)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_ATTACK1);
-    header->_byType = dfPACKET_SC_ATTACK1;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_ATTACK1);
+    header._byType = dfPACKET_SC_ATTACK1;
 
-    packet->_id = id;
-    packet->_direction = direction;
-    packet->_x = x;
-    packet->_y = y;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    *packet << direction;
+    *packet << x;
+    *packet << y;
 
     return true;
 }
 
-bool npfAttack2(st_HEADER* header, st_SC_ATTACK2* packet, unsigned int id, unsigned char direction, short x, short y)
+bool npfAttack2(SerializationBuffer* packet, unsigned int id, unsigned char direction, short x, short y)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_ATTACK2);
-    header->_byType = dfPACKET_SC_ATTACK2;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_ATTACK2);
+    header._byType = dfPACKET_SC_ATTACK2;
 
-    packet->_id = id;
-    packet->_direction = direction;
-    packet->_x = x;
-    packet->_y = y;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    *packet << direction;
+    *packet << x;
+    *packet << y;
 
     return true;
 }
 
-bool npfAttack3(st_HEADER* header, st_SC_ATTACK3* packet, unsigned int id, unsigned char direction, short x, short y)
+bool npfAttack3(SerializationBuffer* packet, unsigned int id, unsigned char direction, short x, short y)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_ATTACK3);
-    header->_byType = dfPACKET_SC_ATTACK3;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_ATTACK3);
+    header._byType = dfPACKET_SC_ATTACK3;
 
-    packet->_id = id;
-    packet->_direction = direction;
-    packet->_x = x;
-    packet->_y = y;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    *packet << direction;
+    *packet << x;
+    *packet << y;
 
     return true;
 }
 
-bool npfDamage(st_HEADER* header, st_SC_DAMAGE* packet, unsigned int attackID, unsigned int damageID, char damageHP)
+bool npfDamage(SerializationBuffer* packet, unsigned int attackID, unsigned int damageID, char damageHP)
 {
-    header->_byCode = ﻿dfNETWORK_PACKET_CODE;
-    header->_bySize = sizeof(st_SC_DAMAGE);
-    header->_byType = dfPACKET_SC_DAMAGE;
+    st_HEADER header;
+    header._byCode = ﻿dfNETWORK_PACKET_CODE;
+    header._bySize = sizeof(st_SC_DAMAGE);
+    header._byType = dfPACKET_SC_DAMAGE;
 
-    packet->_attackID = attackID;
-    packet->_damageID = damageID;
-    packet->_damageHP = damageHP;
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << attackID;
+    *packet << damageID;
+    *packet << damageHP;
 
     return true;
 }

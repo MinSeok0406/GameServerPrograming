@@ -110,6 +110,9 @@
     <ClCompile Include="ServerMain.cpp">
       <Filter>프로카데미과제\5주차</Filter>
     </ClCompile>
+    <ClCompile Include="..\SerializationBuffer\SerializationBuffer.cpp">
+      <Filter>프로카데미과제\SerializationBuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="챕터5">
@@ -154,6 +157,9 @@
     <Filter Include="프로카데미과제\5주차">
       <UniqueIdentifier>{6964d709-aa3b-4162-8a6d-ab3516c2b131}</UniqueIdentifier>
     </Filter>
+    <Filter Include="프로카데미과제\SerializationBuffer">
+      <UniqueIdentifier>{1ce7df6f-2f3a-4e87-81f5-4da338cb82d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h">
@@ -167,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="Protocol.h">
       <Filter>프로카데미과제\5주차</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h">
+      <Filter>프로카데미과제\SerializationBuffer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
