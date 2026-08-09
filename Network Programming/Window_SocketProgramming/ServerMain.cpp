@@ -166,16 +166,18 @@ bool fcreateSession()
     createSession._chHP = 100;
 
     SerializationBuffer packet;
-    npfCreateCharacter(&packet, createSession._dwSessionID, createSession._byDirection,
-        createSession._shX, createSession._shY, createSession._chHP);
 
     // 신규 유저에게 위치 전송
+    npfCreateCharacter(&packet, createSession._dwSessionID, createSession._byDirection,
+        createSession._shX, createSession._shY, createSession._chHP);
     sendPacket_Unicast(&createSession, &packet);
+    packet.clear();
 
     // 기존 유저들에게 신규 유저 위치 보내기
     npfCreateOtherCharacter(&packet, createSession._dwSessionID, createSession._byDirection,
         createSession._shX, createSession._shY, createSession._chHP);
     sendPacket_Broadcast(&createSession, &packet);
+    packet.clear();
 
     // 신규 유저에게 기존 유저 위치들 전송
     for (auto& session : g_sessionList)
@@ -186,6 +188,7 @@ bool fcreateSession()
             npfCreateOtherCharacter(&packet, session._dwSessionID,
                 session._byDirection, session._shX, session._shY, session._chHP);
             sendPacket_Unicast(&createSession, &packet);
+            packet.clear();
         }
     }
 
@@ -231,8 +234,10 @@ bool netProc_Recv(st_SESSION* session)
         if (WSAGetLastError() != WSAEWOULDBLOCK)
         {
             printf("%d\n", WSAGetLastError());
+            printf("recv fail\n");
+            session->_chHP = 0;
         }
-        return false;
+        return true;
     }
     else if (recvRet == 0)
     {
@@ -277,6 +282,7 @@ bool netProc_Recv(st_SESSION* session)
             __debugbreak();
         }
         session->_recvQ.MoveFront(peekRet);
+        packet.moveReadPos(peekRet);
 
         packetProc(session, header->_byType, &packet);
     }
@@ -301,6 +307,8 @@ bool netProc_Send(st_SESSION* session)
             if (WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 printf("%d\n", WSAGetLastError());
+                printf("send fail\n");
+                session->_chHP = 0;
             }
             return true;
         }
@@ -366,12 +374,11 @@ bool packetProc(st_SESSION* session, unsigned char packetType, SerializationBuff
 
 bool netPacketProc_MoveStart(st_SESSION* session, SerializationBuffer* packet)
 {
-    unsigned int id;
     unsigned char direction;
     short x;
     short y;
 
-    *packet >> id >> direction >> x >> y;
+    *packet >> direction >> x >> y;
 
     if (abs(x - session->_shX) > dfERROR_RANGE || abs(y - session->_shY) > dfERROR_RANGE)
     {
@@ -407,12 +414,11 @@ bool netPacketProc_MoveStart(st_SESSION* session, SerializationBuffer* packet)
 
 bool netPacketProc_MoveStop(st_SESSION* session, SerializationBuffer* packet)
 {
-    unsigned int id;
     unsigned char direction;
     short x;
     short y;
 
-    *packet >> id >> direction >> x >> y;
+    *packet >> direction >> x >> y;
 
     if (abs(x - session->_shX) > dfERROR_RANGE || abs(y - session->_shY) > dfERROR_RANGE)
     {
@@ -451,12 +457,11 @@ bool netPacketProc_Attack1(st_SESSION* session, SerializationBuffer* packet)
 {
     // 개선 필요
     // 공격 쿨타임
-    unsigned int id;
     unsigned char direction;
     short x;
     short y;
 
-    *packet >> id >> direction >> x >> y;
+    *packet >> direction >> x >> y;
 
     if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
     {
@@ -515,12 +520,11 @@ bool netPacketProc_Attack2(st_SESSION* session, SerializationBuffer* packet)
 {
     // 개선 필요
     // 공격 쿨타임
-    unsigned int id;
     unsigned char direction;
     short x;
     short y;
 
-    *packet >> id >> direction >> x >> y;
+    *packet >> direction >> x >> y;
 
     if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
     {
@@ -579,12 +583,11 @@ bool netPacketProc_Attack3(st_SESSION* session, SerializationBuffer* packet)
 {
     // 개선 필요
     // 공격 쿨타임
-    unsigned int id;
     unsigned char direction;
     short x;
     short y;
 
-    *packet >> id >> direction >> x >> y;
+    *packet >> direction >> x >> y;
 
     if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
     {

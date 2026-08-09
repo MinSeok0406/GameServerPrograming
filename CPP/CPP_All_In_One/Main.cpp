@@ -32,5 +32,7 @@ int wmain(int argc, WCHAR* argv[])
     timeBeginPeriod(1);
 
 
+
+
     return 0;
 }
