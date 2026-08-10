@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <windowsx.h>
 #include "RingBuffer.h"
+#include "SerializationBuffer.h"
 
 #define SENDBUFSIZE     50000
 #define RECVBUFSIZE     5000

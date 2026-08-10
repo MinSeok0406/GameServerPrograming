@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClCompile Include="ChatServer.cpp" />
     <ClCompile Include="RingBuffer.cpp" />
+    <ClCompile Include="..\SerializationBuffer\SerializationBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="Protocol.h" />
+    <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h" />
   </ItemGroup>
 </Project>

@@ -16,13 +16,7 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-class Base {};
 
-class Derived : public Base
-{
-private:
-    int x;
-};
 
 int wmain(int argc, WCHAR* argv[])
 {

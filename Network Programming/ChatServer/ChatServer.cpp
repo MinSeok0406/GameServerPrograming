@@ -30,19 +30,17 @@ bool Update();
 bool netProc_Accept();
 bool netProc_Send(USER* user);
 bool netProc_Recv(USER* user);
-bool packetProc(USER* user, unsigned char type, char* packet);
-bool sendPacket_Unicast(USER* user, char* header, char* packet, int size);
-bool sendPacket_Broadcast(USER* user, char* header, char* packet, int size);
+bool packetProc(USER* user, unsigned char type, SerializationBuffer* packet);
+bool sendPacket_Unicast(USER* user, SerializationBuffer* packet);
+bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet);
 
 // 네트워크 패킷 함수
-bool netPacketProc_MSG(USER* user, char* packet);
+bool netPacketProc_MSG(USER* user, SerializationBuffer* packet);
 
 // 네트워크 프로토콜 함수
-bool npf_SC_CREATE_USER(HEADER* header, SC_CREATE_USER* packet,
-    unsigned int id, char name[20], int nameSize);
-bool npf_SC_OTHER_USER(HEADER* header, SC_OTHER_USER* packet,
-    unsigned int id, char name[20], int nameSize);
-bool npf_SC_MSG(HEADER* header, SC_MSG* packet, unsigned char len, char* msg);
+bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize);
+bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize);
+bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, char* msg);
 
 int wmain()
 {
@@ -190,29 +188,24 @@ bool netProc_Accept()
     createuser._port = ntohs(clientaddr.sin_port);
     
     // 신규 유저 정보 전송
-    HEADER header;
-    SC_CREATE_USER sendPacket;
-    int packetSize = sizeof(header) + sizeof(sendPacket);
-    npf_SC_CREATE_USER(&header, &sendPacket, createuser._id, createuser._name,
-        sizeof(createuser._name));
-    sendPacket_Unicast(&createuser, (char*)&header, (char*)&sendPacket, packetSize);
-
-    
-    HEADER otherheader;
-    SC_OTHER_USER otherPacket;
-    int size = sizeof(otherheader) + sizeof(otherPacket);
+    SerializationBuffer packet;
+    npf_SC_CREATE_USER(&packet, createuser._id, createuser._name, sizeof(createuser._name));
+    sendPacket_Unicast(&createuser, &packet);
+    packet.clear();
 
     // 기존 유저들에게 신규 유저 정보 전송
-    npf_SC_OTHER_USER(&header, &otherPacket, createuser._id, createuser._name, sizeof(createuser._name));
-    sendPacket_Broadcast(&createuser, (char*)&header, (char*)&sendPacket, packetSize);
+    npf_SC_OTHER_USER(&packet, createuser._id, createuser._name, sizeof(createuser._name));
+    sendPacket_Broadcast(&createuser, &packet);
+    packet.clear();
 
     // 신규 유저에게 기존 유저들 정보 전송
     for (auto& users : g_userList)
     {
         if (users._id != createuser._id)
         {
-            npf_SC_OTHER_USER(&header, &otherPacket, users._id, users._name, sizeof(users._name));
-            sendPacket_Unicast(&createuser, (char*)&otherheader, (char*)&otherPacket, size);
+            npf_SC_OTHER_USER(&packet, users._id, users._name, sizeof(users._name));
+            sendPacket_Unicast(&createuser, &packet);
+            packet.clear();
         }
     }
 
@@ -293,21 +286,22 @@ bool netProc_Recv(USER* user)
 
         user->_recvQ.MoveFront(peekRet);
 
-        char packet[250];
-        peekRet = user->_recvQ.Peek(packet, header->_packetsize);
+        SerializationBuffer packet;
+        peekRet = user->_recvQ.Peek(packet.getBufferPtr(), header->_packetsize);
         if (peekRet != header->_packetsize)
         {
             __debugbreak();
         }
         user->_recvQ.MoveFront(peekRet);
+        packet.moveReadPos(peekRet);
 
-        packetProc(user, header->_type, packet);
+        packetProc(user, header->_type, &packet);
     }
 
     return true;
 }
 
-bool packetProc(USER* user, unsigned char type, char* packet)
+bool packetProc(USER* user, unsigned char type, SerializationBuffer* packet)
 {
     switch (type)
     {
@@ -319,76 +313,92 @@ bool packetProc(USER* user, unsigned char type, char* packet)
     return true;
 }
 
-bool sendPacket_Unicast(USER* user, char* header, char* packet, int size)
+bool sendPacket_Unicast(USER* user, SerializationBuffer* packet)
 {
-    if (user->_sendQ.GetFreeSize() < size)
+    if (user->_sendQ.GetFreeSize() < packet->getDataSize())
     {
         return false;
     }
 
-    user->_sendQ.Enqueue(header, sizeof(HEADER));
-    user->_sendQ.Enqueue(packet, size - sizeof(HEADER));
+    int size = packet->getDataSize();
+    int enqueueRet = user->_sendQ.Enqueue(packet->getBufferPtr(), size);
+    if (enqueueRet != size)
+    {
+        user->_sendQ.Dequeue(packet->getBufferPtr(), enqueueRet);
+        return false;
+    }
 
     return true;
 }
 
-bool sendPacket_Broadcast(USER* user, char* header, char* packet, int size)
+bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
 {
     for (auto& users : g_userList)
     {
         if (users._id != user->_id)
         {
-            sendPacket_Unicast(&users, header, packet, size);
+            sendPacket_Unicast(&users, packet);
         }
     }
 
     return true;
 }
 
-bool netPacketProc_MSG(USER* user, char* packet)
+bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
 {
-    CS_MSG* msgpacket = (CS_MSG*)packet;
+    unsigned char len;
+    char msg[200];
+
+    *packet >> len;
+    packet->getData(msg, sizeof(msg));
     
     // 추가할 예정있다면 작성
     
+    SerializationBuffer sendPacket;
+    npf_SC_MSG(&sendPacket, len, msg);
+    sendPacket_Broadcast(user, &sendPacket);
+
+    return true;
+}
+
+bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize)
+{
     HEADER header;
-    SC_MSG sendPacket;
-    int size = sizeof(header) + sizeof(sendPacket);
-    npf_SC_MSG(&header, &sendPacket, msgpacket->_len, msgpacket->_msg);
-    sendPacket_Broadcast(user, (char*)&header, (char*)&sendPacket, size);
+    header._packetsize = sizeof(SC_CREATE_USER);
+    header._type = PACKET_SC_CREATE_USER;
+
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    packet->putData(name, nameSize);
 
     return true;
 }
 
-bool npf_SC_CREATE_USER(HEADER* header, SC_CREATE_USER* packet, unsigned int id, char name[20], int nameSize)
+bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize)
 {
-    header->_packetsize = sizeof(SC_CREATE_USER);
-    header->_type = PACKET_SC_CREATE_USER;
+    HEADER header;
+    header._packetsize = sizeof(SC_OTHER_USER);
+    header._type = PACKET_SC_OTHER_USER;
 
-    packet->_id = id;
-    memcpy(packet->_name, name, nameSize);
+    packet->putData((char*)&header, sizeof(header));
+
+    *packet << id;
+    packet->putData(name, nameSize);
 
     return true;
 }
 
-bool npf_SC_OTHER_USER(HEADER* header, SC_OTHER_USER* packet, unsigned int id, char name[20], int nameSize)
+bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, char* msg)
 {
-    header->_packetsize = sizeof(SC_OTHER_USER);
-    header->_type = PACKET_SC_OTHER_USER;
+    HEADER header;
+    header._packetsize = sizeof(SC_MSG);
+    header._type = PACKET_SC_MSG;
 
-    packet->_id = id;
-    memcpy(packet->_name, name, nameSize);
+    packet->putData((char*)&header, sizeof(header));
 
-    return true;
-}
-
-bool npf_SC_MSG(HEADER* header, SC_MSG* packet, unsigned char len, char* msg)
-{
-    header->_packetsize = sizeof(SC_MSG);
-    header->_type = PACKET_SC_MSG;
-
-    packet->_len = len;
-    memcpy(packet->_msg, msg, len);
+    *packet << len;
+    packet->putData(msg, len);
 
     return false;
 }
