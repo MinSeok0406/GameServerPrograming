@@ -25,8 +25,7 @@ int wmain(int argc, WCHAR* argv[])
     cout.tie(NULL);
     timeBeginPeriod(1);
 
-
-
+    
 
     return 0;
 }

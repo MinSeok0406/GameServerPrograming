@@ -3,4 +3,4 @@
   Previous IPDB and IOBJ mismatch, fall back to full compilation.
   All 207 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   코드를 생성했습니다.
-  ChatServer.vcxproj -> C:\GamePrograming\Network Programming\ChatServer\x64\Release\ChatServer.exe
+  ChatServer.vcxproj -> C:\GameServerPrograming\Network Programming\ChatServer\x64\Release\ChatServer.exe

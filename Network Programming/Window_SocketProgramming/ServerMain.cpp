@@ -268,11 +268,6 @@ bool netProc_Recv(st_SESSION* session)
             continue;
         }
 
-        if (session->_recvQ.GetUseSize() < sizeof(st_HEADER) + header->_bySize)
-        {
-            return false;
-        }
-
         session->_recvQ.MoveFront(sizeof(st_HEADER));
 
         SerializationBuffer packet;

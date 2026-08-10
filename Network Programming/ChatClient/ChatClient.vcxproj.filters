@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\ChatServer\RingBuffer.cpp" />
+    <ClCompile Include="..\ChatServer\SerializationBuffer.cpp" />
+    <ClCompile Include="ChatClient.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ChatServer\Protocol.h" />
+    <ClInclude Include="..\ChatServer\RingBuffer.h" />
+    <ClInclude Include="..\ChatServer\SerializationBuffer.h" />
+  </ItemGroup>
+</Project>
