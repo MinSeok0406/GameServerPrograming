@@ -7,6 +7,8 @@ SerializationBuffer::SerializationBuffer()
 	_buffersize = (unsigned int)PACKET::BUFFER_DEFAULT;
 	_usesize = 0;
 	_readpos = 0;
+	_headersize = 0;
+	_resetsize = 0;
 	_buffer = (char*)malloc(_buffersize);
 }
 
@@ -15,6 +17,8 @@ SerializationBuffer::SerializationBuffer(int buffersize)
 	_buffersize = buffersize;
 	_usesize = 0;
 	_readpos = 0;
+	_headersize = 0;
+	_resetsize = 0;
 	_buffer = (char*)malloc(_buffersize);
 }
 
@@ -29,6 +33,8 @@ void SerializationBuffer::clear()
 	_buffer = (char*)malloc(_buffersize);
 	_usesize = 0;
 	_readpos = 0;
+	_headersize = 0;
+	_resetsize = 0;
 }
 
 int SerializationBuffer::moveWritePos(int size)
@@ -94,6 +100,29 @@ int SerializationBuffer::putData(char* src, int size)
 	moveReadPos(size);
 
 	return 0;
+}
+
+bool SerializationBuffer::setHeaderSize(int size)
+{
+	_headersize = _usesize;
+	_usesize += size;
+
+	return true;
+}
+
+bool SerializationBuffer::headerWritePos()
+{
+	_resetsize = _usesize;
+	_usesize = _headersize;
+
+	return true;
+}
+
+bool SerializationBuffer::posReset()
+{
+	_usesize = _resetsize;
+
+	return true;
 }
 
 SerializationBuffer& SerializationBuffer::operator=(SerializationBuffer& packet)

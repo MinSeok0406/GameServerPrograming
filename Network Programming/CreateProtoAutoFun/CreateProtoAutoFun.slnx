@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CreateProtoAutoFun.vcxproj" />
+  <Project Path="CreateProtoAutoFun.vcxproj" Id="769c7a56-f6fb-4148-9322-55048494f604" />
 </Solution>

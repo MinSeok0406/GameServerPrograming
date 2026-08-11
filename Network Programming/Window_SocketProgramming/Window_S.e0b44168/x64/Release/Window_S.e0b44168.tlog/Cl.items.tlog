@@ -1,5 +1,4 @@
 C:\GamePrograming\Network Programming\RingBuffer\RingBuffer.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\RingBuffer.obj
-C:\GamePrograming\Network Programming\SerializationBuffer\SerializationBuffer.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\SerializationBuffer.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Buffer.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\Buffer.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\client4.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\client4.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\client5_Close.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\client5_Close.obj
@@ -21,6 +20,7 @@ C:\GamePrograming\Network Programming\Window_SocketProgramming\Practice8_3.cpp;C
 C:\GamePrograming\Network Programming\Window_SocketProgramming\Procademy2_1.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\Procademy2_1.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\SelectClient11.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\SelectClient11.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\SelectServer11.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\SelectServer11.obj
+C:\GamePrograming\Network Programming\Window_SocketProgramming\SerializationBuffer.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\SerializationBuffer.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\server4.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\server4.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\server5_Close.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\server5_Close.obj
 C:\GamePrograming\Network Programming\Window_SocketProgramming\server5_FixedByte.cpp;C:\GamePrograming\Network Programming\Window_SocketProgramming\Window_S.e0b44168\x64\Release\server5_FixedByte.obj

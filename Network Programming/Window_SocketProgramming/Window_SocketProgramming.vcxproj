@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\RingBuffer\RingBuffer.cpp" />
-    <ClCompile Include="..\SerializationBuffer\SerializationBuffer.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="client4.cpp" />
     <ClCompile Include="client5_Close.cpp" />
@@ -42,6 +41,7 @@
     <ClCompile Include="Procademy2_1.cpp" />
     <ClCompile Include="SelectClient11.cpp" />
     <ClCompile Include="SelectServer11.cpp" />
+    <ClCompile Include="SerializationBuffer.cpp" />
     <ClCompile Include="server4.cpp" />
     <ClCompile Include="server5_Close.cpp" />
     <ClCompile Include="server5_FixedByte.cpp" />
@@ -60,10 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\RingBuffer\RingBuffer.h" />
-    <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Protocol.h" />
+    <ClInclude Include="SerializationBuffer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

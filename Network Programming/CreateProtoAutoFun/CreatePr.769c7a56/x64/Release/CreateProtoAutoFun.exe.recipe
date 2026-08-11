@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Network Programming\CreateProtoAutoFun\x64\Debug\CreateProtoAutoFun.exe</FullPath>
+      <FullPath>C:\GamePrograming\Network Programming\CreateProtoAutoFun\x64\Release\CreateProtoAutoFun.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

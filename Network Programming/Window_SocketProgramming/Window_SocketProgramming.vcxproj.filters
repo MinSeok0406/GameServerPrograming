@@ -110,7 +110,7 @@
     <ClCompile Include="ServerMain.cpp">
       <Filter>프로카데미과제\5주차</Filter>
     </ClCompile>
-    <ClCompile Include="..\SerializationBuffer\SerializationBuffer.cpp">
+    <ClCompile Include="SerializationBuffer.cpp">
       <Filter>프로카데미과제\SerializationBuffer</Filter>
     </ClCompile>
   </ItemGroup>
@@ -174,7 +174,7 @@
     <ClInclude Include="Protocol.h">
       <Filter>프로카데미과제\5주차</Filter>
     </ClInclude>
-    <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h">
+    <ClInclude Include="SerializationBuffer.h">
       <Filter>프로카데미과제\SerializationBuffer</Filter>
     </ClInclude>
   </ItemGroup>

@@ -22,6 +22,10 @@ public:
 	int getData(char* dest, int size);							// 데이타 얻기.
 	int putData(char* src, int size);							// 데이타 삽입. (배열, 구조체등 넣기위한 용도)
 
+	bool setHeaderSize(int size);
+	bool headerWritePos();
+	bool posReset();
+
 	// 연산자 오버로딩 버전
 	SerializationBuffer& operator=(SerializationBuffer& packet);
 
@@ -57,5 +61,7 @@ private:
 	unsigned int	_buffersize;
 	unsigned int	_usesize;
 	unsigned int	_readpos;
+	unsigned int	_headersize;
+	unsigned int	_resetsize;
 	char*			_buffer;
 };
