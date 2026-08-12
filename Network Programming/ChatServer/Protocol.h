@@ -21,6 +21,7 @@ struct USER
     SOCKET          _sock;
     unsigned int    _id;
     char            _name[20];
+    unsigned int    _namesize;
     wchar_t         _ip[INET_ADDRSTRLEN];
     unsigned short  _port;
     RingBuffer      _sendQ { SENDBUFSIZE };
@@ -31,6 +32,7 @@ struct USER
 struct SC_CREATE_USER
 {
     unsigned int    _id;
+    unsigned int    _namesize;
     char            _name[20];
 };
 
@@ -38,6 +40,7 @@ struct SC_CREATE_USER
 struct SC_OTHER_USER
 {
     unsigned int    _id;
+    unsigned int    _namesize;
     char            _name[20];
 };
 

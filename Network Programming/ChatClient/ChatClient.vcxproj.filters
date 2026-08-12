@@ -6,8 +6,8 @@
     <ClCompile Include="ChatClient.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ChatServer\Protocol.h" />
     <ClInclude Include="..\ChatServer\RingBuffer.h" />
     <ClInclude Include="..\ChatServer\SerializationBuffer.h" />
+    <ClInclude Include="Protocol.h" />
   </ItemGroup>
 </Project>

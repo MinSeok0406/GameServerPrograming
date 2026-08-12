@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <process.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
@@ -20,6 +21,7 @@ struct USER
 {
     unsigned int    _id;
     char            _name[20];
+    unsigned int    _namesize;
     RingBuffer      _sendQ { SENDBUFSIZE };
     RingBuffer      _recvQ { RECVBUFSIZE };
 };
@@ -28,6 +30,7 @@ struct USER
 struct SC_CREATE_USER
 {
     unsigned int    _id;
+    unsigned int    _namesize;
     char            _name[20];
 };
 
@@ -35,6 +38,7 @@ struct SC_CREATE_USER
 struct SC_OTHER_USER
 {
     unsigned int    _id;
+    unsigned int    _namesize;
     char            _name[20];
 };
 

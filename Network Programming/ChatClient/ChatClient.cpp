@@ -20,6 +20,8 @@ USER g_user;
 SOCKET g_serversock;
 bool g_shutdown = false;
 
+CRITICAL_SECTION cs;
+
 bool netProc_Recv();
 bool netProc_Send();
 bool sendPacket_Unicast(SerializationBuffer* packet);
@@ -34,6 +36,16 @@ bool netPacketProc_MSG(SerializationBuffer* packet);
 
 bool npfMSG(SerializationBuffer* packet, unsigned char len, char* msg);
 
+unsigned int WINAPI threadProc(PVOID arg)
+{
+	while (!g_shutdown)
+	{
+		networkLogic();
+	}
+
+	return 1;
+}
+
 int wmain()
 {
 	srand((unsigned int)time(nullptr));
@@ -45,6 +57,7 @@ int wmain()
 		return 1;
 	}
 
+	InitializeCriticalSection(&cs);
 	g_serversock = socket(AF_INET, SOCK_STREAM, 0);
 	if (g_serversock == INVALID_SOCKET)
 	{
@@ -73,9 +86,15 @@ int wmain()
 		return 1;
 	}
 
+	HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, threadProc, NULL, NULL, NULL);
+	if (hThread == 0)
+	{
+		return 1;
+	}
+	CloseHandle(hThread);
+
 	while (!g_shutdown)
 	{
-		networkLogic();
 		Update();
 	}
 
@@ -173,6 +192,7 @@ bool netProc_Send()
 
 bool sendPacket_Unicast(SerializationBuffer* packet)
 {
+	EnterCriticalSection(&cs);
 	int size = packet->getDataSize();
 	if (g_user._sendQ.GetFreeSize() < size)
 	{
@@ -187,6 +207,7 @@ bool sendPacket_Unicast(SerializationBuffer* packet)
 	}
 
 	packet->moveWritePos(size);
+	LeaveCriticalSection(&cs);
 
 	return true;
 }
@@ -257,7 +278,16 @@ bool networkLogic()
 
 bool Update()
 {
+	char msg[200];
+	if (fgets(msg, 200, stdin) != NULL)
+	{
+		unsigned char len = (unsigned char)strlen(msg);
+		msg[len - 1] = '\0';
 
+		SerializationBuffer packet;
+		npfMSG(&packet, len, msg);
+		sendPacket_Unicast(&packet);
+	}
 
 	return true;
 }
@@ -265,7 +295,8 @@ bool Update()
 bool netPacketProc_CreateUser(SerializationBuffer* packet)
 {
 	*packet >> g_user._id;
-	packet->getData(g_user._name, sizeof(g_user._name));
+	*packet >> g_user._namesize;
+	packet->getData(g_user._name, g_user._namesize);
 
 	return true;
 }
@@ -274,7 +305,8 @@ bool netPacketProc_OtherUser(SerializationBuffer* packet)
 {
 	SC_OTHER_USER otherUser;
 	*packet >> otherUser._id;
-	packet->getData(otherUser._name, sizeof(otherUser._name));
+	*packet >> otherUser._namesize;
+	packet->getData(otherUser._name, otherUser._namesize);
 	g_users.push_back(otherUser);
 
 	return true;
@@ -296,8 +328,10 @@ bool netPacketProc_MSG(SerializationBuffer* packet)
 bool npfMSG(SerializationBuffer* packet, unsigned char len, char* msg)
 {
 	HEADER header;
-	header._packetsize = sizeof(CS_MSG);
+	header._packetsize = sizeof(len) + len;
 	header._type = PACKET_CS_MSG;
+
+	packet->putData((char*)&header, sizeof(HEADER));
 
 	*packet << len;
 	packet->putData(msg, len);

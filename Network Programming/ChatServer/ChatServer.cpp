@@ -158,8 +158,9 @@ bool networkLogic()
 
 bool Update()
 {
-    
-
+    // 채팅 로그
+    // DB 저장
+    // 등등
 
     return true;
 }
@@ -182,19 +183,20 @@ bool netProc_Accept()
     USER& createuser = g_userList.back();
     createuser._id = s_id;
     createuser._sock = g_clientsocket;
-    string name = "User" + to_string(s_id);
-    memcpy(createuser._name, name.c_str(), sizeof(name.c_str()));
+    string name = "User" + to_string(s_id++);
+    createuser._namesize = name.size();
+    memcpy(createuser._name, name.c_str(), createuser._namesize);
     InetNtop(AF_INET, &clientaddr.sin_addr, createuser._ip, sizeof(createuser._ip));
     createuser._port = ntohs(clientaddr.sin_port);
     
     // 신규 유저 정보 전송
     SerializationBuffer packet;
-    npf_SC_CREATE_USER(&packet, createuser._id, createuser._name, sizeof(createuser._name));
+    npf_SC_CREATE_USER(&packet, createuser._id, createuser._name, createuser._namesize);
     sendPacket_Unicast(&createuser, &packet);
     packet.clear();
 
     // 기존 유저들에게 신규 유저 정보 전송
-    npf_SC_OTHER_USER(&packet, createuser._id, createuser._name, sizeof(createuser._name));
+    npf_SC_OTHER_USER(&packet, createuser._id, createuser._name, createuser._namesize);
     sendPacket_Broadcast(&createuser, &packet);
     packet.clear();
 
@@ -203,7 +205,7 @@ bool netProc_Accept()
     {
         if (users._id != createuser._id)
         {
-            npf_SC_OTHER_USER(&packet, users._id, users._name, sizeof(users._name));
+            npf_SC_OTHER_USER(&packet, users._id, users._name, users._namesize);
             sendPacket_Unicast(&createuser, &packet);
             packet.clear();
         }
@@ -350,7 +352,7 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
     char msg[200];
 
     *packet >> len;
-    packet->getData(msg, sizeof(msg));
+    packet->getData(msg, len);
     
     // 추가할 예정있다면 작성
     
@@ -364,12 +366,13 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
 bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize)
 {
     HEADER header;
-    header._packetsize = sizeof(SC_CREATE_USER);
+    header._packetsize = sizeof(id) + sizeof(nameSize) + nameSize;
     header._type = PACKET_SC_CREATE_USER;
 
     packet->putData((char*)&header, sizeof(header));
 
     *packet << id;
+    *packet << nameSize;
     packet->putData(name, nameSize);
 
     return true;
@@ -378,12 +381,13 @@ bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, char name[
 bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize)
 {
     HEADER header;
-    header._packetsize = sizeof(SC_OTHER_USER);
+    header._packetsize = sizeof(id) + sizeof(nameSize) + nameSize;
     header._type = PACKET_SC_OTHER_USER;
 
     packet->putData((char*)&header, sizeof(header));
 
     *packet << id;
+    *packet << nameSize;
     packet->putData(name, nameSize);
 
     return true;
@@ -392,7 +396,7 @@ bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[2
 bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, char* msg)
 {
     HEADER header;
-    header._packetsize = sizeof(SC_MSG);
+    header._packetsize = sizeof(len) + len;
     header._type = PACKET_SC_MSG;
 
     packet->putData((char*)&header, sizeof(header));

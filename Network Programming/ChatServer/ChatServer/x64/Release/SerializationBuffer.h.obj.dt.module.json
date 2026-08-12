@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "ChatServer\\x64\\Release\\SerializationBuffer.obj",
+            "outputs": [
+                "ChatServer\\x64\\Release\\SerializationBuffer.h.obj.dt.module.json",
+                "ChatServer\\x64\\Release\\SerializationBuffer.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

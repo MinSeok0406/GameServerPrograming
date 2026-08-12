@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "ChatServer\\x64\\Release\\Protocol.obj",
+            "outputs": [
+                "ChatServer\\x64\\Release\\Protocol.h.obj.dt.module.json",
+                "ChatServer\\x64\\Release\\Protocol.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

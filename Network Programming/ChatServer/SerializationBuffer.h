@@ -15,12 +15,16 @@ public:
 	int getBufferSize() { return _buffersize; }					// 버퍼 사이즈 얻기.
 	int getDataSize() { return _usesize; }						// 현재 사용중인 사이즈 얻기.
 
-	char* getBufferPtr() { return _buffer + _readpos; }					// 버퍼 포인터 얻기.
+	char* getBufferPtr() { return _buffer; }					// 버퍼 포인터 얻기.
 	int moveWritePos(int size);									// 버퍼 Pos 감소.
 	int moveReadPos(int size);									// 버퍼 Pos 증가.
 
 	int getData(char* dest, int size);							// 데이타 얻기.
 	int putData(char* src, int size);							// 데이타 삽입. (배열, 구조체등 넣기위한 용도)
+
+	bool setHeaderSize(int size);
+	bool headerWritePos();
+	bool posReset();
 
 	// 연산자 오버로딩 버전
 	SerializationBuffer& operator=(SerializationBuffer& packet);
@@ -57,5 +61,7 @@ private:
 	unsigned int	_buffersize;
 	unsigned int	_usesize;
 	unsigned int	_readpos;
-	char*			_buffer;
+	unsigned int	_headersize;
+	unsigned int	_resetsize;
+	char* _buffer;
 };

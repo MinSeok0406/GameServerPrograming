@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "MemoryPool\\Release\\AllocInfo.obj",
+            "outputs": [
+                "MemoryPool\\Release\\AllocInfo.h.obj.dt.module.json",
+                "MemoryPool\\Release\\AllocInfo.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
