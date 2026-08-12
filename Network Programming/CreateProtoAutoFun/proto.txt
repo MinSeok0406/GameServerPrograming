@@ -1,9 +1,9 @@
-CreateCharacter(unsigned int id, unsigned char dir, short x, short y, char hp)
-CreateOtherCharacter(unsigned int id, unsigned char dir, short, x, short y, char hp)
-DeleteCharater(unsigned int id)
-MoveStart(unsigned int id, unsigned char dir, short x, short y)
-MoveStop(unsigned int id, unsigned char dir, short x, short y)
-Attack1(unsigned int id, unsigned char dir, short x, short y)
-Attack2(unsigned int id, unsigned char dir, short x, short y)
-Attack3(unsigned int id, unsigned char dir, short x, short y)
-Damage(unsigned int attackID, unsigned int damageID, char damageHP)
+CreateCharacter(unsigned int id, unsigned char dir, short x, short y, char hp)=0
+CreateOtherCharacter(unsigned int id, unsigned char dir, short x, short y, char hp)=1
+DeleteCharacter(unsigned int id)=2
+MoveStart(unsigned int id, unsigned char dir, short x, short y)=11
+MoveStop(unsigned int id, unsigned char dir, short x, short y)=13
+Attack1(unsigned int id, unsigned char dir, short x, short y)=21
+Attack2(unsigned int id, unsigned char dir, short x, short y)=23
+Attack3(unsigned int id, unsigned char dir, short x, short y)=25
+Damage(unsigned int attackID, unsigned int damageID, char damageHP)=30

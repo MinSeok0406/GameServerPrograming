@@ -52,6 +52,19 @@ int wmain()
 		readpos = getParameterName(bbuf) + 1;
 		bbuf += readpos;
 
+		int number = 0;
+		if (*bbuf == '=')
+		{
+			bbuf += 1;
+			string str;
+			while ((*bbuf != '\r') && (*bbuf != '\0'))
+			{
+				str += *bbuf;
+				++bbuf;
+			}
+			number = stoi(str);
+		}
+
 		if (*bbuf == '\r')
 		{
 			bbuf += 2;
@@ -62,7 +75,6 @@ int wmain()
 			s.clear();
 		}
 
-		static int number = 0;
 		const char* protoStr =
 			"#define dfNETWORK_PACKET_CODE 0x89\n"
 			"#define dfPACKET_SC_%s	%d\n"
@@ -72,10 +84,10 @@ int wmain()
 			"\theader._byCode = dfNETWORK_PACKET_CODE;\n"
 			"\theader._byType = dfPACKET_SC_%s;\n"
 			"\n"
-			"\tpacket->setHeaderSize(sizeof(st_HEADER))\n";
+			"\tpacket->setHeaderSize(sizeof(st_HEADER));\n";
 
 		char result[2000];
-		sprintf_s(result, 2000, protoStr, funcName, number++, funcName, parameterName, funcName);
+		sprintf_s(result, 2000, protoStr, funcName, number, funcName, parameterName, funcName);
 
 		getParameter();
 
@@ -92,10 +104,11 @@ int wmain()
 		}
 
 		strcat_s(result, 2000, "\n");
-		strcat_s(result, 2000, "\theader._bySize = packet->getDataSize() - sizeof(st_HEADER);\n");
+		strcat_s(result, 2000, "\theader._bySize = (unsigned char)(packet->getDataSize() - sizeof(st_HEADER));\n");
 		strcat_s(result, 2000, "\tpacket->headerWritePos();\n");
 		strcat_s(result, 2000, "\tpacket->putData((char*)&header, sizeof(header));\n");
 		strcat_s(result, 2000, "\tpacket->posReset();\n");
+		strcat_s(result, 2000, "\treturn true;\n");
 		strcat_s(result, 2000, "}\n\n");
 
 		FILE* fp;

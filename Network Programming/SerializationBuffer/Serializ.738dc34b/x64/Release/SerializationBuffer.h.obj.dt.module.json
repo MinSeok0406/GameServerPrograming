@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Serializ.738dc34b\\x64\\Release\\SerializationBuffer.obj",
+            "outputs": [
+                "Serializ.738dc34b\\x64\\Release\\SerializationBuffer.h.obj.dt.module.json",
+                "Serializ.738dc34b\\x64\\Release\\SerializationBuffer.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

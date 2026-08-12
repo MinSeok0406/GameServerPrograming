@@ -7,6 +7,8 @@ SerializationBuffer::SerializationBuffer()
 	_buffersize = (unsigned int)PACKET::BUFFER_DEFAULT;
 	_usesize = 0;
 	_readpos = 0;
+	_headersize = 0;
+	_resetsize = 0;
 	_buffer = (char*)malloc(_buffersize);
 }
 
@@ -15,6 +17,8 @@ SerializationBuffer::SerializationBuffer(int buffersize)
 	_buffersize = buffersize;
 	_usesize = 0;
 	_readpos = 0;
+	_headersize = 0;
+	_resetsize = 0;
 	_buffer = (char*)malloc(_buffersize);
 }
 
@@ -25,10 +29,10 @@ SerializationBuffer::~SerializationBuffer()
 
 void SerializationBuffer::clear()
 {
-	free(_buffer);
-	_buffer = (char*)malloc(_buffersize);
 	_usesize = 0;
 	_readpos = 0;
+	_headersize = 0;
+	_resetsize = 0;
 }
 
 int SerializationBuffer::moveWritePos(int size)
@@ -96,6 +100,29 @@ int SerializationBuffer::putData(char* src, int size)
 	return 0;
 }
 
+bool SerializationBuffer::setHeaderSize(int size)
+{
+	_headersize = _usesize;
+	_usesize += size;
+
+	return true;
+}
+
+bool SerializationBuffer::headerWritePos()
+{
+	_resetsize = _usesize;
+	_usesize = _headersize;
+
+	return true;
+}
+
+bool SerializationBuffer::posReset()
+{
+	_usesize = _resetsize;
+
+	return true;
+}
+
 SerializationBuffer& SerializationBuffer::operator=(SerializationBuffer& packet)
 {
 	if (this == &packet)
@@ -105,7 +132,11 @@ SerializationBuffer& SerializationBuffer::operator=(SerializationBuffer& packet)
 
 	this->_buffersize = packet._buffersize;
 	this->_usesize = packet._usesize;
-	free(this->_buffer);
+
+	if (this->_buffer != nullptr)
+	{
+		free(this->_buffer);
+	}
 	this->_buffer = (char*)malloc(_buffersize);
 	memcpy(this->_buffer, packet._buffer, _buffersize);
 	return *this;

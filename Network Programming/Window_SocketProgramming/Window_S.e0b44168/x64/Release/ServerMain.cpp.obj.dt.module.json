@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Window_S.e0b44168\\x64\\Release\\ServerMain.obj",
+            "outputs": [
+                "Window_S.e0b44168\\x64\\Release\\ServerMain.cpp.obj.dt.module.json",
+                "Window_S.e0b44168\\x64\\Release\\ServerMain.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

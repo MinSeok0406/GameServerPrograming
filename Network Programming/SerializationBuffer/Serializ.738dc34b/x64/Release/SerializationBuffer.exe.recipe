@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Network Programming\SerializationBuffer\x64\Release\SerializationBuffer.exe</FullPath>
+      <FullPath>C:\GameServerPrograming\Network Programming\SerializationBuffer\x64\Release\SerializationBuffer.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
