@@ -40,7 +40,7 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet);
 // 네트워크 프로토콜 함수
 bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize);
 bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize);
-bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, char* msg);
+bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, unsigned int id, char* msg);
 
 int wmain()
 {
@@ -184,7 +184,7 @@ bool netProc_Accept()
     createuser._id = s_id;
     createuser._sock = g_clientsocket;
     string name = "User" + to_string(s_id++);
-    createuser._namesize = name.size();
+    createuser._namesize = (unsigned int)name.size();
     memcpy(createuser._name, name.c_str(), createuser._namesize);
     InetNtop(AF_INET, &clientaddr.sin_addr, createuser._ip, sizeof(createuser._ip));
     createuser._port = ntohs(clientaddr.sin_port);
@@ -349,15 +349,17 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
 bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
 {
     unsigned char len;
+    unsigned int id;
     char msg[200];
 
     *packet >> len;
+    *packet >> id;
     packet->getData(msg, len);
     
     // 추가할 예정있다면 작성
     
     SerializationBuffer sendPacket;
-    npf_SC_MSG(&sendPacket, len, msg);
+    npf_SC_MSG(&sendPacket, len, id, msg);
     sendPacket_Broadcast(user, &sendPacket);
 
     return true;
@@ -366,7 +368,7 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
 bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize)
 {
     HEADER header;
-    header._packetsize = sizeof(id) + sizeof(nameSize) + nameSize;
+    header._packetsize = (unsigned char)(sizeof(id) + sizeof(nameSize) + nameSize);
     header._type = PACKET_SC_CREATE_USER;
 
     packet->putData((char*)&header, sizeof(header));
@@ -381,7 +383,7 @@ bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, char name[
 bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[20], int nameSize)
 {
     HEADER header;
-    header._packetsize = sizeof(id) + sizeof(nameSize) + nameSize;
+    header._packetsize = (unsigned char)(sizeof(id) + sizeof(nameSize) + nameSize);
     header._type = PACKET_SC_OTHER_USER;
 
     packet->putData((char*)&header, sizeof(header));
@@ -395,15 +397,16 @@ bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[2
 
 // 개선 필요
 // wchar_t msg 로 바꿔서 한글도 출력되게끔 하자
-bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, char* msg)
+bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, unsigned int id, char* msg)
 {
     HEADER header;
-    header._packetsize = sizeof(len) + len;
+    header._packetsize = sizeof(len) + sizeof(id) + len;
     header._type = PACKET_SC_MSG;
 
     packet->putData((char*)&header, sizeof(header));
 
     *packet << len;
+    *packet << id;
     packet->putData(msg, len);
 
     return false;

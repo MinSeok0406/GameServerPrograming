@@ -34,7 +34,7 @@ bool netPacketProc_CreateUser(SerializationBuffer* packet);
 bool netPacketProc_OtherUser(SerializationBuffer* packet);
 bool netPacketProc_MSG(SerializationBuffer* packet);
 
-bool npfMSG(SerializationBuffer* packet, unsigned char len, char* msg);
+bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int id, char* msg);
 
 unsigned int WINAPI threadProc(PVOID arg)
 {
@@ -197,6 +197,7 @@ bool sendPacket_Unicast(SerializationBuffer* packet)
 	if (g_user._sendQ.GetFreeSize() < size)
 	{
 		printf("send fail\n");
+		LeaveCriticalSection(&cs);
 		return false;
 	}
 
@@ -285,7 +286,7 @@ bool Update()
 		msg[len - 1] = '\0';
 
 		SerializationBuffer packet;
-		npfMSG(&packet, len, msg);
+		npfMSG(&packet, len, g_user._id, msg);
 		sendPacket_Unicast(&packet);
 	}
 
@@ -315,25 +316,35 @@ bool netPacketProc_OtherUser(SerializationBuffer* packet)
 bool netPacketProc_MSG(SerializationBuffer* packet)
 {
 	unsigned char len;
+	unsigned int id;
 	char msg[200];
 
 	*packet >> len;
+	*packet >> id;
 	packet->getData(msg, len);
 
-	printf("%s\n", msg);
+	for (auto& otheruser : g_users)
+	{
+		if (otheruser._id == id)
+		{
+			printf("%s:%s\n", otheruser._name, msg);
+			break;
+		}
+	}
 
 	return true;
 }
 
-bool npfMSG(SerializationBuffer* packet, unsigned char len, char* msg)
+bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int id, char* msg)
 {
 	HEADER header;
-	header._packetsize = sizeof(len) + len;
+	header._packetsize = sizeof(len) + sizeof(id) + len;
 	header._type = PACKET_CS_MSG;
 
 	packet->putData((char*)&header, sizeof(HEADER));
 
 	*packet << len;
+	*packet << id;
 	packet->putData(msg, len);
 
 	return true;
