@@ -42,6 +42,8 @@ struct SC_OTHER_USER
     char            _name[20];
 };
 
+// 개선 필요
+// 클라 id를 받아서 누가 보냈는지 파악 필요
 #define PACKET_CS_MSG               2
 struct CS_MSG
 {

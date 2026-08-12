@@ -393,6 +393,8 @@ bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, char name[2
     return true;
 }
 
+// 개선 필요
+// wchar_t msg 로 바꿔서 한글도 출력되게끔 하자
 bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, char* msg)
 {
     HEADER header;
