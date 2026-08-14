@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "ObjectFreeList\\x64\\Debug\\numeric.obj",
+            "outputs": [
+                "ObjectFreeList\\x64\\Debug\\numeric.obj.dt.module.json",
+                "ObjectFreeList\\x64\\Debug\\numeric.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

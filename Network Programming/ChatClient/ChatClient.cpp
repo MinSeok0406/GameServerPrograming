@@ -15,7 +15,6 @@ using ll = long long;
 const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT 47000
 
-list<SC_OTHER_USER> g_users;
 USER g_user;
 SOCKET g_serversock;
 bool g_shutdown = false;
@@ -34,7 +33,7 @@ bool netPacketProc_CreateUser(SerializationBuffer* packet);
 bool netPacketProc_OtherUser(SerializationBuffer* packet);
 bool netPacketProc_MSG(SerializationBuffer* packet);
 
-bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int id, char* msg);
+bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int namesize, char name[20], char* msg);
 
 unsigned int WINAPI threadProc(PVOID arg)
 {
@@ -286,7 +285,7 @@ bool Update()
 		msg[len - 1] = '\0';
 
 		SerializationBuffer packet;
-		npfMSG(&packet, len, g_user._id, msg);
+		npfMSG(&packet, len, g_user._namesize, g_user._name, msg);
 		sendPacket_Unicast(&packet);
 	}
 
@@ -308,7 +307,6 @@ bool netPacketProc_OtherUser(SerializationBuffer* packet)
 	*packet >> otherUser._id;
 	*packet >> otherUser._namesize;
 	packet->getData(otherUser._name, otherUser._namesize);
-	g_users.push_back(otherUser);
 
 	return true;
 }
@@ -316,35 +314,31 @@ bool netPacketProc_OtherUser(SerializationBuffer* packet)
 bool netPacketProc_MSG(SerializationBuffer* packet)
 {
 	unsigned char len;
-	unsigned int id;
+	unsigned int namesize;
+	char name[20];
 	char msg[200];
 
 	*packet >> len;
-	*packet >> id;
+	*packet >> namesize;
+	packet->getData(name, namesize);
 	packet->getData(msg, len);
 
-	for (auto& otheruser : g_users)
-	{
-		if (otheruser._id == id)
-		{
-			printf("%s:%s\n", otheruser._name, msg);
-			break;
-		}
-	}
+	printf("%s:%s\n", name, msg);
 
 	return true;
 }
 
-bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int id, char* msg)
+bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int namesize, char name[20], char* msg)
 {
 	HEADER header;
-	header._packetsize = sizeof(len) + sizeof(id) + len;
+	header._packetsize = (unsigned char)(sizeof(len) + sizeof(namesize) + namesize + len);
 	header._type = PACKET_CS_MSG;
 
 	packet->putData((char*)&header, sizeof(HEADER));
 
 	*packet << len;
-	*packet << id;
+	*packet << namesize;
+	packet->putData(name, namesize);
 	packet->putData(msg, len);
 
 	return true;

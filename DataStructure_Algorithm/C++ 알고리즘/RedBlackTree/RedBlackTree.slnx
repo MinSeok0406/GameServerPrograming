@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="RedBlackTree.vcxproj" />
+  <Project Path="RedBlackTree.vcxproj" Id="f1dd9d6a-c58a-4836-b3f8-feb567eed1a6" />
 </Solution>

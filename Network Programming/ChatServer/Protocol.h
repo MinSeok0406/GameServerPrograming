@@ -48,7 +48,8 @@ struct SC_OTHER_USER
 struct CS_MSG
 {
     unsigned char   _len;
-    unsigned int    _id;
+    unsigned int    _namesize;
+    char            _name[20];
     char            _msg[200];
 };
 
@@ -56,6 +57,7 @@ struct CS_MSG
 struct SC_MSG
 {
     unsigned char   _len;
-    unsigned int    _id;
+    unsigned int    _namesize;
+    char            _name[20];
     char            _msg[200];
 };

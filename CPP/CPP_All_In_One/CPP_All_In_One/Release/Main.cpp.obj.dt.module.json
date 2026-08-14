@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CPP_All_In_One\\Release\\Main.obj",
+            "outputs": [
+                "CPP_All_In_One\\Release\\Main.cpp.obj.dt.module.json",
+                "CPP_All_In_One\\Release\\Main.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
