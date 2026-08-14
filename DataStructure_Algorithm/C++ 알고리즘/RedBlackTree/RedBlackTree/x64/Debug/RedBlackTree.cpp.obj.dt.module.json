@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "RedBlackTree\\x64\\Debug\\RedBlackTree.obj",
+            "outputs": [
+                "RedBlackTree\\x64\\Debug\\RedBlackTree.cpp.obj.dt.module.json",
+                "RedBlackTree\\x64\\Debug\\RedBlackTree.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
