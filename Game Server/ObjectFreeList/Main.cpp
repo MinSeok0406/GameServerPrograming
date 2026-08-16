@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <chrono>
 #include <time.h>
-#include "ObjectPool.h"
+#include "ObjectFreeList.h"
 using namespace std;
 
 #pragma comment(lib, "Winmm.lib")
@@ -11,54 +11,58 @@ using namespace std;
 class Object
 {
 public:
-	Object() {}
-	virtual ~Object() = default;
+	Object() 
+	{
+		hp = 100;
+		id = 1;
+		x = 0;
+		y = 0;
+	};
+
+	Object(int hp, int id, int x, int y)
+		: hp(hp), id(id), x(x), y(y)
+	{
+	}
+
+	~Object() 
+	{ 
+	};
 
 private:
-	array<int, 10 * 1024 * 1024> _data;
+	int hp;
+	int id;
+	short x;
+	short y;
 };
 
-using Pool = ObjectPool<Object>;
-
-shared_ptr<Object> getObject(Pool& pool)
+class Player : public Object
 {
-	auto object = pool.acquireObject();
-	return object;
-}
+public:
+	Player() {}
+	~Player() {}
+};
 
-void processObject(Object* object)
+class Monster : public Object
 {
-	
-}
+public:
+	Monster() {}
+	~Monster() {}
+};
+
+const size_t num = 500000;
+ObjectFreeList<Player> g_playerPool(num, true);
+ObjectFreeList<Monster> g_monsterPool(num, true);
 
 int wmain()
 {
 	timeBeginPeriod(1);
 	srand((unsigned int)time(nullptr));
-	const size_t num = 500000;
 
-	cout << "Starting loop using pool..." << "\n";
-	Pool requestPool;
-	auto start1 = chrono::steady_clock::now();
-	for (auto i = 0; i < num; ++i)
-	{
-		auto object = getObject(requestPool);
-		processObject(object.get());
-	}
+	Object* player = g_playerPool.Alloc();
+	Object* monster = g_monsterPool.Alloc();
 
-	auto diff1 = chrono::steady_clock::now() - start1;
-	cout << format("{}ms\n", chrono::duration<double, milli>(diff1).count());
-
-	cout << "Starting loop using new/delete..." << "\n";
-	auto start2 = chrono::steady_clock::now();
-	for (auto i = 0; i < num; ++i)
-	{
-		auto object = new Object;
-		processObject(object);
-		delete object;
-	}
-	auto diff2 = chrono::steady_clock::now() - start2;
-	cout << format("{}ms\n", chrono::duration<double, milli>(diff2).count());
+	//g_playerPool.Free(player);
+	//g_monsterPool.Free(monster);
 
 	return 0;
 }
