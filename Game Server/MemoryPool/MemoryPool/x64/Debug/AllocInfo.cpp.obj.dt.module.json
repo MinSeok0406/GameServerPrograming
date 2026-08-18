@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "MemoryPool\\x64\\Debug\\AllocInfo.obj",
+            "outputs": [
+                "MemoryPool\\x64\\Debug\\AllocInfo.cpp.obj.dt.module.json",
+                "MemoryPool\\x64\\Debug\\AllocInfo.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

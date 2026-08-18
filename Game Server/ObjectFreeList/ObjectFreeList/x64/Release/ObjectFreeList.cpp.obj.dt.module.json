@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "ObjectFreeList\\x64\\Release\\ObjectFreeList.obj",
+            "outputs": [
+                "ObjectFreeList\\x64\\Release\\ObjectFreeList.cpp.obj.dt.module.json",
+                "ObjectFreeList\\x64\\Release\\ObjectFreeList.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

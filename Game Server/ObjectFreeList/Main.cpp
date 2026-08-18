@@ -40,6 +40,10 @@ class Player : public Object
 public:
 	Player() {}
 	~Player() {}
+
+	
+private:
+	long long _type;
 };
 
 class Monster : public Object
@@ -47,22 +51,42 @@ class Monster : public Object
 public:
 	Monster() {}
 	~Monster() {}
+
+	
+private:
+	long long _type;
 };
 
 const size_t num = 500000;
-ObjectFreeList<Player> g_playerPool(num, true);
-ObjectFreeList<Monster> g_monsterPool(num, true);
+ObjectFreeList<Player> g_playerPool(50, true);
+ObjectFreeList<Monster> g_monsterPool(50, true);
+vector<Player*> v;
 
 int wmain()
 {
 	timeBeginPeriod(1);
 	srand((unsigned int)time(nullptr));
 
-	Object* player = g_playerPool.Alloc();
-	Object* monster = g_monsterPool.Alloc();
+	Player* p = nullptr;
+	while (true)
+	{
+		int randNum = rand() % 10;
+		if (randNum < 5)
+		{
+			p = g_playerPool.Alloc();
+			v.emplace_back(p);
+		}
+		else
+		{
+			if (v.empty())
+			{
+				continue;
+			}
 
-	//g_playerPool.Free(player);
-	//g_monsterPool.Free(monster);
+			g_playerPool.Free(v.back());
+			v.pop_back();
+		}
+	}
 
 	return 0;
 }
