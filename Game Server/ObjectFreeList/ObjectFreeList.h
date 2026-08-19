@@ -4,6 +4,10 @@
 // 가비지 컬렉터 만들기 -> 오랫동안 사용되지 않는 메모리 삭제
 // 노드가 메모리 침법을 했을 시 파악할 수 있는 코드 작성
 
+// 전체적으로 노드 기반으로 포인터 주소를 노드 갯수만큼 할당받아서 사용하는지
+// 아니면 객체 크기만큼을 갯수 * 크기 만큼 메모리를 할당받는지 알아야함
+const uintptr_t SECURITY_COOKIE = 0xDEADBEEFCAFE0000ULL;
+
 enum class OBJECTSIZE
 {
     B8 =        8,
@@ -40,6 +44,7 @@ public:
     template<typename... Args>
     T* Alloc(Args&&... args);
     void Free(T* object);
+
     void* Alloc(int objectsize);
     void Free(void* object, int objectsize);
 
@@ -55,14 +60,9 @@ private:
         unsigned __int64 size;
     };
 
-    struct HEADER
-    {
-        void* securityCookie;
-    };
-
     struct Node
     {
-        HEADER header;
+        uintptr_t cookie;
         Node* next;
     };
 
@@ -79,7 +79,7 @@ template<typename T>
 ObjectFreeList<T>::ObjectFreeList(int objectCount, bool isPlacementNew)
     : _objectCount(objectCount), _isplacementNew(isPlacementNew), _size(0)
 {
-    _capacity = sizeof(T) * objectCount;
+    _capacity = sizeof(Node) * objectCount;
     _pool = (T*)malloc(_capacity);
     _head = nullptr;
 
@@ -87,7 +87,7 @@ ObjectFreeList<T>::ObjectFreeList(int objectCount, bool isPlacementNew)
 
     for (auto i = 0; i < objectCount; ++i)
     {
-        T* slot = (_pool + i);
+        T* slot = (T*)((Node*)_pool + i);
 
         if (isPlacementNew == false)
         {
@@ -95,8 +95,9 @@ ObjectFreeList<T>::ObjectFreeList(int objectCount, bool isPlacementNew)
         }
 
         Node* node = (Node*)slot;
+        node->cookie = SECURITY_COOKIE;
         node->next = _head;
-        _head = node;
+        _head = (Node*)((char*)node + 8);
     }
 }
 
@@ -120,26 +121,26 @@ T* ObjectFreeList<T>::Alloc(Args&&... args)
 {
     if (_head == nullptr)
     {
-        _capacity += sizeof(T);
-        Node* temp = (Node*)malloc(sizeof(T));
+        _capacity += sizeof(Node);
+        Node* temp = (Node*)malloc(sizeof(Node));
         temp->next = _head;
         _head = temp;
 
-        _chunk.push_back({ temp, sizeof(T) });
+        _chunk.push_back({ temp, sizeof(Node) });
     }
-    else if (_size >= _capacity - sizeof(T))
+    else if (_size >= _capacity - sizeof(Node))
     {
-        _capacity += sizeof(T);
-        Node* temp = (Node*)malloc(sizeof(T));
+        _capacity += sizeof(Node);
+        Node* temp = (Node*)malloc(sizeof(Node));
         temp->next = _head;
         _head = temp;
 
-        _chunk.push_back({ temp, sizeof(T) });
+        _chunk.push_back({ temp, sizeof(Node) });
     }
 
     Node* node = _head;
     _head = node->next;
-    _size += sizeof(T);
+    _size += sizeof(Node);
 
     if (_isplacementNew)
     {
@@ -149,6 +150,47 @@ T* ObjectFreeList<T>::Alloc(Args&&... args)
     {
         return (T*)node;
     }
+}
+
+template<typename T>
+void ObjectFreeList<T>::Free(T* object)
+{
+    if (object == nullptr)
+    {
+        return;
+    }
+
+    // T 타입이 다형성을 가지고 독립적으로 존재하는 두 개의 풀에서
+    // 서로 다른 풀에서 Free를 하는 사고를 방지하는 코드가 들어가야함
+    char* target = (char*)object;
+    bool isbelong = false;
+
+    for (const auto& chunk : _chunk)
+    {
+        char* begin = (char*)chunk.begin;
+        char* end = begin + chunk.size;
+
+        if (target >= begin && target < end && (target - begin) % sizeof(Node) == 0)
+        {
+            isbelong = true;
+            break;
+        }
+    }
+
+    if (!isbelong)
+    {
+        __debugbreak();
+        return;
+    }
+
+    if (_isplacementNew)
+    {
+        object->~T();
+    }
+
+    Node* node = (Node*)object;
+    node->next = _head;
+    _head = node;
 }
 
 template<typename T>
@@ -198,7 +240,7 @@ void ObjectFreeList<T>::Free(void* object, int objectsize)
         char* begin = (char*)chunk.begin;
         char* end = begin + chunk.size;
 
-        if (target >= begin && target < end && (target - begin) % sizeof(T) == 0)
+        if (target >= begin && target < end && (target - begin) % sizeof(Node) == 0)
         {
             isbelong = true;
             break;
@@ -209,47 +251,6 @@ void ObjectFreeList<T>::Free(void* object, int objectsize)
     {
         __debugbreak();
         return;
-    }
-
-    Node* node = (Node*)object;
-    node->next = _head;
-    _head = node;
-}
-
-template<typename T>
-void ObjectFreeList<T>::Free(T* object)
-{
-    if (object == nullptr)
-    {
-        return;
-    }
-    
-    // T 타입이 다형성을 가지고 독립적으로 존재하는 두 개의 풀에서
-    // 서로 다른 풀에서 Free를 하는 사고를 방지하는 코드가 들어가야함
-    char* target = (char*)object;
-    bool isbelong = false;
-
-    for (const auto& chunk : _chunk)
-    {
-        char* begin = (char*)chunk.begin;
-        char* end = begin + chunk.size;
-
-        if (target >= begin && target < end && (target - begin) % sizeof(T) == 0)
-        {
-            isbelong = true;
-            break;
-        }
-    }
-
-    if (!isbelong)
-    {
-        __debugbreak();
-        return;
-    }
-
-    if (_isplacementNew)
-    {
-        object->~T();
     }
 
     Node* node = (Node*)object;

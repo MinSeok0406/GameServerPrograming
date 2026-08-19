@@ -40,10 +40,6 @@ class Player : public Object
 public:
 	Player() {}
 	~Player() {}
-
-	
-private:
-	long long _type;
 };
 
 class Monster : public Object
@@ -51,42 +47,20 @@ class Monster : public Object
 public:
 	Monster() {}
 	~Monster() {}
-
-	
-private:
-	long long _type;
 };
 
 const size_t num = 500000;
-ObjectFreeList<Player> g_playerPool(50, true);
-ObjectFreeList<Monster> g_monsterPool(50, true);
-vector<Player*> v;
 
 int wmain()
 {
 	timeBeginPeriod(1);
 	srand((unsigned int)time(nullptr));
 
-	Player* p = nullptr;
-	while (true)
-	{
-		int randNum = rand() % 10;
-		if (randNum < 5)
-		{
-			p = g_playerPool.Alloc();
-			v.emplace_back(p);
-		}
-		else
-		{
-			if (v.empty())
-			{
-				continue;
-			}
+	ObjectFreeList<Player> g_playerPool(50, true);
 
-			g_playerPool.Free(v.back());
-			v.pop_back();
-		}
-	}
-
+	// 객체에게 포인터 주소를 넘겨줘야 되는데, 그 주소 값 자체를 넘겨주고있다.
+	// 이건 아닌데...
+	Player* player = g_playerPool.Alloc();
+	
 	return 0;
 }

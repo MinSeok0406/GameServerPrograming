@@ -1,2 +1,6 @@
-﻿  ObjectPool.cpp
-  ObjectFreeList.vcxproj -> C:\GamePrograming\Game Server\ObjectFreeList\x64\Debug\ObjectFreeList.exe
+﻿  Main.cpp
+  ObjectFreeList.cpp
+  ObjectPool.cpp
+  코드를 생성하고 있습니다...
+C:\GameServerPrograming\Game Server\ObjectFreeList\ObjectFreeList.cpp(77,1): warning C4715: 'getObjectSize': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  ObjectFreeList.vcxproj -> C:\GameServerPrograming\Game Server\ObjectFreeList\x64\Debug\ObjectFreeList.exe

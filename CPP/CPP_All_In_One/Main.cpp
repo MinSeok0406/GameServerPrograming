@@ -16,20 +16,7 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-class Widget
-{
-public:
-    Widget() { cout << "Widget" << "\n"; }
-    Widget(const Widget& w) { cout << "Widget const" << "\n"; }
-    ~Widget() { cout << "~Widget" << "\n"; }
-    Widget(Widget&& w) noexcept { cout << "Widget&&" << "\n"; }
-};
 
-Widget Test()
-{
-    Widget w;
-    return w;
-}
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -38,7 +25,7 @@ int wmain(int argc, WCHAR* argv[])
     cout.tie(NULL);
     timeBeginPeriod(1);
 
-    Test();
+    
 
     return 0;
 }
