@@ -18,33 +18,32 @@ bool insertData(BTree** root, int data)
     BTree* node = *root;
     while (true)
     {
-        if (node->left == nullptr)
-        {
-            BTree* newNode = (BTree*)malloc(sizeof(BTree));
-            newNode->data = data;
-            newNode->parent = node;
-            newNode->left = nullptr;
-            newNode->right = nullptr;
-            node->left = newNode;
-            break;
-        }
-        else if (node->right == nullptr)
-        {
-            BTree* newNode = (BTree*)malloc(sizeof(BTree));
-            newNode->data = data;
-            newNode->parent = node;
-            newNode->left = nullptr;
-            newNode->right = nullptr;
-            node->right = newNode;
-            break;
-        }
-
         if (node->data > data)
         {
+            if (node->left == nullptr)
+            {
+                BTree* newNode = (BTree*)malloc(sizeof(BTree));
+                newNode->data = data;
+                newNode->parent = node;
+                newNode->left = nullptr;
+                newNode->right = nullptr;
+                node->left = newNode;
+                break;
+            }
             node = node->left;
         }
         else if (node->data < data)
         {
+            if (node->right == nullptr)
+            {
+                BTree* newNode = (BTree*)malloc(sizeof(BTree));
+                newNode->data = data;
+                newNode->parent = node;
+                newNode->left = nullptr;
+                newNode->right = nullptr;
+                node->right = newNode;
+                break;
+            }
             node = node->right;
         }
         else if (node->data == data)
@@ -67,34 +66,50 @@ bool deleteData(BTree** root, int data)
     if (node->left != nullptr)
     {
         BTree* deletenode = searchMaxNode(node->left);
-        if (deletenode->left == nullptr)
+        node->data = deletenode->data;
+
+        BTree* parent = deletenode->parent;
+        BTree* child = deletenode->left;
+
+        if (parent->left == deletenode)
         {
-            node->data = deletenode->data;
-            deleteNode(&deletenode);
+            parent->left = child;
         }
         else
         {
-            BTree* parent = deletenode->parent;
-            parent->right = deletenode->left;
-            deletenode->left->parent = parent;
-            deleteNode(&deletenode);
+            parent->right = child;
         }
+
+        if (child != nullptr)
+        {
+            child->parent = parent;
+        }
+
+        deleteNode(&deletenode);
     }
     else if (node->right != nullptr)
     {
-        BTree* deletenode = searchMaxNode(node->right);
-        if (deletenode->right == nullptr)
+        BTree* deletenode = searchMinNode(node->right);
+        node->data = deletenode->data;
+
+        BTree* parent = deletenode->parent;
+        BTree* child = deletenode->right;
+
+        if (parent->left == deletenode)
         {
-            node->data = deletenode->data;
-            deleteNode(&deletenode);
+            parent->left = child;
         }
         else
         {
-            BTree* parent = deletenode->parent;
-            parent->left = deletenode->right;
-            deletenode->right->parent = parent;
-            deleteNode(&deletenode);
+            parent->right = child;
         }
+
+        if (child != nullptr)
+        {
+            child->parent = parent;
+        }
+
+        deleteNode(&deletenode);
     }
     else
     {
@@ -169,7 +184,15 @@ bool traversalTree(BTree* root, int depth)
         return false;
     }
 
-    printf("%d", root->data);
+    if (depth == 0)
+        printf("root: %d\n", root->data);
+
+    if (root->left)
+        printf("  [%d] %d -> %d (L)\n", depth, root->data, root->left->data);
+
+    if (root->right)
+        printf("  [%d] %d -> %d (R)\n", depth, root->data, root->right->data);
+
     traversalTree(root->left, depth + 1);
     traversalTree(root->right, depth + 1);
 
@@ -180,17 +203,21 @@ bool deleteNode(BTree** root)
 {
     BTree* node = *root;
     BTree* parent = node->parent;
-    if (parent->left == node)
+
+    if (parent == nullptr)
+    {
+        *root = nullptr;
+    }
+    else if (parent->left == node)
     {
         parent->left = nullptr;
-        free(node);
     }
     else
     {
         parent->right = nullptr;
-        free(node);
     }
 
+    free(node);
     return true;
 }
 

@@ -4,10 +4,6 @@
 // 가비지 컬렉터 만들기 -> 오랫동안 사용되지 않는 메모리 삭제
 // 노드가 메모리 침법을 했을 시 파악할 수 있는 코드 작성
 
-// 전체적으로 노드 기반으로 포인터 주소를 노드 갯수만큼 할당받아서 사용하는지
-// 아니면 객체 크기만큼을 갯수 * 크기 만큼 메모리를 할당받는지 알아야함
-const uintptr_t SECURITY_COOKIE = 0xDEADBEEFCAFE0000ULL;
-
 enum class OBJECTSIZE
 {
     B8 =        8,
@@ -30,7 +26,7 @@ enum class OBJECTSIZE
     MB1 =       1024 * 1024
 };
 
-unsigned __int64 getObjectSize(unsigned __int64 objectsize);
+uintptr_t getObjectSize(unsigned __int64 objectsize);
 
 template<typename T>
 class ObjectFreeList
@@ -41,12 +37,11 @@ public:
     ObjectFreeList(int objectCount, bool isPlacementNew);
     virtual ~ObjectFreeList();
 
-    template<typename... Args>
-    T* Alloc(Args&&... args);
+    T* Alloc();
     void Free(T* object);
 
-    void* Alloc(int objectsize);
-    void Free(void* object, int objectsize);
+    /*void* Alloc(int objectsize);
+    void Free(void* object, int objectsize);*/
 
 private:
     ObjectFreeList(const ObjectFreeList& obj) = delete;
@@ -54,102 +49,95 @@ private:
     ObjectFreeList(ObjectFreeList&& obj) = delete;
     ObjectFreeList& operator=(ObjectFreeList&& rhs) = delete;
 
-    struct Chunk
-    {
-        void* begin;
-        unsigned __int64 size;
-    };
-
+    #pragma pack(1)
     struct Node
     {
-        uintptr_t cookie;
+        uintptr_t cookie_front;
+        T data;
+        uintptr_t cookie_end;
         Node* next;
     };
 
-    T* _pool;
     Node* _head;
-    std::vector<Chunk> _chunk;
-    unsigned __int64 _size;
-    unsigned __int64 _capacity;
+    uintptr_t _countPool;
+    uintptr_t _countAlloc;
+    uintptr_t _countFree;
+    uintptr_t _cookieValue;
     int _objectCount;
     bool _isplacementNew;
 };
 
 template<typename T>
 ObjectFreeList<T>::ObjectFreeList(int objectCount, bool isPlacementNew)
-    : _objectCount(objectCount), _isplacementNew(isPlacementNew), _size(0)
+    : _objectCount(objectCount), _isplacementNew(isPlacementNew), _countPool(0),
+    _countAlloc(0), _countFree(0)
 {
-    _capacity = sizeof(Node) * objectCount;
-    _pool = (T*)malloc(_capacity);
     _head = nullptr;
-
-    _chunk.push_back({ _pool, _capacity });
+    _cookieValue = (uintptr_t)this;
 
     for (auto i = 0; i < objectCount; ++i)
     {
-        T* slot = (T*)((Node*)_pool + i);
+        Node* newNode = (Node*)malloc(sizeof(Node));
+        newNode->cookie_front = _cookieValue;
+        newNode->cookie_end = _cookieValue;
 
         if (isPlacementNew == false)
         {
-            new (slot) T();
+            T* data = new (&(newNode->data)) T;
         }
 
-        Node* node = (Node*)slot;
-        node->cookie = SECURITY_COOKIE;
-        node->next = _head;
-        _head = (Node*)((char*)node + 8);
+        newNode->next = _head;
+        _head = newNode;
+        _countPool++;
     }
 }
 
 template<typename T>
 ObjectFreeList<T>::~ObjectFreeList()
 {
-    if (_isplacementNew == false)
+    Node* deleteNode = _head;
+    while (deleteNode != nullptr)
     {
-        for (auto i = 0; i < _objectCount; ++i)
+        Node* nextNode = deleteNode->next;
+        if (_isplacementNew == false)
         {
-            (_pool + i)->~T();
+            deleteNode->data.~T();
         }
-    }
 
-    free(_pool);
+        free(deleteNode);
+        deleteNode = nextNode;
+        _countPool--;
+    }
 }
 
 template<typename T>
-template<typename... Args>
-T* ObjectFreeList<T>::Alloc(Args&&... args)
+T* ObjectFreeList<T>::Alloc()
 {
-    if (_head == nullptr)
+    Node* node = nullptr;
+    _countAlloc++;
+    if (_head != nullptr)
     {
-        _capacity += sizeof(Node);
-        Node* temp = (Node*)malloc(sizeof(Node));
-        temp->next = _head;
-        _head = temp;
-
-        _chunk.push_back({ temp, sizeof(Node) });
-    }
-    else if (_size >= _capacity - sizeof(Node))
-    {
-        _capacity += sizeof(Node);
-        Node* temp = (Node*)malloc(sizeof(Node));
-        temp->next = _head;
-        _head = temp;
-
-        _chunk.push_back({ temp, sizeof(Node) });
+        node = _head;
+        _head = node->next;
+        _countPool--;
+        if (_isplacementNew)
+        {
+            T* data = new (&(node->data)) T;
+        }
+        
+        return &(node->data);
     }
 
-    Node* node = _head;
-    _head = node->next;
-    _size += sizeof(Node);
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->cookie_front = _cookieValue;
+    newNode->cookie_end = _cookieValue;
+    newNode->next = nullptr;
+    if (_isplacementNew == false)
+    {
+        T* data = new (&(newNode->data)) T;
+    }
 
-    if (_isplacementNew)
-    {
-        return new (node) T(std::forward<Args>(args)...);
-    }
-    else
-    {
-        return (T*)node;
-    }
+    return &(newNode->data);
 }
 
 template<typename T>
@@ -162,38 +150,25 @@ void ObjectFreeList<T>::Free(T* object)
 
     // T 타입이 다형성을 가지고 독립적으로 존재하는 두 개의 풀에서
     // 서로 다른 풀에서 Free를 하는 사고를 방지하는 코드가 들어가야함
-    char* target = (char*)object;
-    bool isbelong = false;
-
-    for (const auto& chunk : _chunk)
-    {
-        char* begin = (char*)chunk.begin;
-        char* end = begin + chunk.size;
-
-        if (target >= begin && target < end && (target - begin) % sizeof(Node) == 0)
-        {
-            isbelong = true;
-            break;
-        }
-    }
-
-    if (!isbelong)
+    Node* node = (Node*)((char*)object - 8);
+    if (node->cookie_front != _cookieValue || node->cookie_end != _cookieValue)
     {
         __debugbreak();
         return;
     }
 
+    _countFree++;
     if (_isplacementNew)
     {
-        object->~T();
+        node->data.~T();
     }
 
-    Node* node = (Node*)object;
     node->next = _head;
     _head = node;
+    _countPool++;
 }
 
-template<typename T>
+/*template<typename T>
 void* ObjectFreeList<T>::Alloc(int objectsize)
 {
     unsigned __int64 size = getObjectSize(objectsize);
@@ -256,4 +231,4 @@ void ObjectFreeList<T>::Free(void* object, int objectsize)
     Node* node = (Node*)object;
     node->next = _head;
     _head = node;
-}
+}*/

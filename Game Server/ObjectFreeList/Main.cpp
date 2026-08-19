@@ -38,29 +38,27 @@ private:
 class Player : public Object
 {
 public:
-	Player() {}
-	~Player() {}
+	Player() { printf("Player\n"); }
+	~Player() { printf("~Player\n"); }
 };
 
 class Monster : public Object
 {
 public:
-	Monster() {}
-	~Monster() {}
+	Monster() { printf("Monster\n"); }
+	~Monster() { printf("~Monster\n"); }
 };
 
 const size_t num = 500000;
+ObjectFreeList<Player> g_playerPool(10, true);
 
 int wmain()
 {
 	timeBeginPeriod(1);
 	srand((unsigned int)time(nullptr));
 
-	ObjectFreeList<Player> g_playerPool(50, true);
-
-	// 객체에게 포인터 주소를 넘겨줘야 되는데, 그 주소 값 자체를 넘겨주고있다.
-	// 이건 아닌데...
 	Player* player = g_playerPool.Alloc();
+	g_playerPool.Free(player);
 	
 	return 0;
 }
