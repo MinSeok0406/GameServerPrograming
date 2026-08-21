@@ -1,7 +1,9 @@
 ﻿  Main.cpp
-  코드를 생성하고 있습니다.
-  2 of 31 functions ( 6.5%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  코드를 생성했습니다.
-  CPP_All_In_One.vcxproj -> C:\GamePrograming\CPP\CPP_All_In_One\x64\Release\CPP_All_In_One.exe
+C:\GameServerPrograming\CPP\CPP_All_In_One\Main.cpp(79,9): error C3861: 'sendClear': 식별자를 찾을 수 없습니다.
+      C:\GameServerPrograming\CPP\CPP_All_In_One\Main.cpp(79,18):
+      'sendClear': 인수가 템플릿 매개 변수에 종속되지 않으므로 함수 선언을 사용할 수 있어야 합니다.
+      C:\GameServerPrograming\CPP\CPP_All_In_One\Main.cpp(79,18):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          C:\GameServerPrograming\CPP\CPP_All_In_One\Main.cpp(74,7):
+          클래스 템플릿 'LoggingMsgSender'을(를) 컴파일하는 동안
+  

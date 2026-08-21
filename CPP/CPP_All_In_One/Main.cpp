@@ -16,7 +16,69 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
+class CompanyA
+{
+public:
+    void sendClearText(const string& msg)
+    {
 
+    }
+
+    void sendEncrypted(const string& msg)
+    {
+
+    }
+};
+
+class CompanyB
+{
+public:
+    void sendClearText(const string& msg)
+    {
+
+    }
+
+    void sendEncrypted(const string& msg)
+    {
+
+    }
+};
+
+class MsgInfo
+{
+
+};
+
+template<typename Company>
+class MsgSender
+{
+public:
+    void sendClear(const MsgInfo& info)
+    {
+        string msg;
+
+        Company c;
+        c.sendClearText(msg);
+    }
+
+    void sendSecret(const MsgInfo& info)
+    {
+        string msg;
+
+        Company c;
+        c.sendEncrypted(msg);
+    }
+};
+
+template<typename Company>
+class LoggingMsgSender : public MsgSender<Company>
+{
+public:
+    void sendClearMsg(const MsgInfo& info)
+    {
+        sendClear(info);
+    }
+};
 
 int wmain(int argc, WCHAR* argv[])
 {
