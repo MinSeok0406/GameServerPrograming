@@ -1,443 +1,462 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
-#include "RedBlackTree.h"
+﻿#include "RedBlackTree.h"
 #include <iostream>
 #include <stdlib.h>
 
 extern RBTNode* Nil;
 
-RBTNode* RBT_CreateNode(ElementType newData)
+RBTNode* RBT_CreateNode(int newData)
 {
-    RBTNode* newNode = new RBTNode;
-    newNode->parent = nullptr;
-    newNode->left = nullptr;
-    newNode->right = nullptr;
-    newNode->data = newData;
-    newNode->Color = RBTNode::Color::BLACK;
-
-    return newNode;
+	RBTNode* newNode = new RBTNode;
+	newNode->Color = RBTNode::COLOR::BLACK;
+	newNode->parent = nullptr;
+	newNode->left = Nil;
+	newNode->right = Nil;
+	newNode->data = newData;
+	return newNode;
 }
 
-void RBT_DestoryNode(RBTNode* Node)
+bool RBT_DropNode(RBTNode** root)
 {
-    free(Node);
+	RBTNode* node = *root;
+	RBTNode* parent = node->parent;
+
+	if (parent == nullptr)
+	{
+		*root = nullptr;
+	}
+	else if (parent->left == node)
+	{
+		parent->left = Nil;
+	}
+	else
+	{
+		parent->right = Nil;
+	}
+
+	delete node;
+	return true;
 }
 
-void RBT_DestoryTree(RBTNode* tree)
+RBTNode* RBT_SearchNode(RBTNode** tree, int target)
 {
-    if (tree->right != Nil)
-    {
-        RBT_DestoryTree(tree->right);
-    }
-    
-    if (tree->left != Nil)
-    {
-        RBT_DestoryTree(tree->left);
-    }
+	RBTNode* node = *tree;
 
-    tree->left = Nil;
-    tree->right = Nil;
+	while (true)
+	{
+		if (node == Nil)
+		{
+			return nullptr;
+		}
 
-    RBT_DestoryNode(tree);
-}
+		if (node->data == target)
+		{
+			break;
+		}
+		else if (node->data < target)
+		{
+			node = node->right;
+		}
+		else if (node->data > target)
+		{
+			node = node->left;
+		}
+	}
 
-RBTNode* RBT_SearchNode(RBTNode* tree, ElementType target)
-{
-    if (tree == Nil)
-    {
-        return nullptr;
-    }
-
-    if (tree->data > target)
-    {
-        return RBT_SearchNode(tree->left, target);
-    }
-    else if (tree->data < target)
-    {
-        return RBT_SearchNode(tree->right, target);
-    }
-    else
-    {
-        return tree;
-    }
+	return node;
 }
 
 RBTNode* RBT_SearchMinNode(RBTNode* tree)
 {
-    if (tree == Nil)
-    {
-        return Nil;
-    }
+	RBTNode* node = tree;
+	while (true)
+	{
+		if (node->left == Nil)
+		{
+			break;
+		}
 
-    if (tree->left == Nil)
-    {
-        return tree;
-    }
-    else
-    {
-        return RBT_SearchMinNode(tree->left);
-    }
+		node = node->left;
+	}
+
+	return node;
 }
 
-void RBT_InsertNode(RBTNode** tree, RBTNode* newNode)
+RBTNode* RBT_SearchMaxNode(RBTNode* tree)
 {
-    RBT_InsertNodeHelper(tree, newNode);
+	RBTNode* node = tree;
+	while (true)
+	{
+		if (node->right == Nil)
+		{
+			break;
+		}
 
-    newNode->Color = RBTNode::Color::RED;
-    newNode->left = Nil;
-    newNode->right = Nil;
+		node = node->right;
+	}
 
-    RBT_RebuildAfterInsert(tree, newNode);
+	return node;
 }
 
-void RBT_InsertNodeHelper(RBTNode** tree, RBTNode* newNode)
+bool RBT_InsertNode(RBTNode** tree, RBTNode* newNode)
 {
-    if (*tree == nullptr)
-    {
-        *tree = newNode;
-    }
+	RBT_InsertNodeHelper(tree, newNode);
 
-    if ((*tree)->data < newNode->data)
-    {
-        if ((*tree)->right == Nil)
-        {
-            (*tree)->right = newNode;
-            newNode->parent = (*tree);
-        }
-        else
-        {
-            RBT_InsertNodeHelper(&(*tree)->right, newNode);
-        }
-    }
-    else if ((*tree)->data > newNode->data)
-    {
-        if ((*tree)->left == Nil)
-        {
-            (*tree)->left = newNode;
-            newNode->parent = (*tree);
-        }
-        else
-        {
-            RBT_InsertNodeHelper(&((*tree)->left), newNode);
-        }
-    }
+	newNode->Color = RBTNode::COLOR::RED;
+	newNode->left = Nil;
+	newNode->right = Nil;
+
+	RBT_RebuildAfterInsert(tree, newNode);
+
+	return true;
 }
 
-RBTNode* RBT_RemoveNode(RBTNode** root, ElementType data)
+bool RBT_InsertNodeHelper(RBTNode** tree, RBTNode* newNode)
 {
-    RBTNode* removed = nullptr;
-    RBTNode* successor = nullptr;
-    RBTNode* target = RBT_SearchNode(*root, data);
+	if (*tree == nullptr)
+	{
+		*tree = newNode;
+		return true;
+	}
 
-    if (target == nullptr)
-    {
-        return nullptr;
-    }
+	RBTNode* node = *tree;
+	while (true)
+	{
+		if (node->data > newNode->data)
+		{
+			if (node->left == Nil)
+			{
+				node->left = newNode;
+				newNode->parent = node;
+				break;
+			}
+			node = node->left;
+		}
+		else if (node->data < newNode->data)
+		{
+			if (node->right == Nil)
+			{
+				node->right = newNode;
+				newNode->parent = node;
+				break;
+			}
+			node = node->right;
+		}
+	}
 
-    if (target->left == Nil || target->right == Nil)
-    {
-        removed = target;
-    }
-    else
-    {
-        removed = RBT_SearchMinNode(target->right);
-        target->data = removed->data;
-    }
-
-    if (removed->left != Nil)
-    {
-        successor = removed->left;
-    }
-    else
-    {
-        successor = removed->right;
-    }
-
-    successor->parent = removed->parent;
-
-    if (removed->parent == nullptr)
-    {
-        *root = successor;
-    }
-    else
-    {
-        if (removed == removed->parent->left)
-        {
-            removed->parent->left = successor;
-        }
-        else
-        {
-            removed->parent->right = successor;
-        }
-    }
-
-    if (removed->Color == RBTNode::Color::BLACK)
-    {
-        RBT_RebuildAfterRemove(root, successor);
-    }
-
-    return removed;
+	return true;
 }
 
-void RBT_RebuildAfterInsert(RBTNode** root, RBTNode* x)
+bool RBT_RebuildAfterInsert(RBTNode** root, RBTNode* x)
 {
-    // 4번 규칙을 위반하고 있는 동안에는 계속 반복
-    while (x != *root && x->parent->Color == RBTNode::Color::RED)
-    {
-        // 부모 노드가 할아버지 노드의 왼쪽 자식일 경우
-        if (x->parent == x->parent->parent->left)
-        {
-            RBTNode* uncle = x->parent->parent->right;
-            // 삼촌이 빨간색 노드일 경우
-            if (uncle->Color == RBTNode::Color::RED)
-            {
-                x->parent->Color = RBTNode::Color::BLACK;
-                uncle->Color = RBTNode::Color::BLACK;
-                x->parent->parent->Color = RBTNode::Color::RED;
+	if (x->parent->Color == RBTNode::COLOR::BLACK)
+	{
+		(*root)->Color = RBTNode::COLOR::BLACK;
+		return true;
+	}
 
-                x = x->parent->parent;
-            }
-            else
-            {
-                // 삼촌이 검은색이고 x가 오른쪽 자식일 때
-                if (x == x->parent->right)
-                {
-                    x = x->parent;
-                    RBT_RotateLeft(root, x);
-                }
+	while (x != *root)
+	{
+		if (x->parent == x->parent->parent->left)
+		{
+			RBTNode* uncle = x->parent->parent->right;
+			if (uncle->Color == RBTNode::COLOR::RED)
+			{
+				x->parent->Color = RBTNode::COLOR::BLACK;
+				uncle->Color = RBTNode::COLOR::BLACK;
+				x->parent->parent->Color = RBTNode::COLOR::RED;
+				x = x->parent->parent;
+			}
+			else
+			{
+				if (x == x->parent->right)
+				{
+					x = x->parent;
+					RBT_RotateLeft(root, x);
+				}
 
-                x->parent->Color = RBTNode::Color::BLACK;
-                x->parent->parent->Color = RBTNode::Color::RED;
+				x->parent->Color = RBTNode::COLOR::BLACK;
+				x->parent->parent->Color = RBTNode::COLOR::RED;
+				RBT_RotateRight(root, x->parent->parent);
+			}
+		}
+		else
+		{
+			RBTNode* uncle = x->parent->parent->left;
+			if (uncle->Color == RBTNode::COLOR::RED)
+			{
+				x->parent->Color = RBTNode::COLOR::BLACK;
+				uncle->Color = RBTNode::COLOR::BLACK;
+				x->parent->parent->Color = RBTNode::COLOR::RED;
+				x = x->parent->parent;
+			}
+			else
+			{
+				if (x == x->parent->left)
+				{
+					x = x->parent;
+					RBT_RotateRight(root, x);
+				}
 
-                RBT_RotateRight(root, x->parent->parent);
-            }
-        }
-        else
-        {
-            RBTNode* uncle = x->parent->parent->left;
-            if (uncle->Color == RBTNode::Color::RED)
-            {
-                x->parent->Color = RBTNode::Color::BLACK;
-                uncle->Color = RBTNode::Color::BLACK;
-                x->parent->parent->Color = RBTNode::Color::RED;
+				x->parent->Color = RBTNode::COLOR::BLACK;
+				x->parent->parent->Color = RBTNode::COLOR::RED;
+				RBT_RotateLeft(root, x->parent->parent);
+			}
+		}
+	}
 
-                x = x->parent->parent;
-            }
-            else
-            {
-                if (x == x->parent->left)
-                {
-                    x = x->parent;
-                    RBT_RotateRight(root, x);
-                }
-
-                x->parent->Color = RBTNode::Color::BLACK;
-                x->parent->parent->Color = RBTNode::Color::RED;
-
-                RBT_RotateLeft(root, x->parent->parent);
-            }
-        }
-    }
-
-    // 루트 노드는 반드시 검은색이어야 함
-    (*root)->Color = RBTNode::Color::BLACK;
+	(*root)->Color = RBTNode::COLOR::BLACK;
+	return true;
 }
 
-void RBT_RebuildAfterRemove(RBTNode** root, RBTNode* successor)
+bool RBT_DeleteNode(RBTNode** tree, int deleteData)
 {
-    RBTNode* sibling = nullptr;
+	RBTNode* node = RBT_SearchNode(tree, deleteData);
+	if (node == nullptr)
+	{
+		return false;
+	}
 
-    while (successor->parent != nullptr && successor->Color == RBTNode::Color::BLACK)
-    {
-        if (successor == successor->parent->left)
-        {
-            sibling = successor->parent->right;
+	RBTNode::COLOR color = node->Color;
+	RBTNode* childNode = RBT_DeleteNodeHelper(tree, node);
+	RBT_RebuildAfterDelete(tree, childNode, color);
 
-            if (sibling->Color == RBTNode::Color::RED)
-            {
-                sibling->Color = RBTNode::Color::BLACK;
-                successor->parent->Color = RBTNode::Color::RED;
-                RBT_RotateLeft(root, successor->parent);
-            }
-            else
-            {
-                if (sibling->left->Color == RBTNode::Color::BLACK && sibling->right->Color == RBTNode::Color::BLACK)
-                {
-                    sibling->Color = RBTNode::Color::RED;
-                    successor = successor->parent;
-                }
-                else
-                {
-                    if (sibling->left->Color == RBTNode::Color::RED)
-                    {
-                        sibling->left->Color = RBTNode::Color::BLACK;
-                        sibling->Color = RBTNode::Color::RED;
-
-                        RBT_RotateRight(root, sibling);
-                        sibling = successor->parent->right;
-                    }
-
-                    sibling->Color = successor->parent->Color;
-                    successor->parent->Color = RBTNode::Color::BLACK;
-                    sibling->right->Color = RBTNode::Color::BLACK;
-                    RBT_RotateLeft(root, successor->parent);
-                    successor = *root;
-                }
-            }
-        }
-        else
-        {
-            sibling = successor->parent->left;
-
-            if (sibling->Color == RBTNode::Color::RED)
-            {
-                sibling->Color = RBTNode::Color::BLACK;
-                successor->parent->Color = RBTNode::Color::RED;
-                RBT_RotateRight(root, successor->parent);
-            }
-            else
-            {
-                if (sibling->right->Color == RBTNode::Color::BLACK && sibling->left->Color == RBTNode::Color::BLACK)
-                {
-                    sibling->Color = RBTNode::Color::RED;
-                    successor = successor->parent;
-                }
-                else
-                {
-                    if (sibling->right->Color == RBTNode::Color::RED)
-                    {
-                        sibling->right->Color = RBTNode::Color::BLACK;
-                        sibling->Color = RBTNode::Color::RED;
-
-                        RBT_RotateLeft(root, sibling);
-                        sibling = successor->parent->left;
-                    }
-
-                    sibling->Color = successor->parent->Color;
-                    successor->parent->Color = RBTNode::Color::BLACK;
-                    sibling->left->Color = RBTNode::Color::BLACK;
-                    RBT_RotateRight(root, successor->parent);
-                    successor = *root;
-                }
-            }
-        }
-    }
-
-    successor->Color = RBTNode::Color::BLACK;
+	return true;
 }
 
-void RBT_PrintTree(RBTNode* node, int depth, int blackCount)
+RBTNode* RBT_DeleteNodeHelper(RBTNode** tree, RBTNode* node)
 {
-    int i = 0;
-    char c = 'X';
-    int v = -1;
-    char cnt[100];
+	if (node->left != Nil)
+	{
+		RBTNode* deleteNode = RBT_SearchMaxNode(node->left);
+		node->data = deleteNode->data;
+		node->Color = deleteNode->Color;
 
-    if (node == nullptr || node == Nil)
-    {
-        return;
-    }
+		RBTNode* parent = deleteNode->parent;
+		RBTNode* child = deleteNode->left;
+		if (parent->left == deleteNode)
+		{
+			parent->left = child;
+		}
+		else
+		{
+			parent->right = child;
+		}
 
-    if (node->Color == RBTNode::Color::BLACK)
-    {
-        blackCount++;
-    }
+		// Nil 오히려 부모 연결이 필요하지 않을까?
+		if (child != Nil)
+		{
+			child->parent = parent;
+		}
 
-    if (node->parent != nullptr)
-    {
-        v = node->parent->data;
+		RBT_DropNode(&deleteNode);
+		return child;
+	}
+	else if (node->right != Nil)
+	{
+		RBTNode* deleteNode = RBT_SearchMinNode(node->right);
+		node->data = deleteNode->data;
+		node->Color = deleteNode->Color;
 
-        if (node->parent->left == node)
-        {
-            c = 'L';
-        }
-        else
-        {
-            c = 'R';
-        }
-    }
+		RBTNode* parent = deleteNode->parent;
+		RBTNode* child = deleteNode->right;
+		if (parent->left == deleteNode)
+		{
+			parent->left = child;
+		}
+		else
+		{
+			parent->right = child;
+		}
 
-    if (node->left == Nil && node->right == Nil)
-    {
-        sprintf(cnt, "--------- %d", blackCount);
-    }
-    else
-    {
-        sprintf(cnt, "");
-    }
+		// Nil 오히려 부모 연결이 필요하지 않을까?
+		if (child != Nil)
+		{
+			child->parent = parent;
+		}
 
-    for (i = 0; i < depth; ++i)
-    {
-        printf("  ");
-    }
-
-    printf("%d %s [%c, %d] %s\n", node->data, (node->Color == RBTNode::Color::RED) ? "RED" : "BLACK", c, v, cnt);
-
-    RBT_PrintTree(node->left, depth + 1, blackCount);
-    RBT_PrintTree(node->right, depth + 1, blackCount);
+		RBT_DropNode(&deleteNode);
+		return child;
+	}
+	else
+	{
+		RBT_DropNode(&node);
+		return Nil;
+	}
 }
 
-void RBT_RotateLeft(RBTNode** root, RBTNode* parent)
+bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 {
-    RBTNode* rightChild = parent->right;
+	if (color == RBTNode::COLOR::RED)
+	{
+		(*root)->Color = RBTNode::COLOR::BLACK;
+		return true;
+	}
 
-    parent->right = rightChild->left;
+	while (true)
+	{
+		if (x == x->parent->left)
+		{
+			// 2.1 삭제 노드의 자식(기준노드)이 레드인 경우
+			if (x->Color == RBTNode::COLOR::RED)
+			{
+				x->Color = RBTNode::COLOR::BLACK;
+				break;
+			}
+			else
+			{
+				RBTNode* sibling = x->parent->right;
+				// 2.2 삭제 노드의 형제가 레드
+				if (sibling->Color == RBTNode::COLOR::RED)
+				{
+					sibling->Color = RBTNode::COLOR::BLACK;
+					RBT_RotateLeft(root, x->parent);
+					x->parent->Color = RBTNode::COLOR::RED;
+				}
+				else 
+				{
+					// 2.3 삭제 노드의 형제가 블랙이고 형제의 양쪽 자식이 블랙
+					if (sibling->left->Color == RBTNode::COLOR::BLACK &&
+						sibling->right->Color == RBTNode::COLOR::BLACK)
+					{
+						sibling->Color = RBTNode::COLOR::RED;
+						x = x->parent;
+						continue;
+					}
+					// 2.4 삭제 노드의 형제가 블랙이고 형제의 오른자식은 블랙
+					else if (sibling->right->Color == RBTNode::COLOR::BLACK)
+					{
+						sibling->left->Color = RBTNode::COLOR::BLACK;
+						sibling->Color = RBTNode::COLOR::RED;
+						RBT_RotateRight(root, sibling);
+					}
+					
+					// 2.5 삭제 노드의 형제가 블랙이고 형제의 오른자식이 레드
+					sibling->Color = x->parent->Color;
+					x->parent->Color = RBTNode::COLOR::BLACK;
+					sibling->right->Color = RBTNode::COLOR::BLACK;
+					RBT_RotateLeft(root, x->parent);
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (x->Color == RBTNode::COLOR::RED)
+			{
+				x->Color = RBTNode::COLOR::BLACK;
+				break;
+			}
+			else
+			{
+				RBTNode* sibling = x->parent->left;
+				if (sibling->Color == RBTNode::COLOR::RED)
+				{
+					sibling->Color = RBTNode::COLOR::BLACK;
+					RBT_RotateRight(root, x->parent);
+					x->parent->Color = RBTNode::COLOR::RED;
+				}
+				else
+				{
+					if (sibling->left->Color == RBTNode::COLOR::BLACK &&
+						sibling->right->Color == RBTNode::COLOR::BLACK)
+					{
+						sibling->Color = RBTNode::COLOR::RED;
+						x = x->parent;
+						continue;
+					}
+					else if (sibling->left->Color == RBTNode::COLOR::BLACK)
+					{
+						sibling->right->Color = RBTNode::COLOR::BLACK;
+						sibling->Color = RBTNode::COLOR::RED;
+						RBT_RotateLeft(root, sibling);
+					}
 
-    if (rightChild->left != Nil)
-    {
-        rightChild->left->parent = parent;
-    }
+					sibling->Color = x->parent->Color;
+					x->parent->Color = RBTNode::COLOR::BLACK;
+					sibling->left->Color = RBTNode::COLOR::BLACK;
+					RBT_RotateRight(root, x->parent);
+					break;
+				}
+			}
+		}
+	}
 
-    rightChild->parent = parent->parent;
-
-    if (parent->parent == nullptr)
-    {
-        *root = rightChild;
-    }
-    else
-    {
-        if (parent == parent->parent->left)
-        {
-            parent->parent->left = rightChild;
-        }
-        else if (parent == parent->parent->right)
-        {
-            parent->parent->right = rightChild;
-        }
-    }
-
-    rightChild->left = parent;
-    parent->parent = rightChild;
+	(*root)->Color = RBTNode::COLOR::BLACK;
+	return true;
 }
 
-void RBT_RotateRight(RBTNode** root, RBTNode* parent)
+bool RBT_RotateLeft(RBTNode** root, RBTNode* parent)
 {
-    RBTNode* leftChild = parent->left;
+	RBTNode* rightChild = parent->right;
 
-    parent->left = leftChild->right;
+	if (rightChild->left != Nil)
+	{
+		rightChild->left->parent = parent;
+	}
 
-    if (leftChild->right != Nil)
-    {
-        leftChild->right->parent = parent;
-    }
+	parent->right = rightChild->left;
 
-    leftChild->parent = parent->parent;
+	if (parent->parent == nullptr)
+	{
+		(*root) = rightChild;
+	}
+	else
+	{
+		if (parent == parent->parent->left)
+		{
+			rightChild = parent->parent->left;
+		}
+		else if (parent == parent->parent->right)
+		{
+			rightChild = parent->parent->right;
+		}
+	}
 
-    if (parent->parent == nullptr)
-    {
-        *root = leftChild;
-    }
-    else
-    {
-        if (parent == parent->parent->left)
-        {
-            parent->parent->left = leftChild;
-        }
-        else if (parent == parent->parent->right)
-        {
-            parent->parent->right = leftChild;
-        }
-    }
+	rightChild->left = parent;
+	parent->parent = rightChild->parent;
 
-    leftChild->right = parent;
-    parent->parent = leftChild;
+	return true;
+}
+
+bool RBT_RotateRight(RBTNode** root, RBTNode* parent)
+{
+	RBTNode* leftChild = parent->left;
+
+	if (leftChild->right != Nil)
+	{
+		leftChild->right->parent = parent;
+	}
+
+	parent->left = leftChild->right;
+
+	if (parent->parent == nullptr)
+	{
+		(*root) = leftChild;
+	}
+	else
+	{
+		if (parent == parent->parent->left)
+		{
+			leftChild = parent->parent->left;
+		}
+		else if (parent == parent->parent->right)
+		{
+			leftChild = parent->parent->right;
+		}
+	}
+
+	leftChild->right = parent;
+	parent->parent = leftChild->parent;
+
+	return true;
+}
+
+bool Update(RBTNode** root)
+{
+	return true;
+}
+
+bool Render(RBTNode** root)
+{
+	return true;
 }

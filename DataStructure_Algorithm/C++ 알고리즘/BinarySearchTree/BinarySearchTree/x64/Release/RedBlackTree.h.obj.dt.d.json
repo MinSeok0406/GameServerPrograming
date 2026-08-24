@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\redblacktree\\redblacktree.h",
+        "Source": "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\binarysearchtree\\redblacktree.h",
         "ProvidedModule": "",
         "Includes": [],
         "ImportedModules": [],
