@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "BinarySearchTree\\x64\\Release\\RedBlackTree.obj",
+            "outputs": [
+                "BinarySearchTree\\x64\\Release\\RedBlackTree.h.obj.dt.module.json",
+                "BinarySearchTree\\x64\\Release\\RedBlackTree.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

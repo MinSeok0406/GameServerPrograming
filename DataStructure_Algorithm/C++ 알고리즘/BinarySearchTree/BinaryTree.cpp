@@ -46,10 +46,6 @@ bool insertData(BTree** root, int data)
             }
             node = node->right;
         }
-        else if (node->data == data)
-        {
-            return false;
-        }
     }
 
     return true;
