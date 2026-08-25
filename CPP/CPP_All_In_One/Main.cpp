@@ -74,6 +74,8 @@ template<typename Company>
 class LoggingMsgSender : public MsgSender<Company>
 {
 public:
+    using MsgSender<Company>::sendClear;
+
     void sendClearMsg(const MsgInfo& info)
     {
         sendClear(info);
