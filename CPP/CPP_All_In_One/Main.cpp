@@ -16,69 +16,45 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-class CompanyA
+template<typename T>
+class SquareMatrixBase
 {
-public:
-    void sendClearText(const string& msg)
+protected:
+    SquareMatrixBase(size_t n, T* pMem)
+        : size(n), pData(pMem)
+    {}
+
+    void setDataPtr(T* ptr)
+    {
+        pData = ptr;
+    }
+
+    void invert(size_t matrixsize)
     {
 
     }
 
-    void sendEncrypted(const string& msg)
-    {
-
-    }
+private:
+    size_t size;
+    T* pData;
 };
 
-class CompanyB
+template<typename T, size_t n>
+class SquareMatrix : private SquareMatrixBase<T>
 {
+private:
+    using SquareMatrixBase<T>::invert;
+    T data[n * n];
+
 public:
-    void sendClearText(const string& msg)
+    SquareMatrix() : SquareMatrixBase<T>(n, data)
     {
 
     }
 
-    void sendEncrypted(const string& msg)
+    void invert()
     {
-
-    }
-};
-
-class MsgInfo
-{
-
-};
-
-template<typename Company>
-class MsgSender
-{
-public:
-    void sendClear(const MsgInfo& info)
-    {
-        string msg;
-
-        Company c;
-        c.sendClearText(msg);
-    }
-
-    void sendSecret(const MsgInfo& info)
-    {
-        string msg;
-
-        Company c;
-        c.sendEncrypted(msg);
-    }
-};
-
-template<typename Company>
-class LoggingMsgSender : public MsgSender<Company>
-{
-public:
-    using MsgSender<Company>::sendClear;
-
-    void sendClearMsg(const MsgInfo& info)
-    {
-        sendClear(info);
+        invert(n);
     }
 };
 

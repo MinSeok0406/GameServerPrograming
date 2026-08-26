@@ -6,6 +6,156 @@
 
 extern RBTNode* Nil;
 
+bool RBT_VerificationTest(RBTNode** root)
+{
+	if ((*root) == Nil)
+	{
+		return true;
+	}
+
+	// 0. 루트 노드의 부모 노드 nullptr 검증
+	if ((*root)->parent != nullptr)
+	{
+		printf("root parent error\n");
+		return false;
+	}
+
+	// 1. 루트 노드 검정색
+	if ((*root)->Color != RBTNode::COLOR::BLACK)
+	{
+		printf("root color error\n");
+		return false;
+	}
+
+	// 2. Nil이 검정색
+	if (Nil->Color != RBTNode::COLOR::BLACK)
+	{
+		printf("Nil color error\n");
+		return false;
+	}
+
+	// 3. 데이터 정렬 잘되어 있는지
+	std::vector<int> v;
+	RBT_InorderTraval(*root, v);
+	int a = v[0];
+	for (auto i = 1; i < v.size(); ++i)
+	{
+		if (a > v[i])
+		{
+			printf("Data Array error\n");
+			return false;
+		}
+		a = v[i];
+	}
+
+	// 4. 레드 자식 블랙인지
+	if (!RBT_RedChildrenBlack(*root))
+	{
+		printf("Red Children Not Black\n");
+		return false;
+	}
+
+	// 5. 루트부터 리프까지 검정색 일정한지
+	if (RBT_CheckBlackCount(*root) == -1)
+	{
+		printf("BlackCount Not equle\n");
+		return false;
+	}
+
+	// 6. 모든노드의 부모노드 검증
+	if (!RBT_ParentLinks(*root, nullptr))
+	{
+		printf("Parent Not equle\n");
+		return false;
+	}
+
+	return true;
+}
+
+bool RBT_InorderTraval(RBTNode* root, std::vector<int>& v)
+{
+	if (root == Nil || root == nullptr)
+	{
+		return true;
+	}
+
+	RBT_InorderTraval(root->left, v);
+	v.push_back(root->data);
+	RBT_InorderTraval(root->right, v);
+
+	return true;
+}
+
+bool RBT_RedChildrenBlack(RBTNode* root)
+{
+	if (root == Nil)
+	{
+		return true;
+	}
+
+	if (root->Color == RBTNode::COLOR::RED)
+	{
+		if (root->left->Color != RBTNode::COLOR::BLACK || root->right->Color != RBTNode::COLOR::BLACK)
+		{
+			return false;
+		}
+	}
+
+	if (!RBT_RedChildrenBlack(root->left))
+	{
+		return false;
+	}
+
+	if (!RBT_RedChildrenBlack(root->right))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+int RBT_CheckBlackCount(RBTNode* root)
+{
+	if (root == Nil)
+	{
+		return 1;
+	}
+
+	int leftCount = RBT_CheckBlackCount(root->left);
+	if (leftCount == -1)
+	{
+		return -1;
+	}
+
+	int rightCount = RBT_CheckBlackCount(root->right);
+	if (rightCount == -1)
+	{
+		return -1;
+	}
+
+	if (leftCount != rightCount)
+	{
+		return -1;
+	}
+
+	return leftCount + (root->Color == RBTNode::COLOR::BLACK ? 1 : 0);
+}
+
+bool RBT_ParentLinks(RBTNode* root, RBTNode* parent)
+{
+	if (root == Nil)
+	{
+		return true;
+	}
+
+	if (root->parent != parent)
+	{
+		return false;
+	}
+
+	return RBT_ParentLinks(root->left, root) && RBT_ParentLinks(root->right, root);
+}
+
 RBTNode* RBT_CreateNode(int newData)
 {
 	RBTNode* newNode = new RBTNode;
@@ -118,12 +268,18 @@ bool RBT_InsertNode(RBTNode** tree, RBTNode* newNode)
 
 	RBT_RebuildAfterInsert(tree, newNode);
 
+	// 검증 테스트 삽입
+	if (!RBT_VerificationTest(tree))
+	{
+		__debugbreak();
+	}
+
 	return true;
 }
 
 bool RBT_InsertNodeHelper(RBTNode** tree, RBTNode* newNode)
 {
-	if (*tree == nullptr)
+	if (*tree == Nil)
 	{
 		*tree = newNode;
 		return true;
@@ -239,13 +395,20 @@ bool RBT_DeleteNode(RBTNode** tree, int deleteData)
 	}
 
 	RBTNode::COLOR color;
-	RBTNode* childNode = RBT_DeleteNodeHelper(tree, node, color);
-	RBT_RebuildAfterDelete(tree, childNode, color);
+	RBTNode* parent = nullptr;
+	RBTNode* childNode = RBT_DeleteNodeHelper(tree, node, color, parent);
+	RBT_RebuildAfterDelete(tree, childNode, parent, color);
+
+	// 검증 테스트 삽입
+	if (!RBT_VerificationTest(tree))
+	{
+		__debugbreak();
+	}
 
 	return true;
 }
 
-RBTNode* RBT_DeleteNodeHelper(RBTNode** tree, RBTNode* node, RBTNode::COLOR& outColor)
+RBTNode* RBT_DeleteNodeHelper(RBTNode** tree, RBTNode* node, RBTNode::COLOR& outColor, RBTNode*& outParent)
 {
 	if (node->left != Nil)
 	{
@@ -264,7 +427,11 @@ RBTNode* RBT_DeleteNodeHelper(RBTNode** tree, RBTNode* node, RBTNode::COLOR& out
 			parent->right = child;
 		}
 
-		child->parent = parent;
+		if (child != Nil)
+		{
+			child->parent = parent;
+		}
+		outParent = parent;
 
 		delete deleteNode;
 		return child;
@@ -286,7 +453,11 @@ RBTNode* RBT_DeleteNodeHelper(RBTNode** tree, RBTNode* node, RBTNode::COLOR& out
 			parent->right = child;
 		}
 
-		child->parent = parent;
+		if (child != Nil)
+		{
+			child->parent = parent;
+		}
+		outParent = parent;
 
 		delete deleteNode;
 		return child;
@@ -294,10 +465,10 @@ RBTNode* RBT_DeleteNodeHelper(RBTNode** tree, RBTNode* node, RBTNode::COLOR& out
 	else
 	{
 		outColor = node->Color;
-		Nil->parent = node->parent;
+		outParent = node->parent;
 		if (node->parent == nullptr)
 		{
-			*tree = nullptr;
+			*tree = Nil;
 		}
 
 		RBT_DropNode(&node);
@@ -305,9 +476,9 @@ RBTNode* RBT_DeleteNodeHelper(RBTNode** tree, RBTNode* node, RBTNode::COLOR& out
 	}
 }
 
-bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
+bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode* parent, RBTNode::COLOR color)
 {
-	if (*root == nullptr)
+	if (*root == Nil)
 	{
 		return true;
 	}
@@ -318,9 +489,9 @@ bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 		return true;
 	}
 
-	while (x->parent != nullptr)
+	while (x != *root && parent != nullptr)
 	{
-		if (x == x->parent->left)
+		if (x == parent->left)
 		{
 			// 2.1 삭제 노드의 자식(기준노드)이 레드인 경우
 			if (x->Color == RBTNode::COLOR::RED)
@@ -330,13 +501,13 @@ bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 			}
 			else
 			{
-				RBTNode* sibling = x->parent->right;
+				RBTNode* sibling = parent->right;
 				// 2.2 삭제 노드의 형제가 레드
 				if (sibling->Color == RBTNode::COLOR::RED)
 				{
 					sibling->Color = RBTNode::COLOR::BLACK;
-					x->parent->Color = RBTNode::COLOR::RED;
-					RBT_RotateLeft(root, x->parent);
+					parent->Color = RBTNode::COLOR::RED;
+					RBT_RotateLeft(root, parent);
 				}
 				else 
 				{
@@ -345,7 +516,8 @@ bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 						sibling->right->Color == RBTNode::COLOR::BLACK)
 					{
 						sibling->Color = RBTNode::COLOR::RED;
-						x = x->parent;
+						x = parent;
+						parent = parent->parent;
 						continue;
 					}
 					// 2.4 삭제 노드의 형제가 블랙이고 형제의 오른자식은 블랙
@@ -354,14 +526,14 @@ bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 						sibling->left->Color = RBTNode::COLOR::BLACK;
 						sibling->Color = RBTNode::COLOR::RED;
 						RBT_RotateRight(root, sibling);
-						sibling = x->parent->right;
+						sibling = parent->right;
 					}
 					
 					// 2.5 삭제 노드의 형제가 블랙이고 형제의 오른자식이 레드
-					sibling->Color = x->parent->Color;
-					x->parent->Color = RBTNode::COLOR::BLACK;
+					sibling->Color = parent->Color;
+					parent->Color = RBTNode::COLOR::BLACK;
 					sibling->right->Color = RBTNode::COLOR::BLACK;
-					RBT_RotateLeft(root, x->parent);
+					RBT_RotateLeft(root, parent);
 					break;
 				}
 			}
@@ -376,13 +548,13 @@ bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 			}
 			else
 			{
-				RBTNode* sibling = x->parent->left;
+				RBTNode* sibling = parent->left;
 				// 2.2 삭제 노드의 형제가 레드
 				if (sibling->Color == RBTNode::COLOR::RED)
 				{
 					sibling->Color = RBTNode::COLOR::BLACK;
-					x->parent->Color = RBTNode::COLOR::RED;
-					RBT_RotateRight(root, x->parent);
+					parent->Color = RBTNode::COLOR::RED;
+					RBT_RotateRight(root, parent);
 				}
 				else
 				{
@@ -391,7 +563,8 @@ bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 						sibling->right->Color == RBTNode::COLOR::BLACK)
 					{
 						sibling->Color = RBTNode::COLOR::RED;
-						x = x->parent;
+						x = parent;
+						parent = parent->parent;
 						continue;
 					}
 					// 2.4 삭제 노드의 형제가 블랙이고 형제의 오른자식은 블랙
@@ -400,21 +573,21 @@ bool RBT_RebuildAfterDelete(RBTNode** root, RBTNode* x, RBTNode::COLOR color)
 						sibling->right->Color = RBTNode::COLOR::BLACK;
 						sibling->Color = RBTNode::COLOR::RED;
 						RBT_RotateLeft(root, sibling);
-						sibling = x->parent->left;
+						sibling = parent->left;
 					}
 
 					// 2.5 삭제 노드의 형제가 블랙이고 형제의 오른자식이 레드
-					sibling->Color = x->parent->Color;
-					x->parent->Color = RBTNode::COLOR::BLACK;
+					sibling->Color = parent->Color;
+					parent->Color = RBTNode::COLOR::BLACK;
 					sibling->left->Color = RBTNode::COLOR::BLACK;
-					RBT_RotateRight(root, x->parent);
+					RBT_RotateRight(root, parent);
 					break;
 				}
 			}
 		}
 	}
 
-	if (*root != nullptr)
+	if (*root != Nil)
 	{
 		(*root)->Color = RBTNode::COLOR::BLACK;
 	}
@@ -625,7 +798,7 @@ static void printNode(RBTNode* node)
 
 bool Render(RBTNode** root)
 {
-	if (*root == nullptr)
+	if (*root == Nil)
 	{
 		return true;
 	}
