@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "CreateFi.a30d8f8b\\x64\\Debug\\AStar.obj",
+            "outputs": [
+                "CreateFi.a30d8f8b\\x64\\Debug\\AStar.cpp.obj.dt.module.json",
+                "CreateFi.a30d8f8b\\x64\\Debug\\AStar.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

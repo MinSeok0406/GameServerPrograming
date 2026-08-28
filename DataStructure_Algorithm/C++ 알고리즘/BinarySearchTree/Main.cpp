@@ -23,6 +23,7 @@ int wmain()
 	Nil->Color = RBTNode::COLOR::BLACK;
 
 	// 성능 비교 (map)
+	// 레드블랙트리 -> 57000ms
 /*	auto start = chrono::steady_clock::now();
 
 	for (auto i = 0; i < 100'000'000; ++i)
@@ -40,6 +41,8 @@ int wmain()
 	chrono::duration<double, milli> duration_ms = end - start;
 	printf("%lf\n",duration_ms.count());
 
+
+	// map -> 75000ms
 	start = chrono::steady_clock::now();
 
 	for (auto i = 0; i < 100'000'000; ++i)

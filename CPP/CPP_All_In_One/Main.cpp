@@ -11,45 +11,30 @@
 #include <stack>
 #include <queue>
 #include <list>
+#include <time.h>
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-class Top
+struct Node
 {
+    int a;
+    int b;
+    int c;
+    short x;
+    short y;
 };
 
-class Middle : public Top
+struct Comp
 {
-
-};
-
-class Bottom : public Middle
-{
-
-};
-
-template<typename T>
-class SmartPointer
-{
-public:
-    explicit SmartPointer(T* ptr)
+    bool operator()(const Node* lhs, const Node* rhs)
     {
-
+        return lhs->a > rhs->a;
     }
-
-    template<typename U>
-    SmartPointer(const SmartPointer<U>& other) : _ptr(other.get())
-    {
-
-    }
-
-    T* get() const { return _ptr; }
-
-private:
-    T* _ptr;
 };
+
+priority_queue<Node*, vector<Node*>, Comp> pq;
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -57,12 +42,18 @@ int wmain(int argc, WCHAR* argv[])
     cin.tie(NULL);
     cout.tie(NULL);
     timeBeginPeriod(1);
+    srand((unsigned int)time(nullptr));
 
-    Top* t = new Middle;
-    Top* t2 = new Bottom;
-
-    SmartPointer<Top> shar = SmartPointer<Middle>(new Middle);
-    //SmartPointer<Middle> s = SmartPointer<Top>(new Top);
+    for (auto i = 0; i < 10; ++i)
+    {
+        Node* node = new Node;
+        node->a = rand() % 1000;
+        node->b = rand() % 1000;
+        node->c = rand() % 1000;
+        node->x = rand() % 1000;
+        node->y = rand() % 1000;
+        pq.push(node);
+    }
 
     return 0;
 }
