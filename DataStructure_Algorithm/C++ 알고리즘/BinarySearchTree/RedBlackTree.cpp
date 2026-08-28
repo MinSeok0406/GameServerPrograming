@@ -5,6 +5,7 @@
 #include <string>
 
 extern RBTNode* Nil;
+static int s_level = 0;
 
 bool RBT_VerificationTest(RBTNode** root)
 {
@@ -269,10 +270,10 @@ bool RBT_InsertNode(RBTNode** tree, RBTNode* newNode)
 	RBT_RebuildAfterInsert(tree, newNode);
 
 	// 검증 테스트 삽입
-	if (!RBT_VerificationTest(tree))
+	/*if (!RBT_VerificationTest(tree))
 	{
 		__debugbreak();
-	}
+	}*/
 
 	return true;
 }
@@ -400,10 +401,10 @@ bool RBT_DeleteNode(RBTNode** tree, int deleteData)
 	RBT_RebuildAfterDelete(tree, childNode, parent, color);
 
 	// 검증 테스트 삽입
-	if (!RBT_VerificationTest(tree))
+	/*if (!RBT_VerificationTest(tree))
 	{
 		__debugbreak();
-	}
+	}*/
 
 	return true;
 }
@@ -746,8 +747,6 @@ bool Search(RBTNode** root)
 	return true;
 }
 
-static int g_level = 0;
-
 static int getTreeHeight(RBTNode* node)
 {
 	if (node == Nil)
@@ -808,7 +807,7 @@ bool Render(RBTNode** root)
 	for (auto level = 0; level <= height; ++level)
 	{
 		int depth = (1 << (height - level)) - 1;
-		g_level = (1 << (height - level + 1)) - 1;
+		s_level = (1 << (height - level + 1)) - 1;
 
 		printf("%s", std::string(depth, ' ').c_str());
 		BFS(root, level);
@@ -826,7 +825,7 @@ bool BFS(RBTNode** root, int depth)
 	if (depth == 0)
 	{
 		printNode(node);
-		printf("%s", std::string(g_level, ' ').c_str());
+		printf("%s", std::string(s_level, ' ').c_str());
 		return true;
 	}
 

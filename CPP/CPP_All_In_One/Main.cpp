@@ -16,46 +16,39 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-template<typename T>
-class SquareMatrixBase
+class Top
 {
-protected:
-    SquareMatrixBase(size_t n, T* pMem)
-        : size(n), pData(pMem)
-    {}
-
-    void setDataPtr(T* ptr)
-    {
-        pData = ptr;
-    }
-
-    void invert(size_t matrixsize)
-    {
-
-    }
-
-private:
-    size_t size;
-    T* pData;
 };
 
-template<typename T, size_t n>
-class SquareMatrix : private SquareMatrixBase<T>
+class Middle : public Top
 {
-private:
-    using SquareMatrixBase<T>::invert;
-    T data[n * n];
 
+};
+
+class Bottom : public Middle
+{
+
+};
+
+template<typename T>
+class SmartPointer
+{
 public:
-    SquareMatrix() : SquareMatrixBase<T>(n, data)
+    explicit SmartPointer(T* ptr)
     {
 
     }
 
-    void invert()
+    template<typename U>
+    SmartPointer(const SmartPointer<U>& other) : _ptr(other.get())
     {
-        invert(n);
+
     }
+
+    T* get() const { return _ptr; }
+
+private:
+    T* _ptr;
 };
 
 int wmain(int argc, WCHAR* argv[])
@@ -65,7 +58,11 @@ int wmain(int argc, WCHAR* argv[])
     cout.tie(NULL);
     timeBeginPeriod(1);
 
-    
+    Top* t = new Middle;
+    Top* t2 = new Bottom;
+
+    SmartPointer<Top> shar = SmartPointer<Middle>(new Middle);
+    //SmartPointer<Middle> s = SmartPointer<Top>(new Top);
 
     return 0;
 }

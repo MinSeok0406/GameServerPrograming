@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <vector>
+#include <map>
+#include <chrono>
 #include "RedBlackTree.h"
 using namespace std;
 
@@ -10,6 +12,8 @@ using namespace std;
 RBTNode* Nil = new RBTNode;
 RBTNode* root = Nil;
 
+map<int, int> mp;
+
 vector<int> insertKey;
 
 int wmain()
@@ -17,6 +21,41 @@ int wmain()
 	timeBeginPeriod(1);
 	srand((unsigned int)time(nullptr));
 	Nil->Color = RBTNode::COLOR::BLACK;
+
+	// 성능 비교 (map)
+/*	auto start = chrono::steady_clock::now();
+
+	for (auto i = 0; i < 100'000'000; ++i)
+	{
+		RBT_InsertNode(&root, RBT_CreateNode(i));
+	}
+
+	for (auto i = 0; i < 100'000'000; ++i)
+	{
+		RBT_DeleteNode(&root, i);
+	}
+
+	auto end = chrono::steady_clock::now();
+
+	chrono::duration<double, milli> duration_ms = end - start;
+	printf("%lf\n",duration_ms.count());
+
+	start = chrono::steady_clock::now();
+
+	for (auto i = 0; i < 100'000'000; ++i)
+	{
+		mp[i] = i;
+	}
+
+	for (auto i = 0; i < 100'000'000; ++i)
+	{
+		mp.erase(i);
+	}
+
+	end = chrono::steady_clock::now();
+
+	duration_ms = end - start;
+	printf("%lf\n", duration_ms.count());*/
 
 	while (true)
 	{
