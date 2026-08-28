@@ -1,5 +1,2 @@
 ﻿  AStar.cpp
-  CreateFindRoad_Tool.cpp
-C:\GameServerPrograming\DataStructure_Algorithm\C++ 알고리즘\CreateFindRoad_Tool\CreateFindRoad_Tool.cpp(143,17): warning C4101: 'ps' :참조되지 않은 지역 변수입니다.
-  코드를 생성하고 있습니다...
   CreateFindRoad_Tool.vcxproj -> C:\GameServerPrograming\DataStructure_Algorithm\C++ 알고리즘\CreateFindRoad_Tool\x64\Debug\CreateFindRoad_Tool.exe

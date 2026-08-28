@@ -12,6 +12,8 @@ std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
 std::map<std::pair<int, int>, int> closeList;
 bool g_isrun = false;
 
+extern char g_Tile[GRID_HEIGHT][GRID_WIDTH];
+
 bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
 {
 	Node* newNode = new Node;
@@ -59,7 +61,7 @@ bool AS_Run(int sy, int sx, int ey, int ex)
 			int nx = x + dx[k];
 
 			// 갈 수 없는 길 체크
-			if (ny < 0 || ny >= GRID_HEIGHT || nx < 0 || nx >= GRID_WIDTH)
+			if (ny < 0 || ny >= GRID_HEIGHT || nx < 0 || nx >= GRID_WIDTH || g_Tile[ny][nx])
 			{
 				continue;
 			}
