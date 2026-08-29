@@ -1,5 +1,5 @@
 ﻿#pragma once
-#define GRID_WIDTH 100
+/*#define GRID_WIDTH 100
 #define GRID_HEIGHT 50
 
 // g -> 유클리드
@@ -20,7 +20,7 @@ struct Comp
 	{
 		return lhs->f > rhs->f;
 	}
-};
+};*/
 
-bool AS_CreateNode(Node* parent, int g, int h, int y, int x);
-bool AS_Run(int sy, int sx, int ey, int ex);
+/*bool AS_CreateNode(Node* parent, int g, int h, int y, int x);*/
+/*bool AS_Run(int sy, int sx, int ey, int ex);*/

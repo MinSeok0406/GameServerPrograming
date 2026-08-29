@@ -3,9 +3,62 @@
 
 #include "framework.h"
 #include "CreateFindRoad_Tool.h"
-#include "AStar.h"
+//#include "AStar.h"
+#include <vector>
+#include <map>
+#include <queue>
 
 #define MAX_LOADSTRING 100
+
+// AStar Algorithm
+//---------------------------
+#define GRID_WIDTH 100
+#define GRID_HEIGHT 50
+#define DISTANCE 10
+#define DIGSTANCE 14
+
+// g -> 유클리드
+// h -> 맨해튼
+struct Node
+{
+    unsigned int f;
+    unsigned int g;
+    unsigned int h;
+    unsigned short y;
+    unsigned short x;
+    Node* parent;
+};
+
+struct Comp
+{
+    bool operator()(const Node* lhs, const Node* rhs)
+    {
+        return lhs->f > rhs->f;
+    }
+};
+
+
+const int dy[8] = { -1, 0, 1, 0, -1, 1, 1, -1 };
+const int dx[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };
+std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
+std::map<std::pair<int, int>, int> closeList;
+bool g_isrun = false;
+
+bool AS_CreateNode(Node* parent, int g, int h, int y, int x);
+bool AS_FindEndNode(Node* node);
+bool AS_Update(Node* node, int ey, int ex);
+//---------------------------
+
+enum class TILETYPE
+{
+    Empty = 0,
+    Wall = 1,
+    Start = 2,
+    End = 3,
+    OpenList = 4,
+    CloseList = 5,
+    FindLoad = 6
+};
 
 //-----------------------
 
@@ -15,14 +68,29 @@ WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
 //------------------------
-HBRUSH g_hTileBrush;
 HPEN g_hGridPen;
+HBRUSH g_hBrushEmpty;
+HBRUSH g_hBrushWall;
+HBRUSH g_hBrushStart;
+HBRUSH g_hBrushEnd;
+HBRUSH g_hBrushOpenList;
+HBRUSH g_hBrushCloseList;
+HBRUSH g_hBrushFindLoad;
+
+// 0 -> 벽 없음, 1 -> 벽 있음, 2 -> 출발지, 3 -> 목적지
 char g_Tile[GRID_HEIGHT][GRID_WIDTH];
-bool g_bErase = false;
-bool g_bDrag = false;
+bool g_bStartDrag = false;
+bool g_bEndDrag = false;
+bool g_bWallErase = false;
+bool g_bWallDrag = false;
+bool g_bStart = true;
 int GRID_SIZE = 16;
 double g_offsetX = 0.0;
 double g_offsetY = 0.0;
+int g_StartX = -1;
+int g_StartY = -1;
+int g_EndX = -1;
+int g_EndY = -1;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -144,19 +212,88 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     HDC hdc;
     switch (message)
     {
-    case WM_LBUTTONDOWN:
-        g_bDrag = true;
+    case WM_KEYUP:
+        if (wParam == VK_SPACE)
+        {
+            if (!g_bStart)
+            {
+                while (openList.empty() == false)
+                {
+                    openList.pop();
+                }
+                closeList.clear();
+
+                int g = 0;
+                int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
+                AS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
+                g_bStart = true;
+            }
+
+            if (g_StartX != -1 && g_StartY != -1 && g_EndX != -1 && g_EndY != -1)
+            {
+                // openList, closeList 그리드 표현
+                if (openList.empty() == false)
+                {
+                    Node* node = openList.top();
+                    openList.pop();
+                    AS_Update(node, g_EndY, g_EndX);
+                    InvalidateRect(hWnd, NULL, true);
+                }
+            }
+        }
+        break;
+    case WM_LBUTTONDOWN:    // 출발지 및 목적지 생성
+        g_bStartDrag = true;
         {
             int iTileX;
             int iTileY;
             if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
             {
-                g_bErase = (g_Tile[iTileY][iTileX] == 1);
+                if (g_bEndDrag)
+                {
+                    if (g_EndX != -1 || g_EndY != -1)
+                    {
+                        g_Tile[g_EndY][g_EndX] = (char)TILETYPE::Empty;
+                    }
+
+                    g_Tile[iTileY][iTileX] = (char)TILETYPE::End;
+                    g_EndY = iTileY;
+                    g_EndX = iTileX;
+                    g_bStart = false;
+                }
+                else
+                {
+                    if (g_StartX != -1 || g_StartY != -1)
+                    {
+                        g_Tile[g_StartY][g_StartX] = (char)TILETYPE::Empty;
+                    }
+
+                    g_Tile[iTileY][iTileX] = (char)TILETYPE::Start;
+                    g_StartY = iTileY;
+                    g_StartX = iTileX;
+                }
+
+                InvalidateRect(hWnd, NULL, true);
             }
         }
         break;
     case WM_LBUTTONUP:
-        g_bDrag = false;
+        g_bStartDrag = false;
+        g_bEndDrag = !g_bEndDrag;
+        break;
+    case WM_RBUTTONDOWN:    // 벽 생성
+        g_bWallDrag = true;
+        {
+            int iTileX;
+            int iTileY;
+            if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
+            {
+                g_bWallErase = (g_Tile[iTileY][iTileX] == (char)TILETYPE::Wall);
+            }
+        }
+        break;
+    case WM_RBUTTONUP:
+        g_bWallDrag = false;
         break;
     case WM_MOUSEWHEEL:
         {
@@ -191,14 +328,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_MOUSEMOVE:
         {
-            if (g_bDrag)
+            if (g_bWallDrag && !g_bStartDrag)
             {
                 int iTileX;
                 int iTileY;
 
                 if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
                 {
-                    g_Tile[iTileY][iTileX] = !g_bErase;
+                    g_Tile[iTileY][iTileX] = !g_bWallErase;
                     InvalidateRect(hWnd, NULL, true);
                 }
             }
@@ -206,7 +343,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_CREATE:
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
-        g_hTileBrush = CreateSolidBrush(RGB(100, 100, 100));
+        g_hBrushEmpty = CreateSolidBrush(RGB(255, 255, 255));
+        g_hBrushWall = CreateSolidBrush(RGB(100, 100, 100));
+        g_hBrushStart = CreateSolidBrush(RGB(0, 200, 0));
+        g_hBrushEnd = CreateSolidBrush(RGB(200, 0, 0));
+        g_hBrushOpenList = CreateSolidBrush(RGB(0, 0, 200));
+        g_hBrushCloseList = CreateSolidBrush(RGB(255, 255, 0));
+        g_hBrushFindLoad = CreateSolidBrush(RGB(255, 0, 255));
         break;
     case WM_PAINT:
         {
@@ -218,7 +361,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_DESTROY:
-        DeleteObject(g_hTileBrush);
+        DeleteObject(g_hBrushEmpty);
+        DeleteObject(g_hBrushWall);
+        DeleteObject(g_hBrushStart);
+        DeleteObject(g_hBrushEnd);
+        DeleteObject(g_hBrushOpenList);
+        DeleteObject(g_hBrushCloseList);
+        DeleteObject(g_hBrushFindLoad);
         DeleteObject(g_hGridPen);
         PostQuitMessage(0);
         break;
@@ -287,20 +436,142 @@ void RenderObstacle(HDC hdc)
 {
     int iX = 0;
     int iY = 0;
-    HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, g_hTileBrush);
     SelectObject(hdc, GetStockObject(NULL_PEN));
 
     for (int iCntW = 0; iCntW < GRID_WIDTH; ++iCntW)
     {
         for (int iCntH = 0; iCntH < GRID_HEIGHT; ++iCntH)
         {
-            if (g_Tile[iCntH][iCntW])
+            HBRUSH hBrush = nullptr;
+
+            switch (g_Tile[iCntH][iCntW])
             {
-                iX = (int)((iCntW - g_offsetX) * GRID_SIZE);
-                iY = (int)((iCntH - g_offsetY) * GRID_SIZE);
-                Rectangle(hdc, iX, iY, iX + GRID_SIZE + 2, iY + GRID_SIZE + 2);
+            case (char)TILETYPE::Empty:
+                hBrush = g_hBrushEmpty;
+                break;
+            case (char)TILETYPE::Wall:
+                hBrush = g_hBrushWall;
+                break;
+            case (char)TILETYPE::Start:
+                hBrush = g_hBrushStart;
+                break;
+            case (char)TILETYPE::End:
+                hBrush = g_hBrushEnd;
+                break;
+            case (char)TILETYPE::OpenList:
+                hBrush = g_hBrushOpenList;
+                break;
+            case (char)TILETYPE::CloseList:
+                hBrush = g_hBrushCloseList;
+                break;
+            case (char)TILETYPE::FindLoad:
+                hBrush = g_hBrushFindLoad;
+                break;
             }
+
+            SelectObject(hdc, hBrush);
+
+            iX = (int)((iCntW - g_offsetX) * GRID_SIZE);
+            iY = (int)((iCntH - g_offsetY) * GRID_SIZE);
+            Rectangle(hdc, iX, iY, iX + GRID_SIZE + 2, iY + GRID_SIZE + 2);
         }
     }
-    SelectObject(hdc, hOldBrush);
+}
+
+bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
+{
+    Node* newNode = new Node;
+    newNode->f = g + h;
+    newNode->g = g;
+    newNode->h = h;
+    newNode->y = y;
+    newNode->x = x;
+    newNode->parent = parent;
+    openList.push(newNode);
+
+    if (g_Tile[y][x] == (char)TILETYPE::Empty)
+    {
+        g_Tile[y][x] = (char)TILETYPE::OpenList;
+    }
+    
+    return true;
+}
+
+bool AS_FindEndNode(Node* node)
+{
+    while (node != nullptr)
+    {
+        int x = node->x;
+        int y = node->y;
+
+        g_Tile[y][x] = (char)TILETYPE::FindLoad;
+        node = node->parent;
+    }
+
+    return true;
+}
+
+bool AS_Update(Node* node, int ey, int ex)
+{
+    int y = node->y;
+    int x = node->x;
+
+    // 갔던 길 체크
+    if (closeList.find({ y, x }) != closeList.end())
+    {
+        return true;
+    }
+
+    closeList[{y, x}]++;
+    if (y != g_StartY || x != g_StartX)
+    {
+        g_Tile[y][x] = (char)TILETYPE::CloseList;
+    }
+
+    // 목적지인지 체크
+    if (y == ey && x == ex)
+    {
+        AS_FindEndNode(node);
+        return true;
+    }
+
+    for (auto k = 0; k < 8; ++k)
+    {
+        int ny = y + dy[k];
+        int nx = x + dx[k];
+
+        // 갈 수 없는 길 체크
+        if (ny < 0 || ny >= GRID_HEIGHT || nx < 0 || nx >= GRID_WIDTH || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+        {
+            continue;
+        }
+
+        // 갔던 길 체크
+        if (closeList.find({ ny, nx }) != closeList.end())
+        {
+            continue;
+        }
+
+        if (g_Tile[ny][nx] == (char)TILETYPE::OpenList)
+        {
+            continue;
+        }
+
+        // 직각 거리 & 대각선 거리 계산
+        // 노드 생성해서 넣기
+        if (k < 4)
+        {
+            int ng = node->g + DISTANCE;
+            int nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
+            AS_CreateNode(node, ng, nh, ny, nx);
+        }
+        else
+        {
+            int ng = node->g + DIGSTANCE;
+            int nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
+            AS_CreateNode(node, ng, nh, ny, nx);
+        }
+    }
+
+    return true;
 }

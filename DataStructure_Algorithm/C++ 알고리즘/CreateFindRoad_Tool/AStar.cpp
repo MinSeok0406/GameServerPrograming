@@ -3,7 +3,7 @@
 #include <map>
 #include <queue>
 
-#define DISTANCE 10
+/*#define DISTANCE 10
 #define DIGSTANCE 14
 
 const int dy[8] = { -1, 0, 1, 0, -1, 1, 1, -1 };
@@ -12,9 +12,9 @@ std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
 std::map<std::pair<int, int>, int> closeList;
 bool g_isrun = false;
 
-extern char g_Tile[GRID_HEIGHT][GRID_WIDTH];
+extern char g_Tile[GRID_HEIGHT][GRID_WIDTH];*/
 
-bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
+/*bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
 {
 	Node* newNode = new Node;
 	newNode->f = g + h;
@@ -25,12 +25,12 @@ bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
 	newNode->parent = parent;
 	openList.push(newNode);
 	return true;
-}
+}*/
 
 // 매개변수
 // 출발지 sy, sx좌표
 // 목적지 ey, ex좌표
-bool AS_Run(int sy, int sx, int ey, int ex)
+/*bool AS_Run(int sy, int sx, int ey, int ex)
 {
 	int g = 0;
 	int h = ex * DISTANCE + ey * DISTANCE;
@@ -101,4 +101,4 @@ bool AS_Run(int sy, int sx, int ey, int ex)
 	}
 
 	return true;
-}
+}*/
