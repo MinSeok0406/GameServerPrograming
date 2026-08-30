@@ -35,6 +35,9 @@
     <Filter Include="VirtualMemory_overflow_check">
       <UniqueIdentifier>{3a98252d-a05d-4946-97e2-8b35456a67ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PriorityQueue">
+      <UniqueIdentifier>{f2b3317d-9651-4371-a5a7-95d828f18f24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -85,6 +88,9 @@
     <ClCompile Include="overflow_check.cpp">
       <Filter>VirtualMemory_overflow_check</Filter>
     </ClCompile>
+    <ClCompile Include="PQ_STL.cpp">
+      <Filter>PriorityQueue</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Temp.h">
@@ -101,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="overflow_check.h">
       <Filter>VirtualMemory_overflow_check</Filter>
+    </ClInclude>
+    <ClInclude Include="PQ_STL.h">
+      <Filter>PriorityQueue</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

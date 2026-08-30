@@ -1,9 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <tchar.h>
-#include <process.h>
 #include <Windows.h>
-#include <functional>
 #include <vector>
 #include <algorithm>
 #include <map>
@@ -12,29 +9,15 @@
 #include <queue>
 #include <list>
 #include <time.h>
+#include <chrono>
+#include "PQ_STL.h"
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-struct Node
-{
-    int a;
-    int b;
-    int c;
-    short x;
-    short y;
-};
-
-struct Comp
-{
-    bool operator()(const Node* lhs, const Node* rhs)
-    {
-        return lhs->a > rhs->a;
-    }
-};
-
-priority_queue<Node*, vector<Node*>, Comp> pq;
+priority_queue<int> pq;
+PriorityQueue<int> PQ;
 
 int wmain(int argc, WCHAR* argv[])
 {
@@ -44,16 +27,38 @@ int wmain(int argc, WCHAR* argv[])
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    for (auto i = 0; i < 10; ++i)
+    auto start = chrono::steady_clock::now();
+
+    for (auto i = 1; i < 10'000'000; ++i)
     {
-        Node* node = new Node;
-        node->a = rand() % 1000;
-        node->b = rand() % 1000;
-        node->c = rand() % 1000;
-        node->x = rand() % 1000;
-        node->y = rand() % 1000;
-        pq.push(node);
+        PQ.Push(i);
     }
+
+    for (auto i = 1; i < 10'000'000; ++i)
+    {
+        PQ.Pop();
+    }
+
+    auto end = chrono::steady_clock::now();
+    chrono::duration<double, std::milli> d = end - start;
+    cout << "Custom PQ : " << d.count() << "ms" << "\n";
+
+    auto start2 = chrono::steady_clock::now();
+
+    for (auto i = 1; i < 10'000'000; ++i)
+    {
+        pq.push(i);
+    }
+
+    for (auto i = 1; i < 10'000'000; ++i)
+    {
+        pq.pop();
+    }
+
+    auto end2 = chrono::steady_clock::now();
+    chrono::duration<double, std::milli> d2 = end2 - start2;
+    cout << "STL PQ : " << d2.count() << "ms" << "\n";
+    
 
     return 0;
 }

@@ -148,6 +148,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="make_rand.cpp" />
     <ClCompile Include="overflow_check.cpp" />
+    <ClCompile Include="PQ_STL.cpp" />
     <ClCompile Include="Practice01_1.cpp" />
     <ClCompile Include="Practice01_2.cpp" />
     <ClCompile Include="Practice01_3.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Address.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="overflow_check.h" />
+    <ClInclude Include="PQ_STL.h" />
     <ClInclude Include="StartPrint.h" />
     <ClInclude Include="Temp.h" />
   </ItemGroup>
