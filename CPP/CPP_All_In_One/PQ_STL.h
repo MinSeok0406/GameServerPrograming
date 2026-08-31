@@ -24,6 +24,8 @@ public:
     T Top();
     int Size();
 
+    void Swap(T* a, T* b);
+
 private:
     std::vector<T> tree;
 };
@@ -42,7 +44,7 @@ bool PriorityQueue<T, isArray>::Push(T data)
             int parentIndex = (index - 1) / 2;
             if (tree[index] > tree[parentIndex])
             {
-                std::swap(tree[index], tree[parentIndex]);
+                Swap(&tree[index], &tree[parentIndex]);
                 index = parentIndex;
             }
             else
@@ -53,13 +55,13 @@ bool PriorityQueue<T, isArray>::Push(T data)
     }
     else
     {
-        int index = tree[tree.size() - 1];
+        int index = (int)(tree.size() - 1);
         while (index > 0)
         {
             int parentIndex = (index - 1) / 2;
             if (tree[index] < tree[parentIndex])
             {
-                std::swap(tree[index], tree[parentIndex]);
+                Swap(&tree[index], &tree[parentIndex]);
                 index = parentIndex;
             }
             else
@@ -93,27 +95,27 @@ bool PriorityQueue<T, isArray>::Pop()
 
             if (leftIndex < tree.size() && rightIndex < tree.size())
             {
-                if (tree[index] > tree[leftIndex] && tree[index] > tree[rightIndex])
+                if (tree[index] >= tree[leftIndex] && tree[index] >= tree[rightIndex])
                 {
                     break;
                 }
 
-                if (tree[leftIndex] > tree[rightIndex])
+                if (tree[leftIndex] >= tree[rightIndex])
                 {
-                    std::swap(tree[index], tree[leftIndex]);
+                    Swap(&tree[index], &tree[leftIndex]);
                     index = leftIndex;
                 }
                 else
                 {
-                    std::swap(tree[index], tree[rightIndex]);
+                    Swap(&tree[index], &tree[rightIndex]);
                     index = rightIndex;
                 }
             }
             else if (leftIndex < tree.size())
             {
-                if (tree[leftIndex] > tree[index])
+                if (tree[leftIndex] >= tree[index])
                 {
-                    std::swap(tree[index], tree[leftIndex]);
+                    Swap(&tree[index], &tree[leftIndex]);
                     index = leftIndex;
                 }
                 else
@@ -129,7 +131,7 @@ bool PriorityQueue<T, isArray>::Pop()
     }
     else
     {
-        int index = (int)(tree.size() - 1);
+        int index = 0;
         while (true)
         {
             int leftIndex = (2 * index) + 1;
@@ -137,27 +139,27 @@ bool PriorityQueue<T, isArray>::Pop()
 
             if (leftIndex < tree.size() && rightIndex < tree.size())
             {
-                if (tree[index] < tree[leftIndex] && tree[index] < tree[rightIndex])
+                if (tree[index] <= tree[leftIndex] && tree[index] <= tree[rightIndex])
                 {
                     break;
                 }
 
-                if (tree[leftIndex] > tree[rightIndex])
+                if (tree[leftIndex] >= tree[rightIndex])
                 {
-                    std::swap(tree[index], tree[rightIndex]);
+                    Swap(&tree[index], &tree[rightIndex]);
                     index = rightIndex;
                 }
                 else
                 {
-                    std::swap(tree[index], tree[leftIndex]);
+                    Swap(&tree[index], &tree[leftIndex]);
                     index = leftIndex;
                 }
             }
             else if (leftIndex < tree.size())
             {
-                if (tree[leftIndex] < tree[index])
+                if (tree[leftIndex] <= tree[index])
                 {
-                    std::swap(tree[index], tree[leftIndex]);
+                    Swap(&tree[index], &tree[leftIndex]);
                     index = leftIndex;
                 }
                 else
@@ -196,4 +198,12 @@ template<typename T, bool isArray>
 inline int PriorityQueue<T, isArray>::Size()
 {
     return (int)tree.size();
+}
+
+template<typename T, bool isArray>
+inline void PriorityQueue<T, isArray>::Swap(T* a, T* b)
+{
+    T temp = *a;
+    *a = *b;
+    *b = temp;
 }

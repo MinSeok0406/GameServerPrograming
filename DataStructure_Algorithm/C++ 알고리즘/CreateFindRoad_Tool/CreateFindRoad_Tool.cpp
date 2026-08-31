@@ -31,10 +31,25 @@ struct Node
 
 struct Comp
 {
+    // 안전 정렬
     bool operator()(const Node* lhs, const Node* rhs)
     {
+        if (lhs->f == rhs->f)
+        {
+            if (lhs->g == rhs->g)
+            {
+                return lhs->h > rhs->h;
+            }
+            return lhs->g > rhs->g;
+        }
         return lhs->f > rhs->f;
     }
+
+    // 불안전 정렬
+    /*bool operator()(const Node* lhs, const Node* rhs)
+    {
+        return lhs->f > rhs->f;
+    }*/
 };
 
 
@@ -69,6 +84,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 
 //------------------------
 HPEN g_hGridPen;
+HPEN g_hParentPen;
 HBRUSH g_hBrushEmpty;
 HBRUSH g_hBrushWall;
 HBRUSH g_hBrushStart;
@@ -100,6 +116,7 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 bool ScreenToTile(int xPos, int yPos, int* outTileX, int* outTileY);
 void RenderGrid(HDC hdc);
+void RenderParentLine(HDC hdc);
 void RenderObstacle(HDC hdc);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -213,7 +230,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_KEYUP:
-        if (wParam == VK_SPACE)
+        if (wParam == VK_SPACE) // 단계적 진행
         {
             if (!g_bStart)
             {
@@ -237,6 +254,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     Node* node = openList.top();
                     openList.pop();
                     AS_Update(node, g_EndY, g_EndX);
+                    InvalidateRect(hWnd, NULL, true);
+                }
+            }
+        }
+        else if (wParam == VK_TAB)  // 한 번에 진행
+        {
+            if (!g_bStart)
+            {
+                while (openList.empty() == false)
+                {
+                    openList.pop();
+                }
+                closeList.clear();
+
+                int g = 0;
+                int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
+                AS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
+                g_bStart = true;
+            }
+
+            if (g_StartX != -1 && g_StartY != -1 && g_EndX != -1 && g_EndY != -1)
+            {
+                while (openList.empty() == false)
+                {
+                    Node* node = openList.top();
+                    openList.pop();
+                    if (!AS_Update(node, g_EndY, g_EndX))
+                    {
+                        InvalidateRect(hWnd, NULL, true);
+                        break;
+                    }
                     InvalidateRect(hWnd, NULL, true);
                 }
             }
@@ -343,6 +391,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_CREATE:
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
+        g_hParentPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
         g_hBrushEmpty = CreateSolidBrush(RGB(255, 255, 255));
         g_hBrushWall = CreateSolidBrush(RGB(100, 100, 100));
         g_hBrushStart = CreateSolidBrush(RGB(0, 200, 0));
@@ -357,6 +406,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdc = BeginPaint(hWnd, &ps);
             RenderObstacle(hdc);
             RenderGrid(hdc);
+            RenderParentLine(hdc);
             EndPaint(hWnd, &ps);
         }
         break;
@@ -369,6 +419,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DeleteObject(g_hBrushCloseList);
         DeleteObject(g_hBrushFindLoad);
         DeleteObject(g_hGridPen);
+        DeleteObject(g_hParentPen);
         PostQuitMessage(0);
         break;
     default:
@@ -429,6 +480,28 @@ void RenderGrid(HDC hdc)
         MoveToEx(hdc, (int)((0 - g_offsetX) * GRID_SIZE), iY, NULL);
         LineTo(hdc, (int)((GRID_WIDTH - g_offsetX) * GRID_SIZE), iY);
     }
+    SelectObject(hdc, hOldPen);
+}
+
+// 부모 표현하기
+void RenderParentLine(HDC hdc)
+{
+    HPEN hOldPen = (HPEN)SelectObject(hdc, g_hParentPen);
+
+    auto pq = openList;
+    while (pq.empty() == false)
+    {
+        Node* node = pq.top();
+        pq.pop();
+
+        while (node->parent != nullptr)
+        {
+            MoveToEx(hdc, node->x, node->y, NULL);
+            LineTo(hdc, node->parent->x, node->parent->y);
+            node = node->parent;
+        }
+    }
+
     SelectObject(hdc, hOldPen);
 }
 
@@ -517,7 +590,7 @@ bool AS_Update(Node* node, int ey, int ex)
     int x = node->x;
 
     // 갔던 길 체크
-    if (closeList.find({ y, x }) != closeList.end())
+    if (g_Tile[y][x] == (char)TILETYPE::CloseList)
     {
         return true;
     }
@@ -532,7 +605,7 @@ bool AS_Update(Node* node, int ey, int ex)
     if (y == ey && x == ex)
     {
         AS_FindEndNode(node);
-        return true;
+        return false;
     }
 
     for (auto k = 0; k < 8; ++k)
@@ -547,11 +620,12 @@ bool AS_Update(Node* node, int ey, int ex)
         }
 
         // 갔던 길 체크
-        if (closeList.find({ ny, nx }) != closeList.end())
+        if (g_Tile[ny][nx] == (char)TILETYPE::CloseList)
         {
             continue;
         }
 
+        // 노드가 이미 존재한다면 스킵
         if (g_Tile[ny][nx] == (char)TILETYPE::OpenList)
         {
             continue;
@@ -559,18 +633,20 @@ bool AS_Update(Node* node, int ey, int ex)
 
         // 직각 거리 & 대각선 거리 계산
         // 노드 생성해서 넣기
+        // G : 유클리드, H : 맨해튼
+        int ng;
+        int nh;
         if (k < 4)
         {
-            int ng = node->g + DISTANCE;
-            int nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
-            AS_CreateNode(node, ng, nh, ny, nx);
+            ng = node->g + DISTANCE;
+            nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
         }
         else
         {
-            int ng = node->g + DIGSTANCE;
-            int nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
-            AS_CreateNode(node, ng, nh, ny, nx);
+            ng = node->g + DIGSTANCE;
+            nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
         }
+        AS_CreateNode(node, ng, nh, ny, nx);
     }
 
     return true;

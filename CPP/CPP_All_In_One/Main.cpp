@@ -27,6 +27,40 @@ int wmain(int argc, WCHAR* argv[])
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
+/*    unsigned int t = timeGetTime();
+
+    while (true)
+    {
+        if (timeGetTime() - t < 5000)
+        {
+            int randNum = rand() % 10000;
+            pq.push(randNum);
+            PQ.Push(randNum);
+        }
+        else
+        {
+            while (true)
+            {
+                if (pq.empty())
+                {
+                    break;
+                }
+
+                if (pq.top() != PQ.Top())
+                {
+                    __debugbreak();
+                }
+                else
+                {
+                    pq.pop();
+                    PQ.Pop();
+                }
+            }
+
+            t = timeGetTime();
+        }
+    }*/
+
     auto start = chrono::steady_clock::now();
 
     for (auto i = 1; i < 10'000'000; ++i)
@@ -58,7 +92,6 @@ int wmain(int argc, WCHAR* argv[])
     auto end2 = chrono::steady_clock::now();
     chrono::duration<double, std::milli> d2 = end2 - start2;
     cout << "STL PQ : " << d2.count() << "ms" << "\n";
-    
 
     return 0;
 }
