@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "AStar_Class\\x64\\Debug\\targetver.obj",
+            "outputs": [
+                "AStar_Class\\x64\\Debug\\targetver.h.obj.dt.module.json",
+                "AStar_Class\\x64\\Debug\\targetver.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

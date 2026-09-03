@@ -55,8 +55,11 @@ struct Comp
 
 const int dy[8] = { -1, 0, 1, 0, -1, 1, 1, -1 };
 const int dx[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };
+int g_Best[GRID_HEIGHT][GRID_WIDTH];
+//AStar* g_Astar = nullptr;
 std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
 std::map<std::pair<int, int>, int> closeList;
+Node* g_PathEndNode = nullptr;
 bool g_isrun = false;
 
 bool AS_CreateNode(Node* parent, int g, int h, int y, int x);
@@ -85,6 +88,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 //------------------------
 HPEN g_hGridPen;
 HPEN g_hParentPen;
+HPEN g_hPathPen;
 HBRUSH g_hBrushEmpty;
 HBRUSH g_hBrushWall;
 HBRUSH g_hBrushStart;
@@ -117,6 +121,7 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 bool ScreenToTile(int xPos, int yPos, int* outTileX, int* outTileY);
 void RenderGrid(HDC hdc);
 void RenderParentLine(HDC hdc);
+void RenderFinalPath(HDC hdc);
 void RenderObstacle(HDC hdc);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -128,7 +133,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
-
+    AllocConsole(); // 콘솔창 생성
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CREATEFINDROADTOOL, szWindowClass, MAX_LOADSTRING);
@@ -141,6 +146,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CREATEFINDROADTOOL));
+
+    for (auto i = 0; i < GRID_HEIGHT; ++i)
+    {
+        for (auto j = 0; j < GRID_WIDTH; ++j)
+        {
+            g_Best[i][j] = INT_MAX;
+        }
+    }
+
+    //g_Astar = AStar::getInstance();
 
     MSG msg;
 
@@ -240,6 +255,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 closeList.clear();
 
+                g_PathEndNode = nullptr;
                 int g = 0;
                 int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
                 AS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
@@ -268,6 +284,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 closeList.clear();
 
+                g_PathEndNode = nullptr;
                 int g = 0;
                 int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
                 AS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
@@ -313,6 +330,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 {
                     if (g_StartX != -1 || g_StartY != -1)
                     {
+                        // 처음 시작 시 노드들 초기화
+                        memset(g_Tile, 0, sizeof(g_Tile));
                         g_Tile[g_StartY][g_StartX] = (char)TILETYPE::Empty;
                     }
 
@@ -391,7 +410,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_CREATE:
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
-        g_hParentPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+        g_hParentPen = CreatePen(PS_SOLID, 1, RGB(150, 150, 200));
+        g_hPathPen = CreatePen(PS_SOLID, 2, RGB(255, 150, 200));
         g_hBrushEmpty = CreateSolidBrush(RGB(255, 255, 255));
         g_hBrushWall = CreateSolidBrush(RGB(100, 100, 100));
         g_hBrushStart = CreateSolidBrush(RGB(0, 200, 0));
@@ -407,6 +427,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             RenderObstacle(hdc);
             RenderGrid(hdc);
             RenderParentLine(hdc);
+            RenderFinalPath(hdc);
             EndPaint(hWnd, &ps);
         }
         break;
@@ -420,6 +441,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DeleteObject(g_hBrushFindLoad);
         DeleteObject(g_hGridPen);
         DeleteObject(g_hParentPen);
+        DeleteObject(g_hPathPen);
+        //g_Astar->destoryInstance();
         PostQuitMessage(0);
         break;
     default:
@@ -496,10 +519,44 @@ void RenderParentLine(HDC hdc)
 
         while (node->parent != nullptr)
         {
-            MoveToEx(hdc, node->x, node->y, NULL);
-            LineTo(hdc, node->parent->x, node->parent->y);
+            int x1 = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+            int y1 = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+            int x2 = (int)((node->parent->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+            int y2 = (int)((node->parent->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+
+            int mx = (x1 + x2) / 2;
+            int my = (y1 + y2) / 2;
+
+            MoveToEx(hdc, x1, y1, NULL);
+            LineTo(hdc, mx, my);
             node = node->parent;
         }
+    }
+
+    SelectObject(hdc, hOldPen);
+}
+
+void RenderFinalPath(HDC hdc)
+{
+    if (g_PathEndNode == nullptr)
+    {
+        return;
+    }
+
+    HPEN hOldPen = (HPEN)SelectObject(hdc, g_hPathPen);
+
+    Node* node = g_PathEndNode;
+    int x = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+    int y = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+    MoveToEx(hdc, x, y, NULL);
+
+    node = node->parent;
+    while (node != nullptr)
+    {
+        x = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+        y = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+        LineTo(hdc, x, y);
+        node = node->parent;
     }
 
     SelectObject(hdc, hOldPen);
@@ -604,6 +661,7 @@ bool AS_Update(Node* node, int ey, int ex)
     // 목적지인지 체크
     if (y == ey && x == ex)
     {
+        g_PathEndNode = node;
         AS_FindEndNode(node);
         return false;
     }
@@ -626,10 +684,10 @@ bool AS_Update(Node* node, int ey, int ex)
         }
 
         // 노드가 이미 존재한다면 스킵
-        if (g_Tile[ny][nx] == (char)TILETYPE::OpenList)
+        /*if (g_Tile[ny][nx] == (char)TILETYPE::OpenList)
         {
             continue;
-        }
+        }*/
 
         // 직각 거리 & 대각선 거리 계산
         // 노드 생성해서 넣기
@@ -646,7 +704,12 @@ bool AS_Update(Node* node, int ey, int ex)
             ng = node->g + DIGSTANCE;
             nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
         }
-        AS_CreateNode(node, ng, nh, ny, nx);
+
+        if (ng < g_Best[ny][nx])
+        {
+            g_Best[ny][nx] = ng;
+            AS_CreateNode(node, ng, nh, ny, nx);
+        }
     }
 
     return true;

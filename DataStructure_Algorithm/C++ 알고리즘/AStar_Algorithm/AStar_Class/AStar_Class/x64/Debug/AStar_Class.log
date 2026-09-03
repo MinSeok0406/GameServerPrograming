@@ -1,0 +1,3 @@
+﻿  AStar_Class.cpp
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\AStar_Algorithm\AStar_Class\AStar_Class.cpp(212,17): warning C4101: 'ps' :참조되지 않은 지역 변수입니다.
+  AStar_Class.vcxproj -> C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\AStar_Algorithm\AStar_Class\x64\Debug\AStar_Class.exe

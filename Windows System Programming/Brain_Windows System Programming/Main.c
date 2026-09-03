@@ -1,4 +1,4 @@
-﻿/*#define _WIN32_WINNT0x0400
+﻿#define _WIN32_WINNT0x0400
 #define _CRT_SECURE_NO_WARNINGS
 #include <locale.h>
 #include <stdio.h>
@@ -16,4 +16,4 @@ int _tmain(int argc, TCHAR* argv[])
     
 
     return 1;
-}*/
+}

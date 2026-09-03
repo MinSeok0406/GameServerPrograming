@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AStar_Class.vcxproj" Id="85b98631-33e0-4864-a590-407bc1dd10db" />
+</Solution>

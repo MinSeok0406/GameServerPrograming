@@ -155,6 +155,7 @@
     <ClCompile Include="RandomSystem.cpp" />
     <ClCompile Include="StartPrint.cpp" />
     <ClCompile Include="Temp.cpp" />
+    <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="TimingGame.cpp" />
   </ItemGroup>
   <ItemGroup>

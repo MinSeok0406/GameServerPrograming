@@ -5,7 +5,7 @@
         {
             "primary-output": "x64\\Release\\string_NRRGA8QZX7ZPQQ1I.obj",
             "outputs": [
-                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
                 "x64\\Release\\string_NRRGA8QZX7ZPQQ1I.module.json",
                 "x64\\Release\\string_NRRGA8QZX7ZPQQ1I.ifc"
             ],

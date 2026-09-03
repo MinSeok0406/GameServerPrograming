@@ -5,7 +5,7 @@
         {
             "primary-output": "x64\\Release\\vector_ZB5PUF150NIU6STS.obj",
             "outputs": [
-                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
                 "x64\\Release\\vector_ZB5PUF150NIU6STS.module.json",
                 "x64\\Release\\vector_ZB5PUF150NIU6STS.ifc"
             ],

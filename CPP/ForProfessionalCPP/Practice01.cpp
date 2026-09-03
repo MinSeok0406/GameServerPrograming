@@ -1,35 +1,92 @@
 ﻿#include <iostream>
+#include <string.h>
+#include <vector>
+#include <Windows.h>
+#include <process.h>
+#include <chrono>
 using namespace std;
 
-template<typename T>
-class Rational
+#pragma comment (lib, "winmm.lib")
+
+template<typename IterT, typename DistT>
+void doAdvance(IterT& iter, DistT d, std::random_access_iterator_tag)
 {
-public:
-	Rational(const T& num = 0, const T& den = 1) : _num(num), _den(den)
-	{
+    iter += d;
+}
 
-	}
+template<typename IterT, typename DistT>
+void doAdvance(IterT& iter, DistT d, std::bidirectional_iterator_tag)
+{
+    if (d >= 0)
+    {
+        while (d--)
+        {
+            ++iter;
+        }
+    }
+    else
+    {
+        while (d++)
+        {
+            --iter;
+        }
+    }
+}
 
-	const T number() const { return _num; }
-	const T denomi() const { return _den; }
+template<typename IterT, typename DistT>
+void doAdvance(IterT& iter, DistT d, std::input_iterator_tag)
+{
+    if (d >= 0)
+    {
+        while (d--)
+        {
+            ++iter;
+        }
+    }
+}
 
-	friend const Rational operator*(const Rational& lhs, const Rational& rhs)
-	{
-		return Rational(lhs.number() * rhs.number(), lhs.denomi() * rhs.denomi());
-	}
-
-private:
-	T _num;
-	T _den;
-};
+template<typename IterT, typename DistT>
+void advances(IterT& iter, DistT d)
+{
+    doAdvance(iter, d, typename std::iterator_traits<IterT>::iterator_category());
+}
 
 int wmain()
 {
-	Rational<int> r(4, 1);
-	Rational<int> result;
+    timeBeginPeriod(1);
 
-	result = r * 2;
-	result = 2 * r;
+    vector<int> v;
+    v.resize(1000000000);
+
+    auto iter = v.begin();
+
+    auto start = chrono::steady_clock::now();
+    for (int i = 0; i < v.size(); ++i)
+    {
+        advances(iter, 1);
+    }
+
+    for (int i = 0; i < v.size(); ++i)
+    {
+        advances(iter, -1);
+    }
+    auto end = chrono::steady_clock::now();
+    chrono::duration<double, std::milli> dur = end - start;
+    cout << "Custom advance : " << dur.count() << "\n";
+
+    start = chrono::steady_clock::now();
+    for (int i = 0; i < v.size(); ++i)
+    {
+        advance(iter, 1);
+    }
+
+    for (int i = 0; i < v.size(); ++i)
+    {
+        advance(iter, -1);
+    }
+    end = chrono::steady_clock::now();
+    chrono::duration<double, std::milli> dur2 = end - start;
+    cout << "std::advance : " << dur2.count() << "\n";
 
     return 0;
 }

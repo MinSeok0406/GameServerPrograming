@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\xtr1common.obj",
+            "outputs": [
+                "x64\\Release\\xtr1common.obj.dt.module.json",
+                "x64\\Release\\xtr1common.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

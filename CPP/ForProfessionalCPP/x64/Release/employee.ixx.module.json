@@ -5,14 +5,14 @@
         {
             "primary-output": "x64\\Release\\Employee.ixx.obj",
             "outputs": [
-                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
                 "x64\\Release\\",
-                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\Employee.ixx.ifc"
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\Employee.ixx.ifc"
             ],
             "provides": [
                 {
                     "logical-name": "Employee",
-                    "source-path": "c:\\gameserverprograming\\cpp\\forprofessionalcpp\\employee.ixx",
+                    "source-path": "c:\\gameprograming\\cpp\\forprofessionalcpp\\employee.ixx",
                     "is-interface": true
                 }
             ],

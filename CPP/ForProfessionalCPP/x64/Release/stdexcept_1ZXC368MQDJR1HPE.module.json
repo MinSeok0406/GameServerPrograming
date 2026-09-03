@@ -5,7 +5,7 @@
         {
             "primary-output": "x64\\Release\\stdexcept_1ZXC368MQDJR1HPE.obj",
             "outputs": [
-                "C:\\GameServerPrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
+                "C:\\GamePrograming\\CPP\\ForProfessionalCPP\\x64\\Release\\vc145.pdb",
                 "x64\\Release\\stdexcept_1ZXC368MQDJR1HPE.module.json",
                 "x64\\Release\\stdexcept_1ZXC368MQDJR1HPE.ifc"
             ],

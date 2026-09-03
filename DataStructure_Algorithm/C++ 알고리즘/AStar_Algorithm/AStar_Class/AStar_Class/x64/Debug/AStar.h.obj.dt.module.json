@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "AStar_Class\\x64\\Debug\\AStar.obj",
+            "outputs": [
+                "AStar_Class\\x64\\Debug\\AStar.h.obj.dt.module.json",
+                "AStar_Class\\x64\\Debug\\AStar.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

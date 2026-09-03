@@ -14,68 +14,105 @@
 // 힙 트리 Pop
 // 루트 노드 추출 -> 마지막 노드를 루트 노드로 옮기고 힙 트리 규칙
 
-template<typename T, bool isArray = true>
+template<typename T, typename Container = std::vector<T>, typename Pre = std::less<typename Container::value_type>>
 class PriorityQueue
 {
 public:
-    bool Push(T data);
+    bool Push(const T& data);
     bool Pop();
     bool Empty();
-    T Top();
+    const T& Top();
     int Size();
 
     void Swap(T* a, T* b);
 
 private:
-    std::vector<T> tree;
+    Container tree {};
+    Pre comp {};
 };
 
-template<typename T, bool isArray>
-bool PriorityQueue<T, isArray>::Push(T data)
+// 클로드 최적화 코드
+template<typename T, typename Container, typename Pre>
+bool PriorityQueue<T, Container, Pre>::Push(const T& data)
+{
+    tree.push_back(T {});
+    int index = (int)(tree.size() - 1);
+    int parentIndex = (index - 1) / 2;
+
+    while (index > 0 && comp(tree[parentIndex], data))
+    {
+        tree[index] = std::move(tree[parentIndex]); // swap 대신 이동 1번
+        index = parentIndex;
+        parentIndex = (index - 1) / 2;
+    }
+    tree[index] = data;
+    return true;
+}
+
+// 클로드 최적화 코드
+template<typename T, typename Container, typename Pre>
+bool PriorityQueue<T, Container, Pre>::Pop()
+{
+    if (tree.empty()) return false;
+
+    T last = std::move(tree.back());
+    tree.pop_back();
+    if (tree.empty()) return true;
+
+    int size = (int)tree.size();
+    int index = 0;
+
+    // 1단계: 큰 자식을 계속 끌어올리며 리프까지 (레벨당 비교 1번)
+    while (true)
+    {
+        int leftIndex = 2 * index + 1;
+        int rightIndex = 2 * index + 2;
+        if (leftIndex >= size) break;
+
+        int biggerIndex = leftIndex;
+        if (rightIndex < size && comp(tree[leftIndex], tree[rightIndex]))
+            biggerIndex = rightIndex;
+
+        tree[index] = std::move(tree[biggerIndex]);
+        index = biggerIndex;
+    }
+
+    // 2단계: 마지막 원소를 제자리로 끌어올림
+    int parentIndex = (index - 1) / 2;
+    while (index > 0 && comp(tree[parentIndex], last))
+    {
+        tree[index] = std::move(tree[parentIndex]);
+        index = parentIndex;
+        parentIndex = (index - 1) / 2;
+    }
+    tree[index] = std::move(last);
+    return true;
+}
+
+/*template<typename T, typename Container, typename Pre>
+bool PriorityQueue<T, Container, Pre>::Push(const T& data)
 {
     tree.push_back(data);
 
     // 힙 트리 규칙
-    if (isArray == true)
+    int index = (int)(tree.size() - 1);
+    while (index > 0)
     {
-        int index = (int)(tree.size() - 1);
-        while (index > 0)
+        int parentIndex = (index - 1) / 2;
+        if (comp(tree[index], tree[parentIndex]))
         {
-            int parentIndex = (index - 1) / 2;
-            if (tree[index] > tree[parentIndex])
-            {
-                Swap(&tree[index], &tree[parentIndex]);
-                index = parentIndex;
-            }
-            else
-            {
-                break;
-            }
+            break;
         }
-    }
-    else
-    {
-        int index = (int)(tree.size() - 1);
-        while (index > 0)
-        {
-            int parentIndex = (index - 1) / 2;
-            if (tree[index] < tree[parentIndex])
-            {
-                Swap(&tree[index], &tree[parentIndex]);
-                index = parentIndex;
-            }
-            else
-            {
-                break;
-            }
-        }
+
+        Swap(&tree[index], &tree[parentIndex]);
+        index = parentIndex;
     }
 
     return true;
 }
 
-template<typename T, bool isArray>
-bool PriorityQueue<T, isArray>::Pop()
+template<typename T, typename Container, typename Pre>
+bool PriorityQueue<T, Container, Pre>::Pop()
 {
     if (tree.empty())
     {
@@ -85,123 +122,76 @@ bool PriorityQueue<T, isArray>::Pop()
     tree.pop_back();
 
     // 힙 트리 규칙
-    if (isArray == true)
+    int index = 0;
+    while (true)
     {
-        int index = 0;
-        while (true)
+        int leftIndex = (2 * index) + 1;
+        int rightIndex = (2 * index) + 2;
+
+        if (leftIndex < tree.size() && rightIndex < tree.size())
         {
-            int leftIndex = (2 * index) + 1;
-            int rightIndex = (2 * index) + 2;
-
-            if (leftIndex < tree.size() && rightIndex < tree.size())
+            if (comp(tree[leftIndex], tree[index]) && comp(tree[rightIndex], tree[index]))
             {
-                if (tree[index] >= tree[leftIndex] && tree[index] >= tree[rightIndex])
-                {
-                    break;
-                }
-
-                if (tree[leftIndex] >= tree[rightIndex])
-                {
-                    Swap(&tree[index], &tree[leftIndex]);
-                    index = leftIndex;
-                }
-                else
-                {
-                    Swap(&tree[index], &tree[rightIndex]);
-                    index = rightIndex;
-                }
+                break;
             }
-            else if (leftIndex < tree.size())
+
+            if (comp(tree[leftIndex], tree[rightIndex]))
             {
-                if (tree[leftIndex] >= tree[index])
-                {
-                    Swap(&tree[index], &tree[leftIndex]);
-                    index = leftIndex;
-                }
-                else
-                {
-                    break;
-                }
+                Swap(&tree[index], &tree[rightIndex]);
+                index = rightIndex;
+            }
+            else
+            {
+                Swap(&tree[index], &tree[leftIndex]);
+                index = leftIndex;
+            }
+        }
+        else if (leftIndex < tree.size())
+        {
+            if (comp(tree[index], tree[leftIndex]))
+            {
+                Swap(&tree[index], &tree[leftIndex]);
+                index = leftIndex;
             }
             else
             {
                 break;
             }
         }
-    }
-    else
-    {
-        int index = 0;
-        while (true)
+        else
         {
-            int leftIndex = (2 * index) + 1;
-            int rightIndex = (2 * index) + 2;
-
-            if (leftIndex < tree.size() && rightIndex < tree.size())
-            {
-                if (tree[index] <= tree[leftIndex] && tree[index] <= tree[rightIndex])
-                {
-                    break;
-                }
-
-                if (tree[leftIndex] >= tree[rightIndex])
-                {
-                    Swap(&tree[index], &tree[rightIndex]);
-                    index = rightIndex;
-                }
-                else
-                {
-                    Swap(&tree[index], &tree[leftIndex]);
-                    index = leftIndex;
-                }
-            }
-            else if (leftIndex < tree.size())
-            {
-                if (tree[leftIndex] <= tree[index])
-                {
-                    Swap(&tree[index], &tree[leftIndex]);
-                    index = leftIndex;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
+            break;
         }
     }
 
     return true;
-}
+}*/
 
-template<typename T, bool isArray>
-T PriorityQueue<T, isArray>::Top()
+template<typename T, typename Container, typename Pre>
+const T& PriorityQueue<T, Container, Pre>::Top()
 {
     if (tree.empty())
     {
-        return -1;
+        __debugbreak();
     }
 
     return tree[0];
 }
 
-template<typename T, bool isArray>
-inline bool PriorityQueue<T, isArray>::Empty()
+template<typename T, typename Container, typename Pre>
+inline bool PriorityQueue<T, Container, Pre>::Empty()
 {
     return (Size() == 0);
 }
 
-template<typename T, bool isArray>
-inline int PriorityQueue<T, isArray>::Size()
+template<typename T, typename Container, typename Pre>
+inline int PriorityQueue<T, Container, Pre>::Size()
 {
     return (int)tree.size();
 }
 
-template<typename T, bool isArray>
-inline void PriorityQueue<T, isArray>::Swap(T* a, T* b)
+template<typename T, typename Container, typename Pre>
+inline void PriorityQueue<T, Container, Pre>::Swap(T* a, T* b)
 {
     T temp = *a;
     *a = *b;

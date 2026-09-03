@@ -1,26 +1,94 @@
 ﻿#pragma once
-/*#define GRID_WIDTH 100
-#define GRID_HEIGHT 50
+#include <map>
+#include <queue>
+#include <vector>
 
-// g -> 유클리드
-// h -> 맨해튼
-struct Node
+#define GRID_WIDTH 100
+#define GRID_HEIGHT 50
+#define DISTANCE 10
+#define DIGSTANCE 14
+
+enum class TILETYPE
 {
-	unsigned int f;
-	unsigned int g;
-	unsigned int h;
-	unsigned short y;
-	unsigned short x;
-	Node* parent;
+    Empty = 0,
+    Wall = 1,
+    Start = 2,
+    End = 3,
+    OpenList = 4,
+    CloseList = 5,
+    FindLoad = 6
 };
 
-struct Comp
+class AStar
 {
-	bool operator()(const Node* lhs, const Node* rhs)
-	{
-		return lhs->f > rhs->f;
-	}
-};*/
+public:
+    struct Node
+    {
+        unsigned int f;
+        unsigned int g;
+        unsigned int h;
+        unsigned short y;
+        unsigned short x;
+        Node* parent;
+    };
 
-/*bool AS_CreateNode(Node* parent, int g, int h, int y, int x);*/
-/*bool AS_Run(int sy, int sx, int ey, int ex);*/
+    struct Comp
+    {
+        // 안전 정렬
+        bool operator()(const Node* lhs, const Node* rhs)
+        {
+            if (lhs->f == rhs->f)
+            {
+                if (lhs->g == rhs->g)
+                {
+                    return lhs->h > rhs->h;
+                }
+                return lhs->g > rhs->g;
+            }
+            return lhs->f > rhs->f;
+        }
+
+        // 불안전 정렬
+        /*bool operator()(const Node* lhs, const Node* rhs)
+        {
+            return lhs->f > rhs->f;
+        }*/
+    };
+
+    static AStar* getInstance()
+    {
+        if (_pManagerAstar == nullptr)
+        {
+            _pManagerAstar = new AStar;
+        }
+
+        return _pManagerAstar;
+    }
+
+    static void destoryInstance()
+    {
+        if (_pManagerAstar != nullptr)
+        {
+            delete _pManagerAstar;
+            _pManagerAstar = nullptr;
+        }
+    }
+    
+    // 길찾기 성공 실패 여부 반환
+    bool AS_Run(int sy, int sx, int ey, int ex);
+
+    // 새로운 노드 생성
+    bool AS_CreateNode(Node* parent, int g, int h, int y, int x);
+
+    // 길찾기 성공 시 마지막 노드부터 시작 노드까지 연결
+    bool AS_FindEndNode();
+
+private:
+    static AStar* _pManagerAstar;
+    std::priority_queue<Node*, std::vector<Node*>, Comp> _openList;
+    std::map<std::pair<int, int>, int> _closeList;
+    Node* _endNode = nullptr;
+
+    AStar() = default;
+    ~AStar() = default;
+};

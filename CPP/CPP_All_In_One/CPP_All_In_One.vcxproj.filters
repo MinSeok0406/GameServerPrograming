@@ -91,6 +91,9 @@
     <ClCompile Include="PQ_STL.cpp">
       <Filter>PriorityQueue</Filter>
     </ClCompile>
+    <ClCompile Include="TestCode.cpp">
+      <Filter>PriorityQueue</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Temp.h">

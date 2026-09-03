@@ -1,104 +1,107 @@
 ﻿#include "AStar.h"
-#include <vector>
-#include <map>
-#include <queue>
-
-/*#define DISTANCE 10
-#define DIGSTANCE 14
 
 const int dy[8] = { -1, 0, 1, 0, -1, 1, 1, -1 };
 const int dx[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };
-std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
-std::map<std::pair<int, int>, int> closeList;
-bool g_isrun = false;
+extern int g_Best[GRID_HEIGHT][GRID_WIDTH];
+extern char g_Tile[GRID_HEIGHT][GRID_WIDTH];
 
-extern char g_Tile[GRID_HEIGHT][GRID_WIDTH];*/
+AStar* AStar::_pManagerAstar = nullptr;
 
-/*bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
+bool AStar::AS_Run(int sy, int sx, int ey, int ex)
 {
-	Node* newNode = new Node;
-	newNode->f = g + h;
-	newNode->g = g;
-	newNode->h = h;
-	newNode->y = y;
-	newNode->x = x;
-	newNode->parent = parent;
-	openList.push(newNode);
-	return true;
-}*/
+    Node* node = _openList.top();
+    _openList.pop();
 
-// 매개변수
-// 출발지 sy, sx좌표
-// 목적지 ey, ex좌표
-/*bool AS_Run(int sy, int sx, int ey, int ex)
+    int y = node->y;
+    int x = node->x;
+
+    if (g_Tile[y][x] == (char)TILETYPE::CloseList)
+    {
+        return true;
+    }
+
+    _closeList[{y, x}]++;
+    if (y != sy || x != sx)
+    {
+        g_Tile[y][x] = (char)TILETYPE::CloseList;
+    }
+
+    if (y == ey && x == ex)
+    {
+        _endNode = node;
+        AS_FindEndNode();
+        return false;
+    }
+
+    for (auto k = 0; k < 8; ++k)
+    {
+        int ny = y + dy[k];
+        int nx = x + dx[k];
+
+        // 갈 수 없는 길 체크
+        if (ny < 0 || ny >= GRID_HEIGHT || nx < 0 || nx >= GRID_WIDTH || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+        {
+            continue;
+        }
+
+        // 갔던 길 체크
+        if (g_Tile[ny][nx] == (char)TILETYPE::CloseList)
+        {
+            continue;
+        }
+
+        int ng;
+        int nh;
+        if (k < 4)
+        {
+            ng = node->g + DISTANCE;
+            nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
+        }
+        else
+        {
+            ng = node->g + DIGSTANCE;
+            nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
+        }
+
+        if (ng < g_Best[ny][nx])
+        {
+            g_Best[ny][nx] = ng;
+            AS_CreateNode(node, ng, nh, ny, nx);
+        }
+    }
+
+    return true;
+}
+
+bool AStar::AS_CreateNode(Node* parent, int g, int h, int y, int x)
 {
-	int g = 0;
-	int h = ex * DISTANCE + ey * DISTANCE;
-	AS_CreateNode(nullptr, g, h, sy, sx);
-	closeList[{sy, sx}]++;
+    Node* newNode = new Node;
+    newNode->f = g + h;
+    newNode->g = g;
+    newNode->h = h;
+    newNode->y = y;
+    newNode->x = x;
+    newNode->parent = parent;
+    _openList.push(newNode);
 
-	Node* endNode = nullptr;
-	while (openList.empty() == false)
-	{
-		Node* node = openList.top();
-		openList.pop();
+    if (g_Tile[y][x] == (char)TILETYPE::Empty)
+    {
+        g_Tile[y][x] = (char)TILETYPE::OpenList;
+    }
 
-		int y = node->y;
-		int x = node->x;
+    return true;
+}
 
-		// 목적지인지 체크
-		if (y == ey && x == ex)
-		{
-			endNode = node;
-			closeList[{y, x}]++;
-			break;
-		}
+bool AStar::AS_FindEndNode()
+{
+    while (_endNode != nullptr)
+    {
+        int x = _endNode->x;
+        int y = _endNode->y;
 
-		closeList[{y, x}]++;
-		for (auto k = 0; k < 8; ++k)
-		{
-			int ny = y + dy[k];
-			int nx = x + dx[k];
+        g_Tile[y][x] = (char)TILETYPE::FindLoad;
+        _endNode = _endNode->parent;
+    }
 
-			// 갈 수 없는 길 체크
-			if (ny < 0 || ny >= GRID_HEIGHT || nx < 0 || nx >= GRID_WIDTH || g_Tile[ny][nx])
-			{
-				continue;
-			}
-
-			// 갔던 길 체크
-			if (closeList.find({ ny, nx }) != closeList.end())
-			{
-				continue;
-			}
-
-			// 직각 거리 & 대각선 거리 계산
-			// 노드 생성해서 넣기
-			if (k < 4)
-			{
-				int ng = node->g + DISTANCE;
-				int nh = node->h - DISTANCE;
-				AS_CreateNode(node, ng, nh, ny, nx);
-			}
-			else
-			{
-				int ng = node->g + DIGSTANCE;
-				int nh = node->h - DISTANCE;
-				AS_CreateNode(node, ng, nh, ny, nx);
-			}
-		}
-	}
-
-	if (endNode == nullptr)
-	{
-		return false;
-	}
-
-	// 최종 노드에서 처음 노드까지 선 긋기 (GUI)
-	while (endNode->parent != nullptr)
-	{
-		// TODO
-	}
-
-	return true;
-}*/
+    return true;
+}

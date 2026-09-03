@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\pq_stl.h",
+        "Source": "c:\\gameprograming\\cpp\\cpp_all_in_one\\pq_stl.h",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
