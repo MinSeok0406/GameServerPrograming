@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "JPS_Algorithm\\x64\\Debug\\JPS_Algorithm.obj",
+            "outputs": [
+                "JPS_Algorithm\\x64\\Debug\\JPS_Algorithm.cpp.obj.dt.module.json",
+                "JPS_Algorithm\\x64\\Debug\\JPS_Algorithm.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

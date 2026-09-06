@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="JPS_Algorithm.vcxproj" Id="6e5a8e67-bb13-4227-a7c2-88a545157ec7" />
+</Solution>

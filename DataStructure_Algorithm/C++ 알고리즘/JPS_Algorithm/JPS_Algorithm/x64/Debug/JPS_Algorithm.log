@@ -1,0 +1,14 @@
+﻿  JPS_Algorithm.cpp
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(246,17): error C3861: 'AS_CreateNode': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(257,21): error C3861: 'AS_Update': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(275,17): error C3861: 'AS_CreateNode': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(285,26): error C3861: 'AS_Update': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(300,17): error C3861: 'ScreenToTile': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(341,17): error C3861: 'ScreenToTile': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(388,17): error C3861: 'ScreenToTile': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(412,9): error C3861: 'RenderObstacle': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(413,9): error C3861: 'RenderGrid': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(414,9): error C3861: 'RenderParentLine': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(415,9): error C3861: 'RenderFinalPath': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(650,9): error C3861: 'AS_FindEndNode': 식별자를 찾을 수 없습니다.
+C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\JPS_Algorithm.cpp(690,13): error C3861: 'AS_CreateNode': 식별자를 찾을 수 없습니다.

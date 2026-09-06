@@ -1,24 +1,19 @@
-﻿// CreateFindRoad_Tool.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿// JPS_Algorithm.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
 #include "framework.h"
-#include "CreateFindRoad_Tool.h"
-//#include "AStar.h"
+#include "JPS_Algorithm.h"
 #include <vector>
 #include <map>
 #include <queue>
 
 #define MAX_LOADSTRING 100
 
-// AStar Algorithm
-//---------------------------
 #define GRID_WIDTH 100
 #define GRID_HEIGHT 50
 #define DISTANCE 10
 #define DIGSTANCE 14
 
-// g -> 유클리드
-// h -> 맨해튼
 struct Node
 {
     unsigned int f;
@@ -52,20 +47,27 @@ struct Comp
     }*/
 };
 
-
 const int dy[8] = { -1, 0, 1, 0, -1, 1, 1, -1 };
 const int dx[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };
 int g_Best[GRID_HEIGHT][GRID_WIDTH];
-//AStar* g_Astar = nullptr;
 std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
 std::map<std::pair<int, int>, int> closeList;
 Node* g_PathEndNode = nullptr;
 bool g_isrun = false;
 
-bool AS_CreateNode(Node* parent, int g, int h, int y, int x);
-bool AS_FindEndNode(Node* node);
-bool AS_Update(Node* node, int ey, int ex);
-//---------------------------
+bool JPS_CreateNode(Node* parent, int g, int h, int y, int x);
+bool JPS_FindEndNode(Node* node);
+bool JPS_Update(Node* node, int ey, int ex);
+
+// Jump 함수
+bool Jump_UL(Node* node);
+bool Jump_UU(Node* node);
+bool Jump_UR(Node* node);
+bool Jump_DL(Node* node);
+bool Jump_DR(Node* node);
+bool Jump_DD(Node* node);
+bool Jump_RR(Node* node);
+bool Jump_LL(Node* node);
 
 enum class TILETYPE
 {
@@ -78,14 +80,6 @@ enum class TILETYPE
     FindLoad = 6
 };
 
-//-----------------------
-
-// 전역 변수:
-HINSTANCE hInst;                                // 현재 인스턴스입니다.
-WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
-WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
-
-//------------------------
 HPEN g_hGridPen;
 HPEN g_hParentPen;
 HPEN g_hPathPen;
@@ -112,17 +106,16 @@ int g_StartY = -1;
 int g_EndX = -1;
 int g_EndY = -1;
 
+// 전역 변수:
+HINSTANCE hInst;                                // 현재 인스턴스입니다.
+WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
+WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
+
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
-bool ScreenToTile(int xPos, int yPos, int* outTileX, int* outTileY);
-void RenderGrid(HDC hdc);
-void RenderParentLine(HDC hdc);
-void RenderFinalPath(HDC hdc);
-void RenderObstacle(HDC hdc);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -133,10 +126,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: 여기에 코드를 입력합니다.
+
     AllocConsole(); // 콘솔창 생성
+
+
+
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_CREATEFINDROADTOOL, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_JPSALGORITHM, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // 애플리케이션 초기화를 수행합니다:
@@ -145,7 +142,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CREATEFINDROADTOOL));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_JPSALGORITHM));
 
     for (auto i = 0; i < GRID_HEIGHT; ++i)
     {
@@ -188,10 +185,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CREATEFINDROADTOOL));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_JPSALGORITHM));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_CREATEFINDROADTOOL);
+    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_JPSALGORITHM);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -256,7 +253,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 g_PathEndNode = nullptr;
                 int g = 0;
                 int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
-                AS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
+                JPS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
                 g_bStart = true;
             }
 
@@ -267,7 +264,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 {
                     Node* node = openList.top();
                     openList.pop();
-                    AS_Update(node, g_EndY, g_EndX);
+                    JPS_Update(node, g_EndY, g_EndX);
                     InvalidateRect(hWnd, NULL, true);
                 }
             }
@@ -285,7 +282,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 g_PathEndNode = nullptr;
                 int g = 0;
                 int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
-                AS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
+                JPS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
                 g_bStart = true;
             }
 
@@ -295,7 +292,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 {
                     Node* node = openList.top();
                     openList.pop();
-                    if (!AS_Update(node, g_EndY, g_EndX))
+                    if (!JPS_Update(node, g_EndY, g_EndX))
                     {
                         InvalidateRect(hWnd, NULL, true);
                         break;
@@ -361,51 +358,51 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         g_bWallDrag = false;
         break;
     case WM_MOUSEWHEEL:
+    {
+        POINT pt;
+        pt.x = GET_X_LPARAM(lParam);
+        pt.y = GET_Y_LPARAM(lParam);
+        ScreenToClient(hWnd, &pt);
+
+        double worldX = pt.x / (double)GRID_SIZE + g_offsetX;
+        double worldY = pt.y / (double)GRID_SIZE + g_offsetY;
+
+        short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+        // 휠 위로 이동
+        if (zDelta > 0)
         {
-            POINT pt;
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            ScreenToClient(hWnd, &pt);
-
-            double worldX = pt.x / (double)GRID_SIZE + g_offsetX;
-            double worldY = pt.y / (double)GRID_SIZE + g_offsetY;
-
-            short zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-            // 휠 위로 이동
-            if (zDelta > 0)
-            {
-                GRID_SIZE += 1;
-            }
-            else // 아래로 이동
-            {
-                GRID_SIZE -= 1;
-                if (GRID_SIZE < 16)
-                {
-                    GRID_SIZE = 16;
-                }
-            }
-
-            g_offsetX = worldX - pt.x / (double)GRID_SIZE;
-            g_offsetY = worldY - pt.y / (double)GRID_SIZE;
-
-            InvalidateRect(hWnd, NULL, true);
+            GRID_SIZE += 1;
         }
-        break;
+        else // 아래로 이동
+        {
+            GRID_SIZE -= 1;
+            if (GRID_SIZE < 16)
+            {
+                GRID_SIZE = 16;
+            }
+        }
+
+        g_offsetX = worldX - pt.x / (double)GRID_SIZE;
+        g_offsetY = worldY - pt.y / (double)GRID_SIZE;
+
+        InvalidateRect(hWnd, NULL, true);
+    }
+    break;
     case WM_MOUSEMOVE:
+    {
+        if (g_bWallDrag && !g_bStartDrag)
         {
-            if (g_bWallDrag && !g_bStartDrag)
-            {
-                int iTileX;
-                int iTileY;
+            int iTileX;
+            int iTileY;
 
-                if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
-                {
-                    g_Tile[iTileY][iTileX] = !g_bWallErase;
-                    InvalidateRect(hWnd, NULL, true);
-                }
+            if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
+            {
+                g_Tile[iTileY][iTileX] = !g_bWallErase;
+                InvalidateRect(hWnd, NULL, true);
             }
         }
-        break;
+    }
+    break;
     case WM_CREATE:
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
         g_hParentPen = CreatePen(PS_SOLID, 1, RGB(150, 150, 200));
@@ -419,16 +416,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         g_hBrushFindLoad = CreateSolidBrush(RGB(255, 0, 255));
         break;
     case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            hdc = BeginPaint(hWnd, &ps);
-            RenderObstacle(hdc);
-            RenderGrid(hdc);
-            RenderParentLine(hdc);
-            RenderFinalPath(hdc);
-            EndPaint(hWnd, &ps);
-        }
-        break;
+    {
+        PAINTSTRUCT ps;
+        hdc = BeginPaint(hWnd, &ps);
+        RenderObstacle(hdc);
+        RenderGrid(hdc);
+        RenderParentLine(hdc);
+        RenderFinalPath(hdc);
+        EndPaint(hWnd, &ps);
+    }
+    break;
     case WM_DESTROY:
         DeleteObject(g_hBrushEmpty);
         DeleteObject(g_hBrushWall);
@@ -606,7 +603,7 @@ void RenderObstacle(HDC hdc)
     }
 }
 
-bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
+bool JPS_CreateNode(Node* parent, int g, int h, int y, int x)
 {
     Node* newNode = new Node;
     newNode->f = g + h;
@@ -621,11 +618,11 @@ bool AS_CreateNode(Node* parent, int g, int h, int y, int x)
     {
         g_Tile[y][x] = (char)TILETYPE::OpenList;
     }
-    
+
     return true;
 }
 
-bool AS_FindEndNode(Node* node)
+bool JPS_FindEndNode(Node* node)
 {
     while (node != nullptr)
     {
@@ -639,7 +636,7 @@ bool AS_FindEndNode(Node* node)
     return true;
 }
 
-bool AS_Update(Node* node, int ey, int ex)
+bool JPS_Update(Node* node, int ey, int ex)
 {
     int y = node->y;
     int x = node->x;
@@ -660,55 +657,105 @@ bool AS_Update(Node* node, int ey, int ex)
     if (y == ey && x == ex)
     {
         g_PathEndNode = node;
-        AS_FindEndNode(node);
+        JPS_FindEndNode(node);
         return false;
     }
 
-    for (auto k = 0; k < 8; ++k)
+    // JPS 노드 생성 관련 코드 들어가야함
+    if (node->parent == nullptr)
     {
-        int ny = y + dy[k];
-        int nx = x + dx[k];
+        // Jump 8방향 모두 호출
+        Jump_UL(node);
+        Jump_UU(node);
+        Jump_UR(node);
+        Jump_DL(node);
+        Jump_DR(node);
+        Jump_DD(node);
+        Jump_RR(node);
+        Jump_LL(node);
+    }
+    else
+    {
+        // 부모 방향과 같은 Jump 호출
+        int x = node->parent->x - node->x;
+        int y = node->parent->y - node->y;
 
-        // 갈 수 없는 길 체크
-        if (ny < 0 || ny >= GRID_HEIGHT || nx < 0 || nx >= GRID_WIDTH || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+        // 직선
+        if (x == -1 && y == 0) // - 오른쪽 방향
         {
-            continue;
+            Jump_RR(node);
+        }
+        else if (x == 1 && y == 0) // - 왼쪽 방향
+        {
+            Jump_LL(node);
+        }
+        else if (x == 0 && y == -1) // - 아랫 방향
+        {
+            Jump_DD(node);
+        }
+        else if (x == 0 && y == 1) // - 윗 방향
+        {
+            Jump_UU(node);
         }
 
-        // 갔던 길 체크
-        if (g_Tile[ny][nx] == (char)TILETYPE::CloseList)
+        // 대각선
+        if (x == 1 && y == 1) // - 왼쪽 위 대각선 방향
         {
-            continue;
+            Jump_UL(node);
         }
-
-        // 노드가 이미 존재한다면 스킵
-        /*if (g_Tile[ny][nx] == (char)TILETYPE::OpenList)
+        else if (x == 1 && y == -1) // - 왼쪽 아래 대각선 방향
         {
-            continue;
-        }*/
-
-        // 직각 거리 & 대각선 거리 계산
-        // 노드 생성해서 넣기
-        // G : 유클리드, H : 맨해튼
-        int ng;
-        int nh;
-        if (k < 4)
-        {
-            ng = node->g + DISTANCE;
-            nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
+            Jump_DL(node);
         }
-        else
+        else if (x == -1 && y == 1) // - 오른쪽 위 대각선 방향
         {
-            ng = node->g + DIGSTANCE;
-            nh = (abs(ex - nx) + abs(ey - ny)) * DISTANCE;
+            Jump_UR(node);
         }
-
-        if (ng < g_Best[ny][nx])
+        else if (x == -1 && y == -1) // - 오른쪽 아래 대각선 방향
         {
-            g_Best[ny][nx] = ng;
-            AS_CreateNode(node, ng, nh, ny, nx);
+            Jump_DR(node);
         }
     }
 
     return true;
+}
+
+bool Jump_UL(Node* node)
+{
+    return false;
+}
+
+bool Jump_UU(Node* node)
+{
+    return false;
+}
+
+bool Jump_UR(Node* node)
+{
+    return false;
+}
+
+bool Jump_DL(Node* node)
+{
+    return false;
+}
+
+bool Jump_DR(Node* node)
+{
+    return false;
+}
+
+bool Jump_DD(Node* node)
+{
+    return false;
+}
+
+bool Jump_RR(Node* node)
+{
+    return false;
+}
+
+bool Jump_LL(Node* node)
+{
+    return false;
 }
