@@ -77,7 +77,7 @@ ObjectFreeList<T>::ObjectFreeList(int objectCount, bool isPlacementNew)
 
     for (auto i = 0; i < objectCount; ++i)
     {
-        Node* newNode = (Node*)malloc(sizeof(Node));
+        Node* newNode = (Node*)std::malloc(sizeof(Node));
         newNode->cookie_front = _cookieValue;
         newNode->cookie_end = _cookieValue;
 
@@ -104,7 +104,7 @@ ObjectFreeList<T>::~ObjectFreeList()
             deleteNode->data.~T();
         }
 
-        free(deleteNode);
+        std::free(deleteNode);
         deleteNode = nextNode;
         _countPool--;
     }
@@ -128,7 +128,7 @@ T* ObjectFreeList<T>::Alloc()
         return &(node->data);
     }
 
-    Node* newNode = (Node*)malloc(sizeof(Node));
+    Node* newNode = (Node*)std::malloc(sizeof(Node));
     newNode->cookie_front = _cookieValue;
     newNode->cookie_end = _cookieValue;
     newNode->next = nullptr;

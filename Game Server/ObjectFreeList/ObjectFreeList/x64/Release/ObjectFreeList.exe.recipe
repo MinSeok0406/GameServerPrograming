@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Game Server\ObjectFreeList\x64\Release\ObjectFreeList.exe</FullPath>
+      <FullPath>C:\GameServerPrograming\Game Server\ObjectFreeList\x64\Release\ObjectFreeList.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

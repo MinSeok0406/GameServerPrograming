@@ -34,7 +34,6 @@ int wmain()
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    
 
     return 0;
 }

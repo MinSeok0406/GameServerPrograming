@@ -270,12 +270,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
             }
         }
-        else if (wParam == 'R')
+        else if (wParam == 'R') // 맵 리셋
         {
             SeedNewRandomTest();
             InvalidateRect(hWnd, NULL, true);
         }
-        else if (wParam == 'A')
+        else if (wParam == 'A') // 자동 실행
         {
             g_bAutoTest = !g_bAutoTest;
             if (g_bAutoTest)
@@ -696,7 +696,8 @@ bool IsPathReachable(int sy, int sx, int ey, int ex)
 
     while (!q.empty())
     {
-        auto [cy, cx] = q.front();
+        int cy, cx;
+        std::tie(cy, cx) = q.front();
         q.pop();
 
         if (cy == ey && cx == ex)

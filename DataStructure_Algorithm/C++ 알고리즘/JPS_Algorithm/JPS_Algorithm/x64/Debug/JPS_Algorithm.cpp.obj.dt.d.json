@@ -1,11 +1,11 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\jps_algorithm.cpp",
+        "Source": "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\jps_algorithm.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\gameprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\framework.h",
-            "c:\\gameprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\targetver.h",
+            "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\framework.h",
+            "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\targetver.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\sdkddkver.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\windows.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",
@@ -161,8 +161,8 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\mmintrin.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\zmmintrin.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\ammintrin.h",
-            "c:\\gameprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\jps_algorithm.h",
-            "c:\\gameprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\resource.h",
+            "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\jps_algorithm.h",
+            "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\resource.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\windowsx.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
