@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\x64\Debug\JPS_Algorithm.exe</FullPath>
+      <FullPath>C:\GamePrograming\DataStructure_Algorithm\C++ 알고리즘\JPS_Algorithm\x64\Release\JPS_Algorithm.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
