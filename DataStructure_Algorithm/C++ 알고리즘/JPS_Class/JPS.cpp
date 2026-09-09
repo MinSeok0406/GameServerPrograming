@@ -1,8 +1,5 @@
 ﻿#include "JPS.h"
 
-extern int g_Best[GRID_HEIGHT][GRID_WIDTH];
-extern char g_Tile[GRID_HEIGHT][GRID_WIDTH];
-
 extern int GRID_SIZE;
 extern double g_offsetX;
 extern double g_offsetY;
@@ -11,7 +8,61 @@ extern HPEN g_hPathPen;
 
 JPS* JPS::_pManagerJPS = nullptr;
 
-bool JPS::JPS_Run(int sy, int sx, int ey, int ex)
+bool JPS::JPS_Init(int mapid, int heigth, int width)
+{
+	Map map;
+	map.gridH = heigth;
+	map.gridW = width;
+	memset(map.mapInfo, (char)TILETYPE::Empty, sizeof(map.mapInfo));
+	
+	for (auto i = 0; i < 100; ++i)
+	{
+		for (auto j = 0; j < 100; ++j)
+		{
+			map.BestG[i][j] = INT_MAX;
+		}
+	}
+
+	_map[mapid] = map;
+
+	return true;
+}
+
+bool JPS::JPS_TileWall(int mapid, int y, int x, bool isDelete)
+{
+	Map& map = _map[mapid];
+
+	if (isDelete)
+	{
+		map.mapInfo[y][x] = (char)TILETYPE::Empty;
+	}
+	else
+	{
+		map.mapInfo[y][x] = (char)TILETYPE::Wall;
+	}
+	
+
+	return true;
+}
+
+bool JPS::JPS_TileStartEnd(int mapid, int y, int x, bool isEnd)
+{
+	Map& map = _map[mapid];
+
+	if (isEnd)
+	{
+		map.mapInfo[y][x] = (char)TILETYPE::End;
+	}
+	else
+	{
+		map.mapInfo[y][x] = (char)TILETYPE::Start;
+	}
+
+
+	return true;
+}
+
+bool JPS::JPS_Run(int mapid, int sy, int sx, int ey, int ex)
 {
 	if (_openList.empty())
 	{
@@ -19,6 +70,7 @@ bool JPS::JPS_Run(int sy, int sx, int ey, int ex)
 		return true;
 	}
 
+	Map& map = _map[mapid];
 	Node* node = _openList.top();
 	_openList.pop();
 
@@ -26,7 +78,7 @@ bool JPS::JPS_Run(int sy, int sx, int ey, int ex)
 	int x = node->x;
 
 	// 갔던 길 체크
-	if (g_Tile[y][x] == (char)TILETYPE::CloseList)
+	if (map.mapInfo[y][x] == (char)TILETYPE::CloseList)
 	{
 		return true;
 	}
@@ -34,14 +86,14 @@ bool JPS::JPS_Run(int sy, int sx, int ey, int ex)
 	_closeList[{y, x}]++;
 	if (y != sy || x != sx)
 	{
-		g_Tile[y][x] = (char)TILETYPE::CloseList;
+		map.mapInfo[y][x] = (char)TILETYPE::CloseList;
 	}
 
 	// 목적지인지 체크
 	if (y == ey && x == ex)
 	{
 		_endNode = node;
-		JPS_FindEndNode();
+		JPS_FindEndNode(mapid);
 		isFindLoad = true;
 		return true;
 	}
@@ -51,14 +103,15 @@ bool JPS::JPS_Run(int sy, int sx, int ey, int ex)
 	{
 		// Jump 8방향 모두 호출
 		// 시작 위치는 호출 노드의 그 다음 한 칸
-		JPS_Jump_UL(node, node->y - 1, node->x - 1, ey, ex);
-		JPS_Jump_UR(node, node->y - 1, node->x + 1, ey, ex);
-		JPS_Jump_DL(node, node->y + 1, node->x - 1, ey, ex);
-		JPS_Jump_DR(node, node->y + 1, node->x + 1, ey, ex);
-		JPS_Jump_UU(node, node->y - 1, node->x, ey, ex);
-		JPS_Jump_DD(node, node->y + 1, node->x, ey, ex);
-		JPS_Jump_RR(node, node->y, node->x + 1, ey, ex);
-		JPS_Jump_LL(node, node->y, node->x - 1, ey, ex);
+		map.BestG[node->y][node->x] = 0;
+		JPS_Jump_UL(mapid, node, node->y - 1, node->x - 1, ey, ex);
+		JPS_Jump_UR(mapid, node, node->y - 1, node->x + 1, ey, ex);
+		JPS_Jump_DL(mapid, node, node->y + 1, node->x - 1, ey, ex);
+		JPS_Jump_DR(mapid, node, node->y + 1, node->x + 1, ey, ex);
+		JPS_Jump_UU(mapid, node, node->y - 1, node->x, ey, ex);
+		JPS_Jump_DD(mapid, node, node->y + 1, node->x, ey, ex);
+		JPS_Jump_RR(mapid, node, node->y, node->x + 1, ey, ex);
+		JPS_Jump_LL(mapid, node, node->y, node->x - 1, ey, ex);
 	}
 	else
 	{
@@ -66,45 +119,46 @@ bool JPS::JPS_Run(int sy, int sx, int ey, int ex)
 		// 직선
 		if (node->dir & (int)DIRECTION::Jump_RR) // - 오른쪽 방향
 		{
-			JPS_Jump_RR(node, node->y, node->x + 1, ey, ex);
+			JPS_Jump_RR(mapid, node, node->y, node->x + 1, ey, ex);
 		}
 		if (node->dir & (int)DIRECTION::Jump_LL) // - 왼쪽 방향
 		{
-			JPS_Jump_LL(node, node->y, node->x - 1, ey, ex);
+			JPS_Jump_LL(mapid, node, node->y, node->x - 1, ey, ex);
 		}
 		if (node->dir & (int)DIRECTION::Jump_DD) // - 아랫 방향
 		{
-			JPS_Jump_DD(node, node->y + 1, node->x, ey, ex);
+			JPS_Jump_DD(mapid, node, node->y + 1, node->x, ey, ex);
 		}
 		if (node->dir & (int)DIRECTION::Jump_UU) // - 윗 방향
 		{
-			JPS_Jump_UU(node, node->y - 1, node->x, ey, ex);
+			JPS_Jump_UU(mapid, node, node->y - 1, node->x, ey, ex);
 		}
 
 		// 대각선
 		if (node->dir & (int)DIRECTION::Jump_UL) // - 왼쪽 위 대각선 방향
 		{
-			JPS_Jump_UL(node, node->y - 1, node->x - 1, ey, ex);
+			JPS_Jump_UL(mapid, node, node->y - 1, node->x - 1, ey, ex);
 		}
 		if (node->dir & (int)DIRECTION::Jump_DL) // - 왼쪽 아래 대각선 방향
 		{
-			JPS_Jump_DL(node, node->y + 1, node->x - 1, ey, ex);
+			JPS_Jump_DL(mapid, node, node->y + 1, node->x - 1, ey, ex);
 		}
 		if (node->dir & (int)DIRECTION::Jump_UR) // - 오른쪽 위 대각선 방향
 		{
-			JPS_Jump_UR(node, node->y - 1, node->x + 1, ey, ex);
+			JPS_Jump_UR(mapid, node, node->y - 1, node->x + 1, ey, ex);
 		}
 		if (node->dir & (int)DIRECTION::Jump_DR) // - 오른쪽 아래 대각선 방향
 		{
-			JPS_Jump_DR(node, node->y + 1, node->x + 1, ey, ex);
+			JPS_Jump_DR(mapid, node, node->y + 1, node->x + 1, ey, ex);
 		}
 	}
 
 	return true;
 }
 
-bool JPS::JPS_CreateNode(Node* parent, int g, int h, int y, int x, unsigned char dir)
+bool JPS::JPS_CreateNode(int mapid, Node* parent, int g, int h, int y, int x, unsigned char dir)
 {
+	Map& map = _map[mapid];
 	Node* newNode = new Node;
 	newNode->f = g + h;
 	newNode->g = g;
@@ -115,23 +169,24 @@ bool JPS::JPS_CreateNode(Node* parent, int g, int h, int y, int x, unsigned char
 	newNode->parent = parent;
 	_openList.push(newNode);
 
-	if (g_Tile[y][x] == (char)TILETYPE::Empty)
+	if (map.mapInfo[y][x] == (char)TILETYPE::Empty)
 	{
-		g_Tile[y][x] = (char)TILETYPE::OpenList;
+		map.mapInfo[y][x] = (char)TILETYPE::OpenList;
 	}
 
 	return true;
 }
 
-bool JPS::JPS_FindEndNode()
+bool JPS::JPS_FindEndNode(int mapid)
 {
+	Map& map = _map[mapid];
 	Node* node = _endNode;
 	while (node != nullptr)
 	{
 		int x = node->x;
 		int y = node->y;
 
-		g_Tile[y][x] = (char)TILETYPE::FindLoad;
+		map.mapInfo[y][x] = (char)TILETYPE::FindLoad;
 		node = node->parent;
 	}
 
@@ -203,8 +258,9 @@ void JPS::JPS_RenderFinalPath(HDC hdc)
 	SelectObject(hdc, hOldPen);
 }
 
-bool JPS::JPS_Jump_UL(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_UL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -214,7 +270,7 @@ bool JPS::JPS_Jump_UL(Node* node, int sy, int sx, int ey, int ex)
 		int nx = x - 1;
 		int ny = y - 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
 			break;
 		}
@@ -222,23 +278,23 @@ bool JPS::JPS_Jump_UL(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (nx == ex && ny == ey)
 		{
-			JPS_CreateNode(node, 0, 0, ny, nx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, ny, nx, dir);
 			return true;
 		}
 
-		if ((g_Tile[y + 1][x] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x - 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y + 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x - 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
 		}
 
-		if ((g_Tile[y][x + 1] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x + 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y][x + 1] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x + 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
 		}
 
-		bool isHit = JPS_Jump_LL_Valid(y, x - 1, ey, ex) || JPS_Jump_UU_Valid(y - 1, x, ey, ex);
+		bool isHit = JPS_Jump_LL_Valid(mapid, y, x - 1, ey, ex) || JPS_Jump_UU_Valid(mapid, y - 1, x, ey, ex);
 
 		if (flag || isHit)
 		{
@@ -246,10 +302,10 @@ bool JPS::JPS_Jump_UL(Node* node, int sy, int sx, int ey, int ex)
 			int ng = node->g + DIGSTANCE * steps;
 			int nh = (abs(ey - y) + abs(ex - x)) * DISTANCE;
 
-			if (ng < g_Best[y][x])
+			if (ng < map.BestG[y][x])
 			{
-				g_Best[y][x] = ng;
-				JPS_CreateNode(node, ng, nh, y, x, dir);
+				map.BestG[y][x] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, y, x, dir);
 				break;
 			}
 		}
@@ -261,8 +317,9 @@ bool JPS::JPS_Jump_UL(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_UR(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_UR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -272,7 +329,7 @@ bool JPS::JPS_Jump_UR(Node* node, int sy, int sx, int ey, int ex)
 		int nx = x + 1;
 		int ny = y - 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
 			break;
 		}
@@ -280,23 +337,23 @@ bool JPS::JPS_Jump_UR(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (nx == ex && ny == ey)
 		{
-			JPS_CreateNode(node, 0, 0, ny, nx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, ny, nx, dir);
 			return true;
 		}
 
-		if ((g_Tile[y][x - 1] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x - 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y][x - 1] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x - 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
 		}
 
-		if ((g_Tile[y + 1][x] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x + 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y + 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x + 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
 		}
 
-		bool isHit = JPS_Jump_UU_Valid(y - 1, x, ey, ex) || JPS_Jump_RR_Valid(y, x + 1, ey, ex);
+		bool isHit = JPS_Jump_UU_Valid(mapid, y - 1, x, ey, ex) || JPS_Jump_RR_Valid(mapid, y, x + 1, ey, ex);
 
 		if (flag || isHit)
 		{
@@ -304,10 +361,10 @@ bool JPS::JPS_Jump_UR(Node* node, int sy, int sx, int ey, int ex)
 			int ng = node->g + DIGSTANCE * steps;
 			int nh = (abs(ey - y) + abs(ex - x)) * DISTANCE;
 
-			if (ng < g_Best[y][x])
+			if (ng < map.BestG[y][x])
 			{
-				g_Best[y][x] = ng;
-				JPS_CreateNode(node, ng, nh, y, x, dir);
+				map.BestG[y][x] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, y, x, dir);
 				break;
 			}
 		}
@@ -319,8 +376,9 @@ bool JPS::JPS_Jump_UR(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_DL(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_DL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -330,7 +388,7 @@ bool JPS::JPS_Jump_DL(Node* node, int sy, int sx, int ey, int ex)
 		int nx = x - 1;
 		int ny = y + 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
 			break;
 		}
@@ -338,23 +396,23 @@ bool JPS::JPS_Jump_DL(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (nx == ex && ny == ey)
 		{
-			JPS_CreateNode(node, 0, 0, ny, nx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, ny, nx, dir);
 			return true;
 		}
 
-		if ((g_Tile[y][x + 1] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x + 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y][x + 1] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x + 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
 		}
 
-		if ((g_Tile[y - 1][x] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x - 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y - 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x - 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
 		}
 
-		bool isHit = JPS_Jump_LL_Valid(y, x - 1, ey, ex) || JPS_Jump_DD_Valid(y + 1, x, ey, ex);
+		bool isHit = JPS_Jump_LL_Valid(mapid, y, x - 1, ey, ex) || JPS_Jump_DD_Valid(mapid, y + 1, x, ey, ex);
 
 		if (flag || isHit)
 		{
@@ -362,10 +420,10 @@ bool JPS::JPS_Jump_DL(Node* node, int sy, int sx, int ey, int ex)
 			int ng = node->g + DIGSTANCE * steps;
 			int nh = (abs(ey - y) + abs(ex - x)) * DISTANCE;
 
-			if (ng < g_Best[y][x])
+			if (ng < map.BestG[y][x])
 			{
-				g_Best[y][x] = ng;
-				JPS_CreateNode(node, ng, nh, y, x, dir);
+				map.BestG[y][x] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, y, x, dir);
 				break;
 			}
 		}
@@ -377,8 +435,9 @@ bool JPS::JPS_Jump_DL(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_DR(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_DR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -388,7 +447,7 @@ bool JPS::JPS_Jump_DR(Node* node, int sy, int sx, int ey, int ex)
 		int nx = x + 1;
 		int ny = y + 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
 			break;
 		}
@@ -396,33 +455,33 @@ bool JPS::JPS_Jump_DR(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (nx == ex && ny == ey)
 		{
-			JPS_CreateNode(node, 0, 0, ny, nx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, ny, nx, dir);
 			return true;
 		}
 
-		if ((g_Tile[y][x - 1] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x - 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y][x - 1] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x - 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
 		}
 
-		if ((g_Tile[y - 1][x] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x + 1] == (char)TILETYPE::Empty))
+		if ((map.mapInfo[y - 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x + 1] == (char)TILETYPE::Empty))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
 		}
 
-		bool isHit = JPS_Jump_RR_Valid(y, x + 1, ey, ex) || JPS_Jump_DD_Valid(y + 1, x, ey, ex);
+		bool isHit = JPS_Jump_RR_Valid(mapid, y, x + 1, ey, ex) || JPS_Jump_DD_Valid(mapid, y + 1, x, ey, ex);
 
 		if (flag || isHit)
 		{
 			int steps = max(std::abs(x - node->x), std::abs(y - node->y));
 			int ng = node->g + DIGSTANCE * steps;
 			int nh = (abs(ey - y) + abs(ex - x)) * DISTANCE;
-			if (ng < g_Best[y][x])
+			if (ng < map.BestG[y][x])
 			{
-				g_Best[y][x] = ng;
-				JPS_CreateNode(node, ng, nh, y, x, dir);
+				map.BestG[y][x] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, y, x, dir);
 				break;
 			}
 		}
@@ -434,8 +493,9 @@ bool JPS::JPS_Jump_DR(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_UU(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_UU(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -444,7 +504,7 @@ bool JPS::JPS_Jump_UU(Node* node, int sy, int sx, int ey, int ex)
 		unsigned char dir = (int)DIRECTION::Jump_UU;
 		int ny = y - 1;
 
-		if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
+		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -452,19 +512,19 @@ bool JPS::JPS_Jump_UU(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (sx == ex && ny == ey)
 		{
-			JPS_CreateNode(node, 0, 0, ny, sx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, ny, sx, dir);
 			return true;
 		}
 
-		if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
 		}
 
-		if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
@@ -476,10 +536,10 @@ bool JPS::JPS_Jump_UU(Node* node, int sy, int sx, int ey, int ex)
 			int ng = node->g + DISTANCE * steps;
 			int nh = (abs(ey - y) + abs(ex - sx)) * DISTANCE;
 
-			if (ng < g_Best[y][sx])
+			if (ng < map.BestG[y][sx])
 			{
-				g_Best[y][sx] = ng;
-				JPS_CreateNode(node, ng, nh, y, sx, dir);
+				map.BestG[y][sx] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, y, sx, dir);
 				break;
 			}
 		}
@@ -490,8 +550,9 @@ bool JPS::JPS_Jump_UU(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_DD(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_DD(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -500,7 +561,7 @@ bool JPS::JPS_Jump_DD(Node* node, int sy, int sx, int ey, int ex)
 		unsigned char dir = (int)DIRECTION::Jump_DD;
 		int ny = y + 1;
 
-		if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
+		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -508,19 +569,19 @@ bool JPS::JPS_Jump_DD(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (sx == ex && ny == ey)
 		{
-			JPS_CreateNode(node, 0, 0, ny, sx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, ny, sx, dir);
 			return true;
 		}
 
-		if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
 		}
 
-		if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
@@ -532,10 +593,10 @@ bool JPS::JPS_Jump_DD(Node* node, int sy, int sx, int ey, int ex)
 			int ng = node->g + DISTANCE * steps;
 			int nh = (abs(ey - y) + abs(ex - sx)) * DISTANCE;
 
-			if (ng < g_Best[y][sx])
+			if (ng < map.BestG[y][sx])
 			{
-				g_Best[y][sx] = ng;
-				JPS_CreateNode(node, ng, nh, y, sx, dir);
+				map.BestG[y][sx] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, y, sx, dir);
 				break;
 			}
 		}
@@ -546,8 +607,9 @@ bool JPS::JPS_Jump_DD(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_RR(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_RR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -556,7 +618,7 @@ bool JPS::JPS_Jump_RR(Node* node, int sy, int sx, int ey, int ex)
 		unsigned char dir = (int)DIRECTION::Jump_RR;
 		int nx = x + 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -564,19 +626,19 @@ bool JPS::JPS_Jump_RR(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (nx == ex && sy == ey)
 		{
-			JPS_CreateNode(node, 0, 0, sy, nx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, sy, nx, dir);
 			return true;
 		}
 
-		if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
 		}
 
-		if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
@@ -588,10 +650,10 @@ bool JPS::JPS_Jump_RR(Node* node, int sy, int sx, int ey, int ex)
 			int ng = node->g + DISTANCE * steps;
 			int nh = (abs(ey - sy) + abs(ex - x)) * DISTANCE;
 
-			if (ng < g_Best[sy][x])
+			if (ng < map.BestG[sy][x])
 			{
-				g_Best[sy][x] = ng;
-				JPS_CreateNode(node, ng, nh, sy, x, dir);
+				map.BestG[sy][x] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, sy, x, dir);
 				break;
 			}
 		}
@@ -602,8 +664,9 @@ bool JPS::JPS_Jump_RR(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_LL(Node* node, int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_LL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	int y = sy;
 	while (true)
@@ -612,7 +675,7 @@ bool JPS::JPS_Jump_LL(Node* node, int sy, int sx, int ey, int ex)
 		unsigned char dir = (int)DIRECTION::Jump_LL;
 		int nx = x - 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -620,19 +683,19 @@ bool JPS::JPS_Jump_LL(Node* node, int sy, int sx, int ey, int ex)
 		// 목적지 발견
 		if (nx == ex && sy == ey)
 		{
-			JPS_CreateNode(node, 0, 0, sy, nx, dir);
+			JPS_CreateNode(mapid, node, 0, 0, sy, nx, dir);
 			return true;
 		}
 
-		if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
 		}
 
-		if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
@@ -644,10 +707,10 @@ bool JPS::JPS_Jump_LL(Node* node, int sy, int sx, int ey, int ex)
 			int ng = node->g + DISTANCE * steps;
 			int nh = (abs(ey - sy) + abs(ex - x)) * DISTANCE;
 
-			if (ng < g_Best[sy][x])
+			if (ng < map.BestG[sy][x])
 			{
-				g_Best[sy][x] = ng;
-				JPS_CreateNode(node, ng, nh, sy, x, dir);
+				map.BestG[sy][x] = ng;
+				JPS_CreateNode(mapid, node, ng, nh, sy, x, dir);
 				break;
 			}
 		}
@@ -658,14 +721,15 @@ bool JPS::JPS_Jump_LL(Node* node, int sy, int sx, int ey, int ex)
 	return true;
 }
 
-bool JPS::JPS_Jump_UU_Valid(int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_UU_Valid(int mapid, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int y = sy;
 	while (true)
 	{
 		int ny = y - 1;
 
-		if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
+		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -676,14 +740,14 @@ bool JPS::JPS_Jump_UU_Valid(int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}
 
-		if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}
@@ -692,14 +756,15 @@ bool JPS::JPS_Jump_UU_Valid(int sy, int sx, int ey, int ex)
 	}
 }
 
-bool JPS::JPS_Jump_LL_Valid(int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_LL_Valid(int mapid, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	while (true)
 	{
 		int nx = x - 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -710,14 +775,14 @@ bool JPS::JPS_Jump_LL_Valid(int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}
 
-		if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}
@@ -726,14 +791,15 @@ bool JPS::JPS_Jump_LL_Valid(int sy, int sx, int ey, int ex)
 	}
 }
 
-bool JPS::JPS_Jump_RR_Valid(int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_RR_Valid(int mapid, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int x = sx;
 	while (true)
 	{
 		int nx = x + 1;
 
-		if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
+		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -744,14 +810,14 @@ bool JPS::JPS_Jump_RR_Valid(int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}
 
-		if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}
@@ -760,14 +826,15 @@ bool JPS::JPS_Jump_RR_Valid(int sy, int sx, int ey, int ex)
 	}
 }
 
-bool JPS::JPS_Jump_DD_Valid(int sy, int sx, int ey, int ex)
+bool JPS::JPS_Jump_DD_Valid(int mapid, int sy, int sx, int ey, int ex)
 {
+	Map& map = _map[mapid];
 	int y = sy;
 	while (true)
 	{
 		int ny = y + 1;
 
-		if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
+		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
 			return false;
 		}
@@ -778,14 +845,14 @@ bool JPS::JPS_Jump_DD_Valid(int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}
 
-		if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
+			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
 		{
 			return true;
 		}

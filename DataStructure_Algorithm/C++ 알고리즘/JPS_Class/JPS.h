@@ -5,8 +5,6 @@
 #include <queue>
 #include <algorithm>
 
-#define GRID_WIDTH 100
-#define GRID_HEIGHT 50
 #define DISTANCE 10
 #define DIGSTANCE 14
 
@@ -70,6 +68,15 @@ public:
         /*}*/
     };
 
+    // 맵 관련 구조체가 나와서 맵ID 마다 맵 구조체 생성
+    struct Map
+    {
+        char mapInfo[100][100];
+        int BestG[100][100];
+        int gridH;
+        int gridW;
+    };
+
     static JPS* getInstance()
     {
         if (_pManagerJPS == nullptr)
@@ -89,14 +96,21 @@ public:
         }
     }
 
+    // 길찾기 전 초기 작업
+    bool JPS_Init(int mapid, int heigth, int width);
+
+    // Tile 체크
+    bool JPS_TileWall(int mapid, int y, int x, bool isDelete);
+    bool JPS_TileStartEnd(int mapid, int y, int x, bool isEnd);
+
     // 오픈리스트에서 노드 하나 꺼내서 Jump 수행
-    bool JPS_Run(int sy, int sx, int ey, int ex);
+    bool JPS_Run(int mapid, int sy, int sx, int ey, int ex);
 
     // 새로운 노드 생성
-    bool JPS_CreateNode(Node* parent, int g, int h, int y, int x, unsigned char dir);
+    bool JPS_CreateNode(int mapid, Node* parent, int g, int h, int y, int x, unsigned char dir);
 
     // 길찾기 성공 시 마지막 노드부터 시작 노드까지 연결
-    bool JPS_FindEndNode();
+    bool JPS_FindEndNode(int mapid);
 
     // 길찾기를 처음부터 다시 하기 위해서 자료구조 초기화
     bool JPS_Clear();
@@ -106,20 +120,20 @@ public:
     void JPS_RenderFinalPath(HDC hdc);
 
     // Jump 함수
-    bool JPS_Jump_UL(Node* node, int sy, int sx, int ey, int ex);
-    bool JPS_Jump_UR(Node* node, int sy, int sx, int ey, int ex);
-    bool JPS_Jump_DL(Node* node, int sy, int sx, int ey, int ex);
-    bool JPS_Jump_DR(Node* node, int sy, int sx, int ey, int ex);
-    bool JPS_Jump_UU(Node* node, int sy, int sx, int ey, int ex);
-    bool JPS_Jump_DD(Node* node, int sy, int sx, int ey, int ex);
-    bool JPS_Jump_RR(Node* node, int sy, int sx, int ey, int ex);
-    bool JPS_Jump_LL(Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_UL(int mapid, Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_UR(int mapid, Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_DL(int mapid, Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_DR(int mapid, Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_UU(int mapid, Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_DD(int mapid, Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_RR(int mapid, Node* node, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_LL(int mapid, Node* node, int sy, int sx, int ey, int ex);
 
     // 대각선 직선 검증 함수
-    bool JPS_Jump_UU_Valid(int sy, int sx, int ey, int ex);
-    bool JPS_Jump_LL_Valid(int sy, int sx, int ey, int ex);
-    bool JPS_Jump_RR_Valid(int sy, int sx, int ey, int ex);
-    bool JPS_Jump_DD_Valid(int sy, int sx, int ey, int ex);
+    bool JPS_Jump_UU_Valid(int mapid, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_LL_Valid(int mapid, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_RR_Valid(int mapid, int sy, int sx, int ey, int ex);
+    bool JPS_Jump_DD_Valid(int mapid, int sy, int sx, int ey, int ex);
 
     bool isError = false;
     bool isFindLoad = false;
@@ -128,6 +142,8 @@ private:
     std::priority_queue<Node*, std::vector<Node*>, Comp> _openList;
     std::map<std::pair<int, int>, int> _closeList;
     Node* _endNode = nullptr;
+
+    std::map<int, Map> _map;
 
     JPS() = default;
     ~JPS() = default;

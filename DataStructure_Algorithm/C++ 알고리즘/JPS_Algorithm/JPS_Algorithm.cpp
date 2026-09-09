@@ -561,11 +561,8 @@ void RenderParentLine(HDC hdc)
             int x2 = (int)((node->parent->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
             int y2 = (int)((node->parent->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
 
-            int mx = (x1 + x2) / 2;
-            int my = (y1 + y2) / 2;
-
             MoveToEx(hdc, x1, y1, NULL);
-            LineTo(hdc, mx, my);
+            LineTo(hdc, x2, y2);
             node = node->parent;
         }
     }

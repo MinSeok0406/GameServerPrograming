@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="JPS_Class.vcxproj" />
+  <Project Path="JPS_Class.vcxproj" Id="de291311-34b1-40e4-8ae3-40b4e24bf194" />
 </Solution>

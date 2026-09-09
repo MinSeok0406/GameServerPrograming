@@ -7,8 +7,11 @@
 
 #define MAX_LOADSTRING 100
 
+#define GRID_WIDTH 100
+#define GRID_HEIGHT 50
+
 JPS* g_JPS = nullptr;
-int g_Best[GRID_HEIGHT][GRID_WIDTH];
+const int g_mapID = 0;
 bool g_isrun = false;
 
 HPEN g_hGridPen;
@@ -58,6 +61,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ int       nCmdShow)
 {
     g_JPS = JPS::getInstance();
+    g_JPS->JPS_Init(g_mapID, GRID_HEIGHT, GRID_WIDTH);
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -80,14 +84,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_JPSCLASS));
-
-    for (auto i = 0; i < GRID_HEIGHT; ++i)
-    {
-        for (auto j = 0; j < GRID_WIDTH; ++j)
-        {
-            g_Best[i][j] = INT_MAX;
-        }
-    }
 
     MSG msg;
 
@@ -181,7 +177,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (!g_bStart)
             {
                 g_JPS->JPS_Clear();
-                g_Best[g_StartY][g_StartX] = 0;
                 unsigned char dir = 0;
                 for (auto i = 0; i < 8; ++i)
                 {
@@ -189,14 +184,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 int g = 0;
                 int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
-                g_JPS->JPS_CreateNode(nullptr, g, h, g_StartY, g_StartX, dir);
+                g_JPS->JPS_CreateNode(g_mapID, nullptr, g, h, g_StartY, g_StartX, dir);
                 g_bStart = true;
             }
 
             if (g_StartX != -1 && g_StartY != -1 && g_EndX != -1 && g_EndY != -1)
             {
                 // openList, closeList 그리드 표현
-                if (g_JPS->JPS_Run(g_StartY, g_StartX, g_EndY, g_EndX))
+                if (g_JPS->JPS_Run(g_mapID, g_StartY, g_StartX, g_EndY, g_EndX))
                 {
                     if (g_JPS->isError == true)
                     {
@@ -213,7 +208,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (!g_bStart)
             {
                 g_JPS->JPS_Clear();
-                g_Best[g_StartY][g_StartX] = 0;
                 unsigned char dir = 0;
                 for (auto i = 0; i < 8; ++i)
                 {
@@ -221,13 +215,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 int g = 0;
                 int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
-                g_JPS->JPS_CreateNode(nullptr, g, h, g_StartY, g_StartX, dir);
+                g_JPS->JPS_CreateNode(g_mapID, nullptr, g, h, g_StartY, g_StartX, dir);
                 g_bStart = true;
             }
 
             if (g_StartX != -1 && g_StartY != -1 && g_EndX != -1 && g_EndY != -1)
             {
-                while (g_JPS->JPS_Run(g_StartY, g_StartX, g_EndY, g_EndX))
+                while (g_JPS->JPS_Run(g_mapID, g_StartY, g_StartX, g_EndY, g_EndX))
                 {
                     if (g_JPS->isError == true)
                     {
@@ -260,6 +254,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
 
                     g_Tile[iTileY][iTileX] = (char)TILETYPE::End;
+                    g_JPS->JPS_TileStartEnd(g_mapID, iTileY, iTileX, g_bEndDrag);
                     g_EndY = iTileY;
                     g_EndX = iTileX;
                     g_bStart = false;
@@ -274,6 +269,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
 
                     g_Tile[iTileY][iTileX] = (char)TILETYPE::Start;
+                    g_JPS->JPS_TileStartEnd(g_mapID, iTileY, iTileX, g_bEndDrag);
                     g_StartY = iTileY;
                     g_StartX = iTileX;
                 }
@@ -341,6 +337,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (ScreenToTile(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &iTileX, &iTileY))
             {
                 g_Tile[iTileY][iTileX] = !g_bWallErase;
+                g_JPS->JPS_TileWall(g_mapID, iTileY, iTileX, g_bWallErase);
                 InvalidateRect(hWnd, NULL, true);
             }
         }
@@ -348,8 +345,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_CREATE:
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
-        g_hParentPen = CreatePen(PS_SOLID, 1, RGB(150, 150, 200));
-        g_hPathPen = CreatePen(PS_SOLID, 2, RGB(255, 150, 200));
+        g_hParentPen = CreatePen(PS_SOLID, 3, RGB(150, 150, 200));
+        g_hPathPen = CreatePen(PS_SOLID, 4, RGB(255, 150, 200));
         g_hBrushEmpty = CreateSolidBrush(RGB(255, 255, 255));
         g_hBrushWall = CreateSolidBrush(RGB(100, 100, 100));
         g_hBrushStart = CreateSolidBrush(RGB(0, 200, 0));
