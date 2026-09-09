@@ -474,7 +474,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DeleteObject(g_hGridPen);
         DeleteObject(g_hParentPen);
         DeleteObject(g_hPathPen);
-        g_Astar->destoryInstance();
+        g_Astar->destroyInstance();
         PostQuitMessage(0);
         break;
     default:

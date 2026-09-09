@@ -157,7 +157,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     AllocConsole(); // 콘솔창 생성
 
-
+    FILE* fp;
+    freopen_s(&fp, "CONOUT$", "w", stdout); // stdout을 방금 만든 콘솔로 연결
+    freopen_s(&fp, "CONOUT$", "w", stderr); // stderr도 연결
+    freopen_s(&fp, "CONIN$", "r", stdin);  // 필요하면 입력도 연결
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

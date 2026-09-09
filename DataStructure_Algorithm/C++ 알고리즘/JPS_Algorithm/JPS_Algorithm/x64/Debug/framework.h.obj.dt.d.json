@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\framework.h",
+        "Source": "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\framework.h",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\gameprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\targetver.h",
+            "c:\\gameserverprograming\\datastructure_algorithm\\c++ 알고리즘\\jps_algorithm\\targetver.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\sdkddkver.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\windows.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",

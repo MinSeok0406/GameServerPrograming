@@ -66,7 +66,7 @@ public:
         return _pManagerAstar;
     }
 
-    static void destoryInstance()
+    static void destroyInstance()
     {
         if (_pManagerAstar != nullptr)
         {
