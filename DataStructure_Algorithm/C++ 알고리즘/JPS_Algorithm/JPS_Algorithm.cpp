@@ -3,12 +3,23 @@
 
 #include "framework.h"
 #include "JPS_Algorithm.h"
-#include <vector>
-#include <map>
+#include <random>
 #include <queue>
+#include <map>
+#include <utility>
+#include <chrono>
+#include <cmath>
 #include <algorithm>
 
 #define MAX_LOADSTRING 100
+
+/* 검증 코드 */
+HWND g_hWnd = nullptr;
+bool g_bAutoTest = false;
+uint64_t g_AutoTestTimerId = 1;
+int g_TestCount = 0;
+int g_MismatchCount = 0;
+//======================================
 
 #define GRID_WIDTH 100
 #define GRID_HEIGHT 50
@@ -56,9 +67,13 @@ std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
 std::map<std::pair<int, int>, int> closeList;
 Node* g_PathEndNode = nullptr;
 bool g_isrun = false;
+bool g_isFindLoad = false;
 
 Node* JPS_CreateNode(Node* parent, int g, int h, int y, int x, unsigned char dir);
 Node* JPS_AllocNode(Node* parent, int g, int h, int y, int x, unsigned char dir);
+
+// 최대한 직접적으로 갈 수 있는 노드를 발견하고 그 노드를 반환
+Node* JPS_BresenhamLine(Node* node);
 bool JPS_CommitNode(Node* node);
 bool JPS_FindEndNode(Node* node);
 bool JPS_Update(Node* node, int ey, int ex);
@@ -105,6 +120,7 @@ enum class DIRECTION
 HPEN g_hGridPen;
 HPEN g_hParentPen;
 HPEN g_hPathPen;
+HPEN g_hBresenhamPen;
 HBRUSH g_hBrushEmpty;
 HBRUSH g_hBrushWall;
 HBRUSH g_hBrushStart;
@@ -133,6 +149,13 @@ void RenderGrid(HDC hdc);
 void RenderParentLine(HDC hdc);
 void RenderFinalPath(HDC hdc);
 void RenderObstacle(HDC hdc);
+void RenderBresenhamLine(HDC hdc);
+
+/* 검증 코드 */
+void GenerateRandomMap(double wall = 0.3);
+bool IsPathReachable(int sy, int sx, int ey, int ex);
+void SeedNewRandomTest();
+//=============================
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -343,6 +366,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
             }
         }
+        else if (wParam == 'R') // 맵 리셋
+        {
+            SeedNewRandomTest();
+            InvalidateRect(hWnd, NULL, true);
+        }
+        else if (wParam == 'A') // 자동 실행
+        {
+            g_bAutoTest = !g_bAutoTest;
+            if (g_bAutoTest)
+            {
+                SetTimer(hWnd, g_AutoTestTimerId, 1000, NULL);
+                printf("====== Test Start ======\n");
+            }
+            else
+            {
+                KillTimer(hWnd, g_AutoTestTimerId);
+                printf("====== Test Stop (%d of %d fail) ======\n", g_TestCount, g_MismatchCount);
+            }
+        }
         break;
     case WM_LBUTTONDOWN:    // 출발지 및 목적지 생성
         g_bStartDrag = true;
@@ -445,10 +487,69 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
     }
     break;
+    case WM_TIMER:
+        if (wParam == g_AutoTestTimerId)
+        {
+            auto start = std::chrono::steady_clock::now();
+
+            GenerateRandomMap(0.3);
+            bool expectedReachable = IsPathReachable(g_StartY, g_StartX, g_EndY, g_EndX);
+
+            while (openList.empty() == false)
+            {
+                openList.pop();
+            }
+            closeList.clear();
+            g_PathEndNode = nullptr;
+
+            unsigned char dir = 0;
+            for (auto i = 0; i < 8; ++i)
+            {
+                dir |= (1 << i);
+            }
+            int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
+            JPS_CreateNode(nullptr, 0, h, g_StartY, g_StartX, dir);
+
+            while (openList.empty() == false)
+            {
+                Node* node = openList.top();
+                openList.pop();
+                if (!JPS_Update(node, g_EndY, g_EndX))
+                {
+                    break;
+                }
+            }
+
+            auto end = std::chrono::steady_clock::now();
+            std::chrono::duration<double, std::milli> dur = end - start;
+
+            bool actualFound = g_isFindLoad;
+            ++g_TestCount;
+
+            printf("[#%d] expected=%d actual=%d (start:%d,%d end:%d,%d) (duration:%lf)\n",
+                g_TestCount, expectedReachable, actualFound,
+                g_StartX, g_StartY, g_EndX, g_EndY, dur.count());
+
+            InvalidateRect(hWnd, NULL, true);
+
+            if (expectedReachable != actualFound)
+            {
+                ++g_MismatchCount;
+                KillTimer(hWnd, g_AutoTestTimerId);
+                g_bAutoTest = false;
+                __debugbreak();
+            }
+            else
+            {
+                printf("Find Load!!!\n");
+            }
+        }
+        break;
     case WM_CREATE:
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
         g_hParentPen = CreatePen(PS_SOLID, 1, RGB(150, 150, 200));
         g_hPathPen = CreatePen(PS_SOLID, 2, RGB(255, 150, 200));
+        g_hBresenhamPen = CreatePen(PS_SOLID, 3, RGB(100, 100, 200));
         g_hBrushEmpty = CreateSolidBrush(RGB(255, 255, 255));
         g_hBrushWall = CreateSolidBrush(RGB(100, 100, 100));
         g_hBrushStart = CreateSolidBrush(RGB(0, 200, 0));
@@ -465,6 +566,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         RenderGrid(hdc);
         RenderParentLine(hdc);
         RenderFinalPath(hdc);
+        RenderBresenhamLine(hdc);
         EndPaint(hWnd, &ps);
     }
     break;
@@ -479,7 +581,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DeleteObject(g_hGridPen);
         DeleteObject(g_hParentPen);
         DeleteObject(g_hPathPen);
-        //g_Astar->destoryInstance();
+        DeleteObject(g_hBresenhamPen);
         PostQuitMessage(0);
         break;
     default:
@@ -642,6 +744,136 @@ void RenderObstacle(HDC hdc)
     }
 }
 
+void RenderBresenhamLine(HDC hdc)
+{
+    if (g_PathEndNode == nullptr)
+    {
+        return;
+    }
+
+    HPEN hOldPen = (HPEN)SelectObject(hdc, g_hBresenhamPen);
+
+    Node* node = g_PathEndNode;
+    while (node->parent != nullptr)
+    {
+        Node* connectNode = JPS_BresenhamLine(node);
+
+        int mtX = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+        int mtY = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+        MoveToEx(hdc, mtX, mtY, NULL);
+
+        int ltX = (int)((connectNode->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+        int ltY = (int)((connectNode->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+        LineTo(hdc, ltX, ltY);
+
+        node = connectNode;
+    }
+
+    SelectObject(hdc, hOldPen);
+}
+
+void GenerateRandomMap(double wall)
+{
+    static std::mt19937 rng(std::random_device {}());
+    std::uniform_int_distribution<int> distX(0, GRID_WIDTH - 1);
+    std::uniform_int_distribution<int> distY(0, GRID_HEIGHT - 1);
+    std::uniform_real_distribution<double> distWall(0.0, 1.0);
+
+    memset(g_Tile, (char)TILETYPE::Empty, sizeof(g_Tile));
+    for (auto i = 0; i < GRID_HEIGHT; ++i)
+    {
+        for (auto j = 0; j < GRID_WIDTH; ++j)
+        {
+            g_Best[i][j] = INT_MAX;
+        }
+    }
+
+    for (auto y = 0; y < GRID_HEIGHT; ++y)
+    {
+        for (auto x = 0; x < GRID_WIDTH; ++x)
+        {
+            if (distWall(rng) < wall)
+            {
+                g_Tile[y][x] = (char)TILETYPE::Wall;
+            }
+        }
+    }
+
+    do
+    {
+        g_StartY = distY(rng);
+        g_StartX = distX(rng);
+    } while (g_Tile[g_StartY][g_StartX] == (char)TILETYPE::Wall);
+
+    do
+    {
+        g_EndY = distY(rng);
+        g_EndX = distX(rng);
+    } while (g_Tile[g_EndY][g_EndX] == (char)TILETYPE::Wall
+        || (g_EndX == g_StartX && g_EndY == g_StartY));
+
+    g_Tile[g_StartY][g_StartX] = (char)TILETYPE::Start;
+    g_Tile[g_EndY][g_EndX] = (char)TILETYPE::End;
+}
+
+bool IsPathReachable(int sy, int sx, int ey, int ex)
+{
+    static const int dy[8] = { -1, 0, 1, 0, -1, 1, 1, -1 };
+    static const int dx[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };
+
+    static bool visited[GRID_HEIGHT][GRID_WIDTH];
+    memset(visited, 0, sizeof(visited));
+
+    std::queue<std::pair<int, int>> q;
+    q.push({ sy, sx });
+    visited[sy][sx] = true;
+
+    while (!q.empty())
+    {
+        int cy, cx;
+        std::tie(cy, cx) = q.front();
+        q.pop();
+
+        if (cy == ey && cx == ex)
+            return true;
+
+        for (int k = 0; k < 8; ++k)
+        {
+            int ny = cy + dy[k];
+            int nx = cx + dx[k];
+            if (ny < 0 || ny >= GRID_HEIGHT || nx < 0 || nx >= GRID_WIDTH)
+                continue;
+            if (visited[ny][nx] || g_Tile[ny][nx] == (char)TILETYPE::Wall)
+                continue;
+
+            visited[ny][nx] = true;
+            q.push({ ny, nx });
+        }
+    }
+    return false;
+}
+
+void SeedNewRandomTest()
+{
+    GenerateRandomMap(0.3);
+
+    while (openList.empty() == false)
+    {
+        openList.pop();
+    }
+    closeList.clear();
+    g_PathEndNode = nullptr;
+
+    unsigned char dir = 0;
+    for (auto i = 0; i < 8; ++i)
+    {
+        dir |= (1 << i);
+    }
+    int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
+    JPS_CreateNode(nullptr, 0, h, g_StartY, g_StartX, dir);
+    g_bStart = true;
+}
+
 Node* JPS_CreateNode(Node* parent, int g, int h, int y, int x, unsigned char dir)
 {
     Node* node = JPS_AllocNode(parent, g, h, y, x, dir);
@@ -660,6 +892,74 @@ Node* JPS_AllocNode(Node* parent, int g, int h, int y, int x, unsigned char dir)
     newNode->dir = dir;
     newNode->parent = parent;
     return newNode;
+}
+
+Node* JPS_BresenhamLine(Node* node)
+{
+    Node* presentNode = node;
+    Node* connectNode = node->parent;
+
+    Node* validNode = connectNode;
+
+    while (connectNode != nullptr)
+    {
+        int sy = presentNode->y;
+        int sx = presentNode->x;
+        int ey = connectNode->y;
+        int ex = connectNode->x;
+
+        int dy = std::abs(ey - sy);
+        int dx = std::abs(ex - sx);
+
+        // 진행 방향
+        int addY = (sy < ey) ? 1 : -1;
+        int addX = (sx < ex) ? 1 : -1;
+
+        // 오차항
+        int err = dx - dy;
+
+        int y = sy;
+        int x = sx;
+        bool blocked = false;
+
+        while (true)
+        {
+            if (x == ex && y == ey)
+            {
+                break;
+            }
+
+            int e2 = err * 2;
+
+            if (e2 > -dy)
+            {
+                err -= dy;
+                x += addX;
+            }
+
+            if (e2 < dx)
+            {
+                err += dx;
+                y += addY;
+            }
+
+            if (x < 0 || x >= GRID_WIDTH || y < 0 || y >= GRID_HEIGHT || g_Tile[y][x] == (char)TILETYPE::Wall)
+            {
+                blocked = true;
+                break;
+            }
+        }
+
+        if (blocked)
+        {
+            break;
+        }
+
+        validNode = connectNode;
+        connectNode = connectNode->parent;
+    }
+
+    return validNode;
 }
 
 bool JPS_CommitNode(Node* node)
@@ -707,6 +1007,7 @@ bool JPS_Update(Node* node, int ey, int ex)
     if (y == ey && x == ex)
     {
         g_PathEndNode = node;
+        g_isFindLoad = true;
         JPS_FindEndNode(node);
         return false;
     }
@@ -776,8 +1077,8 @@ bool Jump_UL(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_UL) | (1 << (int)DIRECTION::Jump_UU) | (1 << (int)DIRECTION::Jump_LL);
-        int nx = x - 1;
-        int ny = y - 1;
+        int nx = x;
+        int ny = y;
 
         if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
         {
@@ -791,13 +1092,13 @@ bool Jump_UL(Node* node, int sy, int sx, int ey, int ex)
             return true;
         }
 
-        if ((g_Tile[y + 1][x] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x - 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y + 1][x] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x - 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_DL);
             flag = true;
         }
 
-        if ((g_Tile[y][x + 1] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x + 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y][x + 1] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x + 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_UR);
             flag = true;
@@ -819,8 +1120,8 @@ bool Jump_UL(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        x = nx;
-        y = ny;
+        x = nx - 1;
+        y = ny - 1;
     }
 
     return true;
@@ -834,8 +1135,8 @@ bool Jump_UR(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_UR) | (1 << (int)DIRECTION::Jump_UU) | (1 << (int)DIRECTION::Jump_RR);
-        int nx = x + 1;
-        int ny = y - 1;
+        int nx = x;
+        int ny = y;
 
         if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
         {
@@ -849,13 +1150,13 @@ bool Jump_UR(Node* node, int sy, int sx, int ey, int ex)
             return true;
         }
 
-        if ((g_Tile[y][x - 1] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x - 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y][x - 1] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x - 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_UL);
             flag = true;
         }
 
-        if ((g_Tile[y + 1][x] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x + 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y + 1][x] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x + 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_DR);
             flag = true;
@@ -877,8 +1178,8 @@ bool Jump_UR(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        x = nx;
-        y = ny;
+        x = nx + 1;
+        y = ny - 1;
     }
 
     return true;
@@ -892,8 +1193,8 @@ bool Jump_DL(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_DL) | (1 << (int)DIRECTION::Jump_DD) | (1 << (int)DIRECTION::Jump_LL);
-        int nx = x - 1;
-        int ny = y + 1;
+        int nx = x;
+        int ny = y;
 
         if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
         {
@@ -907,13 +1208,13 @@ bool Jump_DL(Node* node, int sy, int sx, int ey, int ex)
             return true;
         }
 
-        if ((g_Tile[y][x + 1] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x + 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y][x + 1] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x + 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_DR);
             flag = true;
         }
 
-        if ((g_Tile[y - 1][x] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x - 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y - 1][x] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x - 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_UL);
             flag = true;
@@ -935,8 +1236,8 @@ bool Jump_DL(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        x = nx;
-        y = ny;
+        x = nx - 1;
+        y = ny + 1;
     }
 
     return true;
@@ -950,8 +1251,8 @@ bool Jump_DR(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_DR) | (1 << (int)DIRECTION::Jump_DD) | (1 << (int)DIRECTION::Jump_RR);
-        int nx = x + 1;
-        int ny = y + 1;
+        int nx = x;
+        int ny = y;
 
         if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][nx] == (char)TILETYPE::Wall)
         {
@@ -965,13 +1266,13 @@ bool Jump_DR(Node* node, int sy, int sx, int ey, int ex)
             return true;
         }
 
-        if ((g_Tile[y][x - 1] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x - 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y][x - 1] == (char)TILETYPE::Wall) && (g_Tile[y + 1][x - 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_DL);
             flag = true;
         }
 
-        if ((g_Tile[y - 1][x] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x + 1] == (char)TILETYPE::Empty))
+        if ((g_Tile[y - 1][x] == (char)TILETYPE::Wall) && (g_Tile[y - 1][x + 1] != (char)TILETYPE::Wall))
         {
             dir |= (1 << (int)DIRECTION::Jump_UR);
             flag = true;
@@ -992,8 +1293,8 @@ bool Jump_DR(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        x = nx;
-        y = ny;
+        x = nx + 1;
+        y = ny + 1;
     }
 
     return true;
@@ -1007,7 +1308,7 @@ bool Jump_UU(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_UU);
-        int ny = y - 1;
+        int ny = y;
 
         if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
         {
@@ -1022,14 +1323,14 @@ bool Jump_UU(Node* node, int sy, int sx, int ey, int ex)
         }
 
         if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y - 1][sx + 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_UR);
             flag = true;
         }
 
         if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y - 1][sx - 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_UL);
             flag = true;
@@ -1049,7 +1350,7 @@ bool Jump_UU(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        y = ny;
+        y = ny - 1;
     }
 
     return true;
@@ -1063,7 +1364,7 @@ bool Jump_DD(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_DD);
-        int ny = y + 1;
+        int ny = y;
 
         if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
         {
@@ -1078,14 +1379,14 @@ bool Jump_DD(Node* node, int sy, int sx, int ey, int ex)
         }
 
         if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y + 1][sx + 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_DR);
             flag = true;
         }
 
         if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y + 1][sx - 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_DL);
             flag = true;
@@ -1105,7 +1406,7 @@ bool Jump_DD(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        y = ny;
+        y = ny + 1;
     }
 
     return true;
@@ -1119,7 +1420,7 @@ bool Jump_RR(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_RR);
-        int nx = x + 1;
+        int nx = x;
 
         if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
         {
@@ -1134,14 +1435,14 @@ bool Jump_RR(Node* node, int sy, int sx, int ey, int ex)
         }
 
         if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy + 1][x + 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_DR);
             flag = true;
         }
 
         if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy - 1][x + 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_UR);
             flag = true;
@@ -1161,7 +1462,7 @@ bool Jump_RR(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        x = nx;
+        x = nx + 1;
     }
 
     return true;
@@ -1175,7 +1476,7 @@ bool Jump_LL(Node* node, int sy, int sx, int ey, int ex)
     {
         bool flag = false;
         unsigned char dir = (1 << (int)DIRECTION::Jump_LL);
-        int nx = x - 1;
+        int nx = x;
 
         if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
         {
@@ -1190,14 +1491,14 @@ bool Jump_LL(Node* node, int sy, int sx, int ey, int ex)
         }
 
         if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy + 1][x - 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_DL);
             flag = true;
         }
 
         if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy - 1][x - 1] != (char)TILETYPE::Wall)))
         {
             dir |= (1 << (int)DIRECTION::Jump_UL);
             flag = true;
@@ -1217,7 +1518,7 @@ bool Jump_LL(Node* node, int sy, int sx, int ey, int ex)
             }
         }
 
-        x = nx;
+        x = nx - 1;
     }
 
     return true;
@@ -1228,7 +1529,7 @@ bool JPS_Jump_UU_Valid(int sy, int sx, int ey, int ex)
     int y = sy;
     while (true)
     {
-        int ny = y - 1;
+        int ny = y;
 
         if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
         {
@@ -1242,18 +1543,18 @@ bool JPS_Jump_UU_Valid(int sy, int sx, int ey, int ex)
         }
 
         if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y - 1][sx + 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
         if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y - 1][sx - 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
-        y = ny;
+        y = ny - 1;
     }
 }
 
@@ -1262,7 +1563,7 @@ bool JPS_Jump_LL_Valid(int sy, int sx, int ey, int ex)
     int x = sx;
     while (true)
     {
-        int nx = x - 1;
+        int nx = x;
 
         if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
         {
@@ -1276,18 +1577,18 @@ bool JPS_Jump_LL_Valid(int sy, int sx, int ey, int ex)
         }
 
         if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy + 1][x - 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
         if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy - 1][x - 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
-        x = nx;
+        x = nx - 1;
     }
 }
 
@@ -1296,7 +1597,7 @@ bool JPS_Jump_RR_Valid(int sy, int sx, int ey, int ex)
     int x = sx;
     while (true)
     {
-        int nx = x + 1;
+        int nx = x;
 
         if (nx < 0 || nx >= GRID_WIDTH || sy < 0 || sy >= GRID_HEIGHT || g_Tile[sy][nx] == (char)TILETYPE::Wall)
         {
@@ -1310,18 +1611,18 @@ bool JPS_Jump_RR_Valid(int sy, int sx, int ey, int ex)
         }
 
         if (!(sy + 1 >= GRID_HEIGHT) && ((g_Tile[sy + 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy + 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy + 1][x + 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
         if (!(sy - 1 < 0) && ((g_Tile[sy - 1][x] == (char)TILETYPE::Wall) &&
-            (g_Tile[sy - 1][nx] == (char)TILETYPE::Empty)))
+            (g_Tile[sy - 1][x + 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
-        x = nx;
+        x = nx + 1;
     }
 }
 
@@ -1330,7 +1631,7 @@ bool JPS_Jump_DD_Valid(int sy, int sx, int ey, int ex)
     int y = sy;
     while (true)
     {
-        int ny = y + 1;
+        int ny = y;
 
         if (sx < 0 || sx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT || g_Tile[ny][sx] == (char)TILETYPE::Wall)
         {
@@ -1344,17 +1645,17 @@ bool JPS_Jump_DD_Valid(int sy, int sx, int ey, int ex)
         }
 
         if (!(sx + 1 >= GRID_WIDTH) && ((g_Tile[y][sx + 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx + 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y + 1][sx + 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
         if (!(sx - 1 < 0) && ((g_Tile[y][sx - 1] == (char)TILETYPE::Wall) &&
-            (g_Tile[ny][sx - 1] == (char)TILETYPE::Empty)))
+            (g_Tile[y + 1][sx - 1] != (char)TILETYPE::Wall)))
         {
             return true;
         }
 
-        y = ny;
+        y = ny + 1;
     }
 }

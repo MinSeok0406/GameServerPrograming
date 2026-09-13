@@ -5,6 +5,7 @@ extern double g_offsetX;
 extern double g_offsetY;
 extern HPEN g_hParentPen;
 extern HPEN g_hPathPen;
+extern HPEN g_hBresenhamPen;
 
 JPS* JPS::_pManagerJPS = nullptr;
 
@@ -254,7 +255,34 @@ void JPS::JPS_RenderFinalPath(HDC hdc)
 		node = node->parent;
 	}
 
-	_endNode = nullptr;
+	SelectObject(hdc, hOldPen);
+}
+
+void JPS::JPS_RenderBresenhamLine(int mapid, HDC hdc)
+{
+	if (_endNode == nullptr)
+	{
+		return;
+	}
+
+	HPEN hOldPen = (HPEN)SelectObject(hdc, g_hBresenhamPen);
+
+	Node* node = _endNode;
+	while (node->parent != nullptr)
+	{
+		Node* connectNode = JPS_BresenhamLine(mapid, node);
+
+		int mtX = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+		int mtY = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+		MoveToEx(hdc, mtX, mtY, NULL);
+
+		int ltX = (int)((connectNode->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+		int ltY = (int)((connectNode->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+		LineTo(hdc, ltX, ltY);
+
+		node = connectNode;
+	}
+
 	SelectObject(hdc, hOldPen);
 }
 
@@ -267,8 +295,8 @@ bool JPS::JPS_Jump_UL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_UL | (int)DIRECTION::Jump_UU | (int)DIRECTION::Jump_LL;
-		int nx = x - 1;
-		int ny = y - 1;
+		int nx = x;
+		int ny = y;
 
 		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
@@ -282,13 +310,13 @@ bool JPS::JPS_Jump_UL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if ((map.mapInfo[y + 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x - 1] == (char)TILETYPE::Empty))
+		if (!(y + 1 >= map.gridH || x - 1 < 0) && (map.mapInfo[y + 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x - 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
 		}
 
-		if ((map.mapInfo[y][x + 1] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x + 1] == (char)TILETYPE::Empty))
+		if (!(x + 1 >= map.gridW || y - 1 < 0) && (map.mapInfo[y][x + 1] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x + 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
@@ -310,8 +338,8 @@ bool JPS::JPS_Jump_UL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		x = nx;
-		y = ny;
+		x = nx - 1;
+		y = ny - 1;
 	}
 
 	return true;
@@ -326,8 +354,8 @@ bool JPS::JPS_Jump_UR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_UR | (int)DIRECTION::Jump_UU | (int)DIRECTION::Jump_RR;
-		int nx = x + 1;
-		int ny = y - 1;
+		int nx = x;
+		int ny = y;
 
 		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
@@ -341,13 +369,13 @@ bool JPS::JPS_Jump_UR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if ((map.mapInfo[y][x - 1] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x - 1] == (char)TILETYPE::Empty))
+		if (!(x - 1 < 0 || y - 1 < 0) && (map.mapInfo[y][x - 1] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x - 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
 		}
 
-		if ((map.mapInfo[y + 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x + 1] == (char)TILETYPE::Empty))
+		if (!(x + 1 >= map.gridW || y + 1 >= map.gridH) && (map.mapInfo[y + 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x + 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
@@ -369,8 +397,8 @@ bool JPS::JPS_Jump_UR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		x = nx;
-		y = ny;
+		x = nx + 1;
+		y = ny - 1;
 	}
 
 	return true;
@@ -385,8 +413,8 @@ bool JPS::JPS_Jump_DL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_DL | (int)DIRECTION::Jump_DD | (int)DIRECTION::Jump_LL;
-		int nx = x - 1;
-		int ny = y + 1;
+		int nx = x;
+		int ny = y;
 
 		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
@@ -400,13 +428,13 @@ bool JPS::JPS_Jump_DL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if ((map.mapInfo[y][x + 1] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x + 1] == (char)TILETYPE::Empty))
+		if (!(x + 1 >= map.gridW || y + 1 >= map.gridH) && (map.mapInfo[y][x + 1] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x + 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
 		}
 
-		if ((map.mapInfo[y - 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x - 1] == (char)TILETYPE::Empty))
+		if (!(x - 1 < 0 || y - 1 < 0) && (map.mapInfo[y - 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x - 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
@@ -428,8 +456,8 @@ bool JPS::JPS_Jump_DL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		x = nx;
-		y = ny;
+		x = nx - 1;
+		y = ny + 1;
 	}
 
 	return true;
@@ -444,8 +472,8 @@ bool JPS::JPS_Jump_DR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_DR | (int)DIRECTION::Jump_DD | (int)DIRECTION::Jump_RR;
-		int nx = x + 1;
-		int ny = y + 1;
+		int nx = x;
+		int ny = y;
 
 		if (nx < 0 || nx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][nx] == (char)TILETYPE::Wall)
 		{
@@ -459,13 +487,13 @@ bool JPS::JPS_Jump_DR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			return true;
 		}
 
-		if ((map.mapInfo[y][x - 1] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x - 1] == (char)TILETYPE::Empty))
+		if (!(x - 1 < 0 || y + 1 >= map.gridH) && (map.mapInfo[y][x - 1] == (char)TILETYPE::Wall) && (map.mapInfo[y + 1][x - 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
 		}
 
-		if ((map.mapInfo[y - 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x + 1] == (char)TILETYPE::Empty))
+		if (!(x + 1 >= map.gridW || y - 1 < 0) && (map.mapInfo[y - 1][x] == (char)TILETYPE::Wall) && (map.mapInfo[y - 1][x + 1] != (char)TILETYPE::Wall))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
@@ -486,8 +514,8 @@ bool JPS::JPS_Jump_DR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		x = nx;
-		y = ny;
+		x = nx + 1;
+		y = ny + 1;
 	}
 
 	return true;
@@ -502,7 +530,7 @@ bool JPS::JPS_Jump_UU(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_UU;
-		int ny = y - 1;
+		int ny = y;
 
 		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
@@ -517,14 +545,14 @@ bool JPS::JPS_Jump_UU(int mapid, Node* node, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y - 1][sx + 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
 		}
 
 		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y - 1][sx - 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
@@ -544,7 +572,7 @@ bool JPS::JPS_Jump_UU(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		y = ny;
+		y = ny - 1;
 	}
 
 	return true;
@@ -559,7 +587,7 @@ bool JPS::JPS_Jump_DD(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_DD;
-		int ny = y + 1;
+		int ny = y;
 
 		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
@@ -574,14 +602,14 @@ bool JPS::JPS_Jump_DD(int mapid, Node* node, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y + 1][sx + 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
 		}
 
 		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y + 1][sx - 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
@@ -601,7 +629,7 @@ bool JPS::JPS_Jump_DD(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		y = ny;
+		y = ny + 1;
 	}
 
 	return true;
@@ -616,7 +644,7 @@ bool JPS::JPS_Jump_RR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_RR;
-		int nx = x + 1;
+		int nx = x;
 
 		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
@@ -631,14 +659,14 @@ bool JPS::JPS_Jump_RR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy + 1][x + 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_DR;
 			flag = true;
 		}
 
 		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy - 1][x + 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_UR;
 			flag = true;
@@ -658,7 +686,7 @@ bool JPS::JPS_Jump_RR(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		x = nx;
+		x = nx + 1;
 	}
 
 	return true;
@@ -673,7 +701,7 @@ bool JPS::JPS_Jump_LL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 	{
 		bool flag = false;
 		unsigned char dir = (int)DIRECTION::Jump_LL;
-		int nx = x - 1;
+		int nx = x;
 
 		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
@@ -688,14 +716,14 @@ bool JPS::JPS_Jump_LL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy + 1][x - 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_DL;
 			flag = true;
 		}
 
 		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy - 1][x - 1] != (char)TILETYPE::Wall)))
 		{
 			dir |= (int)DIRECTION::Jump_UL;
 			flag = true;
@@ -715,7 +743,7 @@ bool JPS::JPS_Jump_LL(int mapid, Node* node, int sy, int sx, int ey, int ex)
 			}
 		}
 
-		x = nx;
+		x = nx - 1;
 	}
 
 	return true;
@@ -727,7 +755,7 @@ bool JPS::JPS_Jump_UU_Valid(int mapid, int sy, int sx, int ey, int ex)
 	int y = sy;
 	while (true)
 	{
-		int ny = y - 1;
+		int ny = y;
 
 		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
@@ -741,18 +769,18 @@ bool JPS::JPS_Jump_UU_Valid(int mapid, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y - 1][sx + 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
 		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y - 1][sx - 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
-		y = ny;
+		y = ny - 1;
 	}
 }
 
@@ -762,7 +790,7 @@ bool JPS::JPS_Jump_LL_Valid(int mapid, int sy, int sx, int ey, int ex)
 	int x = sx;
 	while (true)
 	{
-		int nx = x - 1;
+		int nx = x;
 
 		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
@@ -776,18 +804,18 @@ bool JPS::JPS_Jump_LL_Valid(int mapid, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy + 1][x - 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
 		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy - 1][x - 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
-		x = nx;
+		x = nx - 1;
 	}
 }
 
@@ -797,7 +825,7 @@ bool JPS::JPS_Jump_RR_Valid(int mapid, int sy, int sx, int ey, int ex)
 	int x = sx;
 	while (true)
 	{
-		int nx = x + 1;
+		int nx = x;
 
 		if (nx < 0 || nx >= map.gridW || sy < 0 || sy >= map.gridH || map.mapInfo[sy][nx] == (char)TILETYPE::Wall)
 		{
@@ -811,18 +839,18 @@ bool JPS::JPS_Jump_RR_Valid(int mapid, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sy + 1 >= map.gridH) && ((map.mapInfo[sy + 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy + 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy + 1][x + 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
 		if (!(sy - 1 < 0) && ((map.mapInfo[sy - 1][x] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[sy - 1][nx] == (char)TILETYPE::Empty)))
+			(map.mapInfo[sy - 1][x + 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
-		x = nx;
+		x = nx + 1;
 	}
 }
 
@@ -832,7 +860,7 @@ bool JPS::JPS_Jump_DD_Valid(int mapid, int sy, int sx, int ey, int ex)
 	int y = sy;
 	while (true)
 	{
-		int ny = y + 1;
+		int ny = y;
 
 		if (sx < 0 || sx >= map.gridW || ny < 0 || ny >= map.gridH || map.mapInfo[ny][sx] == (char)TILETYPE::Wall)
 		{
@@ -846,17 +874,85 @@ bool JPS::JPS_Jump_DD_Valid(int mapid, int sy, int sx, int ey, int ex)
 		}
 
 		if (!(sx + 1 >= map.gridW) && ((map.mapInfo[y][sx + 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx + 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y + 1][sx + 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
 		if (!(sx - 1 < 0) && ((map.mapInfo[y][sx - 1] == (char)TILETYPE::Wall) &&
-			(map.mapInfo[ny][sx - 1] == (char)TILETYPE::Empty)))
+			(map.mapInfo[y + 1][sx - 1] != (char)TILETYPE::Wall)))
 		{
 			return true;
 		}
 
-		y = ny;
+		y = ny + 1;
 	}
+}
+
+JPS::Node* JPS::JPS_BresenhamLine(int mapid, Node* node)
+{
+	Map& map = _map[mapid];
+	Node* presentNode = node;
+	Node* connectNode = node->parent;
+
+	Node* validNode = connectNode;
+	while (connectNode != nullptr)
+	{
+		int sy = presentNode->y;
+		int sx = presentNode->x;
+		int ey = connectNode->y;
+		int ex = connectNode->x;
+
+		int dy = std::abs(ey - sy);
+		int dx = std::abs(ex - sx);
+
+		// 진행 방향
+		int addY = (sy < ey) ? 1 : -1;
+		int addX = (sx < ex) ? 1 : -1;
+
+		// 오차항
+		int err = dx - dy;
+
+		int y = sy;
+		int x = sx;
+		bool blocked = false;
+
+		while (true)
+		{
+			if (x == ex && y == ey)
+			{
+				break;
+			}
+
+			int e2 = err * 2;
+
+			if (e2 > -dy)
+			{
+				err -= dy;
+				x += addX;
+			}
+
+			if (e2 < dx)
+			{
+				err += dx;
+				y += addY;
+			}
+
+			if (x < 0 || x >= map.gridW || y < 0 || y >= map.gridH || map.mapInfo[y][x] == (char)TILETYPE::Wall)
+			{
+				blocked = true;
+				break;
+			}
+		}
+
+		if (blocked)
+		{
+			break;
+		}
+
+		validNode = connectNode;
+		connectNode = connectNode->parent;
+	}
+
+	return validNode;
 }

@@ -1,0 +1,3 @@
+TestCount = 10018
+min Duration = 0.308200
+max Duration = 15.818400

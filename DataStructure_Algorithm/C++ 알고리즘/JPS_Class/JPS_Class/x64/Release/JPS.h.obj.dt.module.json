@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "JPS_Class\\x64\\Release\\JPS.obj",
+            "outputs": [
+                "JPS_Class\\x64\\Release\\JPS.h.obj.dt.module.json",
+                "JPS_Class\\x64\\Release\\JPS.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

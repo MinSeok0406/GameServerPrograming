@@ -118,6 +118,7 @@ public:
     // Render 함수
     void JPS_RenderParentLine(HDC hdc);
     void JPS_RenderFinalPath(HDC hdc);
+    void JPS_RenderBresenhamLine(int mapid, HDC hdc);
 
     // Jump 함수
     bool JPS_Jump_UL(int mapid, Node* node, int sy, int sx, int ey, int ex);
@@ -134,6 +135,9 @@ public:
     bool JPS_Jump_LL_Valid(int mapid, int sy, int sx, int ey, int ex);
     bool JPS_Jump_RR_Valid(int mapid, int sy, int sx, int ey, int ex);
     bool JPS_Jump_DD_Valid(int mapid, int sy, int sx, int ey, int ex);
+
+    // 길찾기 후보정 알고리즘(브레젠햄 직선 알고리즘)
+    Node* JPS_BresenhamLine(int mapid, Node* node);
 
     bool isError = false;
     bool isFindLoad = false;

@@ -57,6 +57,24 @@ int g_StartY = -1;
 int g_EndX = -1;
 int g_EndY = -1;
 
+// 프로파일링
+//=====================
+struct MapData
+{
+    char map[GRID_HEIGHT][GRID_WIDTH];
+};
+
+bool cmp(std::pair<double, MapData>& a, std::pair<double, MapData>& b)
+{
+    return a.first > b.first;
+}
+
+std::vector<std::pair<double, MapData>> v;
+
+double g_maxDuration = -1.0;
+double g_minDuration = 123456789.0;
+//=====================
+
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -110,6 +128,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             g_Best[i][j] = INT_MAX;
         }
     }
+
+    FILE* file = nullptr;
+    fopen_s(&file, "AStar_MapData.txt", "rb");
+
+    fread(g_Tile, sizeof(char), GRID_HEIGHT * GRID_WIDTH, file);
+    fclose(file);
 
     MSG msg;
 
@@ -209,7 +233,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PAINTSTRUCT ps;
     HDC hdc;
     switch (message)
     {
@@ -253,6 +276,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             if (g_StartX != -1 && g_StartY != -1 && g_EndX != -1 && g_EndY != -1)
             {
+                auto start = std::chrono::steady_clock::now();
+
                 while (g_Astar->AS_Run(g_StartY, g_StartX, g_EndY, g_EndX))
                 {
                     if (g_Astar->isError == true)
@@ -268,6 +293,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                     InvalidateRect(hWnd, NULL, true);
                 }
+
+                auto end = std::chrono::steady_clock::now();
+                std::chrono::duration<double, std::milli> dur = end - start;
+
+                printf("(start:%d,%d end:%d,%d) (duration:%lf)\n", g_StartX, g_StartY, g_EndX, g_EndY, dur.count());
             }
         }
         else if (wParam == 'R') // 맵 리셋
@@ -280,7 +310,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             g_bAutoTest = !g_bAutoTest;
             if (g_bAutoTest)
             {
-                SetTimer(hWnd, g_AutoTestTimerId, 1000, NULL);
+                SetTimer(hWnd, g_AutoTestTimerId, 100, NULL);
                 printf("====== Test Start ======\n");
             }
             else
@@ -288,6 +318,67 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 KillTimer(hWnd, g_AutoTestTimerId);
                 printf("====== Test Stop (%d of %d fail) ======\n", g_TestCount, g_MismatchCount);
             }
+        }
+        else if (wParam == 'P')
+        {
+            FILE* file = nullptr;
+            fopen_s(&file, "AStar_Profiling.txt", "w");
+            if (file == NULL)
+            {
+                __debugbreak();
+            }
+
+            fprintf(file, "TestCount = %d\n", g_TestCount);
+            fprintf(file, "min Duration = %.6lf\n", g_minDuration);
+            fprintf(file, "max Duration = %.6lf\n", g_maxDuration);
+            fclose(file);
+
+            printf("AStar_Profiling.txt 저장 완료 (max=%.6lf, min=%.6lf, count=%d)\n",
+                g_maxDuration, g_minDuration, g_TestCount);
+
+            // 맵 데이터 저장
+            sort(v.begin(), v.end(), cmp);
+            FILE* fp = nullptr;
+            fopen_s(&fp, "AStar_MapData.txt", "wb");
+            if (fp == NULL)
+            {
+                __debugbreak();
+            }
+
+            MapData& md = v[0].second;
+            fwrite(md.map, sizeof(char), GRID_HEIGHT * GRID_WIDTH, fp);
+            fclose(fp);
+        }
+        else if (wParam == 'B')
+        {
+            g_bStartDrag = false;
+            g_bEndDrag = !g_bEndDrag;
+
+            for (auto i = 0; i < GRID_HEIGHT; ++i)
+            {
+                for (auto j = 0; j < GRID_WIDTH; ++j)
+                {
+                    if (g_Tile[i][j] == (char)TILETYPE::Start)
+                    {
+                        g_StartY = i;
+                        g_StartX = j;
+                    }
+                    else if (g_Tile[i][j] == (char)TILETYPE::End)
+                    {
+                        g_EndY = i;
+                        g_EndX = j;
+                    }
+                }
+            }
+
+            g_Astar->AS_Clear();
+            int g = 0;
+            int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
+            g_Astar->AS_CreateNode(nullptr, g, h, g_StartY, g_StartX);
+            g_bStart = true;
+
+
+            InvalidateRect(hWnd, NULL, true);
         }
         break;
     case WM_LBUTTONDOWN:    // 출발지 및 목적지 생성
@@ -405,6 +496,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int h = (abs(g_EndY - g_StartY) + abs(g_EndX - g_StartX)) * DISTANCE;
             g_Astar->AS_CreateNode(nullptr, 0, h, g_StartY, g_StartX);
 
+            MapData md;
+            memcpy(md.map, g_Tile, sizeof(g_Tile));
+
             while (g_Astar->AS_Run(g_StartY, g_StartX, g_EndY, g_EndX))
             {
                 if (g_Astar->isError || g_Astar->isFindLoad)
@@ -422,6 +516,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             printf("[#%d] expected=%d actual=%d (start:%d,%d end:%d,%d) (duration:%lf)\n",
                 g_TestCount, expectedReachable, actualFound,
                 g_StartX, g_StartY, g_EndX, g_EndY, dur.count());
+
+            g_maxDuration = max(g_maxDuration, dur.count());
+            g_minDuration = min(g_minDuration, dur.count());
+            v.push_back({ g_maxDuration, md });
 
             InvalidateRect(hWnd, NULL, true);
 
@@ -587,14 +685,15 @@ void RenderObstacle(HDC hdc)
 void RenderHelpText(HDC hdc)
 {
     static const WCHAR* lines[] = {
-            L"[조작법]",
-            L"좌클릭 : 출발지 / 목적지 지정",
-            L"우클릭 드래그 : 벽 생성 / 삭제",
-            L"마우스 휠 : 확대 / 축소",
-            L"SPACE : 한 스텝 진행",
-            L"TAB : 끝까지 한 번에 진행",
-            L"R : 새 랜덤 맵 생성",
-            L"A : 자동 검증 모드 토글",
+                L"[조작법]",
+                L"좌클릭 : 출발지 / 목적지 지정",
+                L"우클릭 드래그 : 벽 생성 / 삭제",
+                L"마우스 휠 : 확대 / 축소",
+                L"SPACE : 한 스텝 진행",
+                L"TAB : 끝까지 한 번에 진행",
+                L"R : 새 랜덤 맵 생성",
+                L"A : 자동 검증 모드 토글",
+                L"P : 프로파일링 결과 저장(.txt)",   // 추가
     };
     const int lineCount = sizeof(lines) / sizeof(lines[0]);
 
@@ -640,7 +739,7 @@ void RenderHelpText(HDC hdc)
 
 void GenerateRandomMap(double wall)
 {
-    static std::mt19937 rng(std::random_device {}());
+    static std::mt19937 rng(3246);
     std::uniform_int_distribution<int> distX(0, GRID_WIDTH - 1);
     std::uniform_int_distribution<int> distY(0, GRID_HEIGHT - 1);
     std::uniform_real_distribution<double> distWall(0.0, 1.0);
