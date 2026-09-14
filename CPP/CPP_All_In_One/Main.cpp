@@ -2,29 +2,15 @@
 #include <iostream>
 #include <Windows.h>
 #include <time.h>
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 using namespace std;
+using namespace rapidjson;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-template<typename T>
-class NewHandlerSupport
-{
-public:
-    static new_handler set_new_handler(new_handler p);
-    static void* operator new(size_t size);
-
-private:
-    static new_handler currentHandler;
-};
-
-template<typename T>
-new_handler NewHandlerSupport<T>::currentHandler = NULL;
-
-class Widget : public NewHandlerSupport<Widget>
-{
-
-};
 
 int wmain()
 {
@@ -34,21 +20,47 @@ int wmain()
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
+    StringBuffer stringJson;
+    Writer<StringBuffer, UTF16<>> writer(stringJson);
+    writer.StartObject();
+    writer.String(L"Account");
+    writer.StartArray();
+    {
+        writer.StartObject();
+        writer.String(L"AccountNo");
+        writer.Uint64(1111);
+        writer.String(L"Nickname");
+        writer.String(L"TestAccount1");
+        writer.EndObject();
+    }
 
+    {
+        writer.StartObject();
+        writer.String(L"AccountNo");
+        writer.Uint64(2222);
+        writer.String(L"Nickname");
+        writer.String(L"TestAccount2");
+        writer.EndObject();
+    }
+
+    {
+        writer.StartObject();
+        writer.String(L"AccountNo");
+        writer.Uint64(3333);
+        writer.String(L"Nickname");
+        writer.String(L"TestAccount3");
+        writer.EndObject();
+    }
+    writer.EndArray();
+    writer.EndObject();
+
+    const char* pJson = stringJson.GetString();
+    FILE* file;
+    fopen_s(&file, "JSON.txt", "wb");
+
+    auto size = strlen(pJson);
+    fwrite(pJson, size * sizeof(char), 1, file);
+    fclose(file);
+        
     return 0;
-}
-
-template<typename T>
-new_handler NewHandlerSupport<T>::set_new_handler(new_handler p)
-{
-    new_handler oldHandler = currentHandler;
-    currentHandler = p;
-    return oldHandler;
-}
-
-template<typename T>
-void* NewHandlerSupport<T>::operator new(size_t size)
-{
-    
-    return ::operator new(size);
 }

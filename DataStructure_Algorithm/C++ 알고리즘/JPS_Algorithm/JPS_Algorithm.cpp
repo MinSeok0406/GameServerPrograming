@@ -774,7 +774,8 @@ void RenderBresenhamLine(HDC hdc)
 
 void GenerateRandomMap(double wall)
 {
-    static std::mt19937 rng(std::random_device {}());
+    static std::mt19937 rng(9000);
+    //static std::mt19937 rng(std::random_device {}());
     std::uniform_int_distribution<int> distX(0, GRID_WIDTH - 1);
     std::uniform_int_distribution<int> distY(0, GRID_HEIGHT - 1);
     std::uniform_real_distribution<double> distWall(0.0, 1.0);

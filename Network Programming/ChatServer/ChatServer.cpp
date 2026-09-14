@@ -40,7 +40,7 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet);
 // 네트워크 프로토콜 함수
 bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, int nameSize, char name[20]);
 bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, int nameSize, char name[20]);
-bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, unsigned int namesize, char name[20], char* msg);
+bool npf_SC_MSG(SerializationBuffer* packet, unsigned short len, unsigned int namesize, char name[20], char* msg);
 
 int wmain()
 {
@@ -173,7 +173,7 @@ bool netProc_Accept()
     {
         if (WSAGetLastError() != WSAEWOULDBLOCK)
         {
-            printf("%d\n", WSAGetLastError());
+            printf("accept error : %d\n", WSAGetLastError());
         }
         
         return false;
@@ -229,7 +229,7 @@ bool netProc_Send(USER* user)
         {
             if (WSAGetLastError() != WSAEWOULDBLOCK)
             {
-                printf("%d\n", WSAGetLastError());
+                printf("send error : %d\n", WSAGetLastError());
             }
 
             break;
@@ -254,10 +254,10 @@ bool netProc_Recv(USER* user)
     {
         if (WSAGetLastError() != WSAEWOULDBLOCK)
         {
-            printf("%d\n", WSAGetLastError());
+            printf("recv error : %d\n", WSAGetLastError());
         }
 
-        return false;
+        return true;
     }
     else if (recvRet == 0)
     {
@@ -273,7 +273,7 @@ bool netProc_Recv(USER* user)
             return false;
         }
 
-        char buf[2];
+        char buf[3];
         int peekRet = user->_recvQ.Peek(buf, sizeof(HEADER));
         if (peekRet != sizeof(HEADER))
         {
@@ -348,10 +348,10 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
 
 bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
 {
-    unsigned char len;
+    unsigned short len;
     unsigned int namesize;
     char name[20];
-    char msg[200];
+    char msg[500];
 
     *packet >> len;
     *packet >> namesize;
@@ -371,7 +371,7 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
 bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, int nameSize, char name[20])
 {
     HEADER header;
-    header._packetsize = (unsigned char)(sizeof(id) + sizeof(nameSize) + nameSize);
+    header._packetsize = (unsigned short)(sizeof(id) + sizeof(nameSize) + nameSize);
     header._type = PACKET_SC_CREATE_USER;
 
     packet->putData((char*)&header, sizeof(header));
@@ -386,7 +386,7 @@ bool npf_SC_CREATE_USER(SerializationBuffer* packet, unsigned int id, int nameSi
 bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, int nameSize, char name[20])
 {
     HEADER header;
-    header._packetsize = (unsigned char)(sizeof(id) + sizeof(nameSize) + nameSize);
+    header._packetsize = (unsigned short)(sizeof(id) + sizeof(nameSize) + nameSize);
     header._type = PACKET_SC_OTHER_USER;
 
     packet->putData((char*)&header, sizeof(header));
@@ -398,10 +398,10 @@ bool npf_SC_OTHER_USER(SerializationBuffer* packet, unsigned int id, int nameSiz
     return true;
 }
 
-bool npf_SC_MSG(SerializationBuffer* packet, unsigned char len, unsigned int namesize, char name[20], char* msg)
+bool npf_SC_MSG(SerializationBuffer* packet, unsigned short len, unsigned int namesize, char name[20], char* msg)
 {
     HEADER header;
-    header._packetsize = (unsigned char)(sizeof(len) + sizeof(namesize) + namesize + len);
+    header._packetsize = (unsigned short)(sizeof(len) + sizeof(namesize) + namesize + len);
     header._type = PACKET_SC_MSG;
 
     packet->putData((char*)&header, sizeof(header));

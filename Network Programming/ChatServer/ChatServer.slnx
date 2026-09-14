@@ -4,5 +4,6 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="../ChatClient/ChatClient.vcxproj" Id="1740e33f-1cd0-438b-8c9b-3e413ecb8755" />
+  <Project Path="../ChatDummyClinet/ChatDummyClinet.vcxproj" Id="fbfbcc64-783a-482c-bd22-9749c2c27132" />
   <Project Path="ChatServer.vcxproj" Id="7f869f6e-f5e7-4a0f-b47e-25bfedbc6241" />
 </Solution>

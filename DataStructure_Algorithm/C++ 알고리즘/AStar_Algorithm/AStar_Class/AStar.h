@@ -87,8 +87,11 @@ public:
     // 길찾기를 처음부터 다시 하기 위해서 자료구조 초기화
     bool AS_Clear();
 
+    Node* AS_BresenhamLine(Node* node);
+
     void AS_RenderParentLine(HDC hdc);
     void AS_RenderFinalPath(HDC hdc);
+    void AS_RenderBresenhamLine(HDC hdc);
 
     bool isError = false;
     bool isFindLoad = false;

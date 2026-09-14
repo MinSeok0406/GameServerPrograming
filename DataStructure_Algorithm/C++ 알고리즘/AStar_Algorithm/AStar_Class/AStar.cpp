@@ -13,6 +13,7 @@ extern double g_offsetX;
 extern double g_offsetY;
 extern HPEN g_hParentPen;
 extern HPEN g_hPathPen;
+extern HPEN g_hBresenhamPen;
 
 AStar* AStar::_pManagerAstar = nullptr;
 
@@ -135,6 +136,75 @@ bool AStar::AS_Clear()
     return true;
 }
 
+AStar::Node* AStar::AS_BresenhamLine(Node* node)
+{
+    Node* presentNode = node;
+    Node* connectNode = node->parent;
+
+    Node* validNode = connectNode;
+    while (connectNode != nullptr)
+    {
+        int sy = presentNode->y;
+        int sx = presentNode->x;
+        int ey = connectNode->y;
+        int ex = connectNode->x;
+
+        int dy = std::abs(ey - sy);
+        int dx = std::abs(ex - sx);
+
+        // 진행 방향
+        int addY = (sy < ey) ? 1 : -1;
+        int addX = (sx < ex) ? 1 : -1;
+
+        // 오차항
+        int err = dx - dy;
+
+        int y = sy;
+        int x = sx;
+        bool blocked = false;
+
+        while (true)
+        {
+            if (x == ex && y == ey)
+            {
+                break;
+            }
+
+            int e2 = err * 2;
+
+            if (e2 > -dy)
+            {
+                err -= dy;
+                x += addX;
+            }
+
+            if (e2 < dx)
+            {
+                err += dx;
+                y += addY;
+            }
+
+            if (x < 0 || x >= GRID_WIDTH || y < 0 || y >= GRID_HEIGHT || g_Tile[y][x] == (char)TILETYPE::Wall)
+            {
+                blocked = true;
+                break;
+            }
+        }
+
+        if (blocked)
+        {
+            break;
+        }
+
+        validNode = connectNode;
+        connectNode = connectNode->parent;
+    }
+
+    return validNode;
+
+    return nullptr;
+}
+
 void AStar::AS_RenderParentLine(HDC hdc)
 {
     HPEN hOldPen = (HPEN)SelectObject(hdc, g_hParentPen);
@@ -187,6 +257,33 @@ void AStar::AS_RenderFinalPath(HDC hdc)
         node = node->parent;
     }
 
-    _endNode = nullptr;
+    SelectObject(hdc, hOldPen);
+}
+
+void AStar::AS_RenderBresenhamLine(HDC hdc)
+{
+    if (_endNode == nullptr)
+    {
+        return;
+    }
+
+    HPEN hOldPen = (HPEN)SelectObject(hdc, g_hBresenhamPen);
+
+    Node* node = _endNode;
+    while (node->parent != nullptr)
+    {
+        Node* connectNode = AS_BresenhamLine(node);
+
+        int mtX = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+        int mtY = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+        MoveToEx(hdc, mtX, mtY, NULL);
+
+        int ltX = (int)((connectNode->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+        int ltY = (int)((connectNode->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+        LineTo(hdc, ltX, ltY);
+
+        node = connectNode;
+    }
+
     SelectObject(hdc, hOldPen);
 }

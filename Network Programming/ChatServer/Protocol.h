@@ -9,9 +9,10 @@
 #define SENDBUFSIZE     50000
 #define RECVBUFSIZE     5000
 
+#pragma pack(1)
 struct HEADER
 {
-    unsigned char _packetsize;
+    unsigned short _packetsize;
     unsigned char _type;
 };
 
@@ -47,17 +48,17 @@ struct SC_OTHER_USER
 #define PACKET_CS_MSG               2
 struct CS_MSG
 {
-    unsigned char   _len;
+    unsigned short  _len;
     unsigned int    _namesize;
     char            _name[20];
-    char            _msg[200];
+    char            _msg[500];
 };
 
 #define PACKET_SC_MSG               3
 struct SC_MSG
 {
-    unsigned char   _len;
+    unsigned short  _len;
     unsigned int    _namesize;
     char            _name[20];
-    char            _msg[200];
+    char            _msg[500];
 };

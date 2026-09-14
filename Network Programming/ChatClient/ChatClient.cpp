@@ -33,7 +33,7 @@ bool netPacketProc_CreateUser(SerializationBuffer* packet);
 bool netPacketProc_OtherUser(SerializationBuffer* packet);
 bool netPacketProc_MSG(SerializationBuffer* packet);
 
-bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int namesize, char name[20], char* msg);
+bool npfMSG(SerializationBuffer* packet, unsigned short len, unsigned int namesize, char name[20], char* msg);
 
 unsigned int WINAPI threadProc(PVOID arg)
 {
@@ -137,7 +137,7 @@ bool netProc_Recv()
 			return false;
 		}
 
-		char buf[2];
+		char buf[3];
 		int peekRet = g_user._recvQ.Peek(buf, sizeof(HEADER));
 		if (peekRet != sizeof(HEADER))
 		{
@@ -313,10 +313,10 @@ bool netPacketProc_OtherUser(SerializationBuffer* packet)
 
 bool netPacketProc_MSG(SerializationBuffer* packet)
 {
-	unsigned char len;
+	unsigned short len;
 	unsigned int namesize;
 	char name[20];
-	char msg[200];
+	char msg[500];
 
 	*packet >> len;
 	*packet >> namesize;
@@ -328,10 +328,10 @@ bool netPacketProc_MSG(SerializationBuffer* packet)
 	return true;
 }
 
-bool npfMSG(SerializationBuffer* packet, unsigned char len, unsigned int namesize, char name[20], char* msg)
+bool npfMSG(SerializationBuffer* packet, unsigned short len, unsigned int namesize, char name[20], char* msg)
 {
 	HEADER header;
-	header._packetsize = (unsigned char)(sizeof(len) + sizeof(namesize) + namesize + len);
+	header._packetsize = (unsigned short)(sizeof(len) + sizeof(namesize) + namesize + len);
 	header._type = PACKET_CS_MSG;
 
 	packet->putData((char*)&header, sizeof(HEADER));

@@ -34,6 +34,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 HPEN g_hGridPen;
 HPEN g_hParentPen;
 HPEN g_hPathPen;
+HPEN g_hBresenhamPen;
 HBRUSH g_hBrushEmpty;
 HBRUSH g_hBrushWall;
 HBRUSH g_hBrushStart;
@@ -540,6 +541,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
         g_hParentPen = CreatePen(PS_SOLID, 1, RGB(150, 150, 200));
         g_hPathPen = CreatePen(PS_SOLID, 2, RGB(255, 150, 200));
+        g_hBresenhamPen = CreatePen(PS_SOLID, 3, RGB(100, 100, 200));
         g_hBrushEmpty = CreateSolidBrush(RGB(255, 255, 255));
         g_hBrushWall = CreateSolidBrush(RGB(100, 100, 100));
         g_hBrushStart = CreateSolidBrush(RGB(0, 200, 0));
@@ -556,6 +558,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         RenderGrid(hdc);
         g_Astar->AS_RenderParentLine(hdc);
         g_Astar->AS_RenderFinalPath(hdc);
+        g_Astar->AS_RenderBresenhamLine(hdc);
         RenderHelpText(hdc);
         EndPaint(hWnd, &ps);
     }
@@ -572,6 +575,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DeleteObject(g_hGridPen);
         DeleteObject(g_hParentPen);
         DeleteObject(g_hPathPen);
+        DeleteObject(g_hBresenhamPen);
         g_Astar->destroyInstance();
         PostQuitMessage(0);
         break;
@@ -739,7 +743,7 @@ void RenderHelpText(HDC hdc)
 
 void GenerateRandomMap(double wall)
 {
-    static std::mt19937 rng(3246);
+    static std::mt19937 rng(9000);
     std::uniform_int_distribution<int> distX(0, GRID_WIDTH - 1);
     std::uniform_int_distribution<int> distY(0, GRID_HEIGHT - 1);
     std::uniform_real_distribution<double> distWall(0.0, 1.0);
