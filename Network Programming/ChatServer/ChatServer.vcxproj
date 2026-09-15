@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h" />
+    <ClInclude Include="MetricLogger.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="RingBuffer.h" />
   </ItemGroup>

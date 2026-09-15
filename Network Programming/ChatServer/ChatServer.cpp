@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include "Protocol.h"
+#include "MetricLogger.h"
 using namespace std;
 using ll = long long;
 
@@ -13,6 +14,9 @@ using ll = long long;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT      47000
+
+// 검증 관련 지표
+MetricLogger g_metricLogger(60.0 * 60.0 * 1);
 
 list<USER> g_userList;
 SOCKET g_listensocket;
@@ -46,6 +50,8 @@ int wmain()
 {
     timeBeginPeriod(1);
     srand((unsigned int)(time(nullptr)));
+
+    g_metricLogger.Init();
 
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -161,6 +167,8 @@ bool Update()
     // 채팅 로그
     // DB 저장
     // 등등
+    g_metricLogger.OnTick();
+    g_metricLogger.Update();
 
     return true;
 }
@@ -220,6 +228,7 @@ bool netProc_Send(USER* user)
     {
         if (user->_sendQ.GetUseSize() < sizeof(HEADER))
         {
+            g_metricLogger.OnPacketSendDrop();
             break;
         }
 
@@ -305,6 +314,8 @@ bool netProc_Recv(USER* user)
 
 bool packetProc(USER* user, unsigned char type, SerializationBuffer* packet)
 {
+    g_metricLogger.OnPacketRecv();
+
     switch (type)
     {
     case PACKET_CS_MSG:
@@ -319,6 +330,7 @@ bool sendPacket_Unicast(USER* user, SerializationBuffer* packet)
 {
     if (user->_sendQ.GetFreeSize() < packet->getDataSize())
     {
+        g_metricLogger.OnPacketSendDrop();
         return false;
     }
 
@@ -327,6 +339,7 @@ bool sendPacket_Unicast(USER* user, SerializationBuffer* packet)
     if (enqueueRet != size)
     {
         user->_sendQ.Dequeue(packet->getBufferPtr(), enqueueRet);
+        g_metricLogger.OnPacketSendDrop();
         return false;
     }
 
@@ -340,6 +353,7 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
         if (users._id != user->_id)
         {
             sendPacket_Unicast(&users, packet);
+            g_metricLogger.OnPacketSend();
         }
     }
 
@@ -356,10 +370,13 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
     *packet >> len;
     *packet >> namesize;
     packet->getData(name, namesize);
+    name[namesize] = '\0';
+
     packet->getData(msg, len);
+    msg[len] = '\0';
 
     // 추가할 예정있다면 작성
-    printf("%s : %s\n", name, msg);
+    // printf("%s : %s\n", name, msg);
     
     SerializationBuffer sendPacket;
     npf_SC_MSG(&sendPacket, len, namesize, name, msg);

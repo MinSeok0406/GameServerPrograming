@@ -9,5 +9,13 @@
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h" />
+    <ClInclude Include="MetricLogger.h">
+      <Filter>Logger</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Logger">
+      <UniqueIdentifier>{e9a7cc9c-23c2-4f1a-bfc6-91b77772364c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

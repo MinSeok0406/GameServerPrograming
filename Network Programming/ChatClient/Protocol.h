@@ -7,8 +7,8 @@
 #include "RingBuffer.h"
 #include "SerializationBuffer.h"
 
-#define SENDBUFSIZE     50000
-#define RECVBUFSIZE     5000
+#define SENDBUFSIZE     500000
+#define RECVBUFSIZE     50000
 
 #pragma pack(1)
 struct HEADER
@@ -20,6 +20,7 @@ struct HEADER
 #pragma pack(1)
 struct USER
 {
+    SOCKET          _sock;
     unsigned int    _id;
     char            _name[20];
     unsigned int    _namesize;

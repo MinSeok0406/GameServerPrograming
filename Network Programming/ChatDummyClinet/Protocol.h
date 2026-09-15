@@ -20,9 +20,11 @@ struct HEADER
 #pragma pack(1)
 struct USER
 {
+    SOCKET          _sock;
     unsigned int    _id;
     char            _name[20];
     unsigned int    _namesize;
+    bool            _ready = false;
     RingBuffer      _sendQ { SENDBUFSIZE };
     RingBuffer      _recvQ { RECVBUFSIZE };
 };

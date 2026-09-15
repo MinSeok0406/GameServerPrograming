@@ -14,12 +14,9 @@ using ll = long long;
 
 const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT 47000
-#define CLIENT 100
+#define CLIENT 900
 
-SOCKET g_serversock;
 bool g_shutdown = false;
-
-CRITICAL_SECTION cs;
 
 bool netProc_Recv(USER* user);
 bool netProc_Send(USER* user);
@@ -37,14 +34,45 @@ bool npfMSG(SerializationBuffer* packet, unsigned short len, unsigned int namesi
 
 unsigned int WINAPI threadProc(PVOID arg)
 {
-	USER user;
+	USER user {};
+
+	user._sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (user._sock == INVALID_SOCKET)
+	{
+		printf("%d\n", WSAGetLastError());
+		return 1;
+	}
+
+	SOCKADDR_IN serveraddr;
+	memset(&serveraddr, 0, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
+	serveraddr.sin_port = htons(SERVERPORT);
+
+	int connectRet = connect(user._sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+	if (connectRet == SOCKET_ERROR)
+	{
+		printf("%d\n", WSAGetLastError());
+		return 1;
+	}
+
+	u_long on = 1;
+	int nonblkRet = ioctlsocket(user._sock, FIONBIO, &on);
+	if (nonblkRet == SOCKET_ERROR)
+	{
+		printf("%d\n", WSAGetLastError());
+		return 1;
+	}
 
 	while (!g_shutdown)
 	{
+		int randNum = (rand() % 1500) + 500;
 		networkLogic(&user);
 		Update(&user);
-		Sleep(10);
+		Sleep(randNum);
 	}
+
+	closesocket(user._sock);
 
 	return 1;
 }
@@ -60,52 +88,30 @@ int wmain()
 		return 1;
 	}
 
-	InitializeCriticalSection(&cs);
-	g_serversock = socket(AF_INET, SOCK_STREAM, 0);
-	if (g_serversock == INVALID_SOCKET)
-	{
-		printf("%d\n", WSAGetLastError());
-		return 1;
-	}
-
-	SOCKADDR_IN serveraddr;
-	memset(&serveraddr, 0, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
-	serveraddr.sin_port = htons(SERVERPORT);
-
-	int connectRet = connect(g_serversock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-	if (connectRet == SOCKET_ERROR)
-	{
-		printf("%d\n", WSAGetLastError());
-		return 1;
-	}
-
-	u_long on = 1;
-	int nonblkRet = ioctlsocket(g_serversock, FIONBIO, &on);
-	if (nonblkRet == SOCKET_ERROR)
-	{
-		printf("%d\n", WSAGetLastError());
-		return 1;
-	}
-
 	HANDLE hThread[CLIENT];
 	for (auto i = 0; i < CLIENT; ++i)
 	{
 		hThread[i] = (HANDLE)_beginthreadex(NULL, 0, threadProc, NULL, NULL, NULL);
-		if (hThread == 0)
+		if (hThread[i] == 0)
 		{
 			return 1;
 		}
+	}
+
+	for (auto i = 0; i < CLIENT; ++i)
+	{
+		auto waitForRet = WaitForSingleObject(hThread[i], INFINITE);
+		if (waitForRet == WAIT_FAILED)
+		{
+			printf("WaitForSingleObject failed : %lu\n", GetLastError());
+		}
+	}
+
+	for (auto i = 0; i < CLIENT; ++i)
+	{
 		CloseHandle(hThread[i]);
 	}
 
-	while (!g_shutdown)
-	{
-		
-	}
-
-	closesocket(g_serversock);
 	WSACleanup();
 
 	return 0;
@@ -118,7 +124,7 @@ bool netProc_Recv(USER* user)
 		return false;
 	}
 
-	int recvRet = recv(g_serversock, user->_recvQ.GetRearBufferPtr(),
+	int recvRet = recv(user->_sock, user->_recvQ.GetRearBufferPtr(),
 		user->_recvQ.DirectEnqueueSize(), 0);
 	if (recvRet == SOCKET_ERROR)
 	{
@@ -152,9 +158,14 @@ bool netProc_Recv(USER* user)
 			__debugbreak();
 		}
 
+		HEADER* header = (HEADER*)buf;
+		if (user->_recvQ.GetUseSize() < sizeof(HEADER) + header->_packetsize)
+		{
+			return false;   // 헤더는 아직 큐에서 빼지 않은 상태로 리턴 -> 다음 recv에서 이어서 재확인
+		}
+
 		user->_recvQ.MoveFront(sizeof(HEADER));
 
-		HEADER* header = (HEADER*)buf;
 		SerializationBuffer packet;
 		peekRet = user->_recvQ.Peek(packet.getBufferPtr(), header->_packetsize);
 		if (peekRet != header->_packetsize)
@@ -179,7 +190,7 @@ bool netProc_Send(USER* user)
 			break;
 		}
 
-		int sendRet = send(g_serversock, user->_sendQ.GetFrontBufferPtr(),
+		int sendRet = send(user->_sock, user->_sendQ.GetFrontBufferPtr(),
 			user->_sendQ.DirectDequeueSize(), 0);
 		if (sendRet == SOCKET_ERROR)
 		{
@@ -199,12 +210,10 @@ bool netProc_Send(USER* user)
 
 bool sendPacket_Unicast(SerializationBuffer* packet, USER* user)
 {
-	EnterCriticalSection(&cs);
 	int size = packet->getDataSize();
 	if (user->_sendQ.GetFreeSize() < size)
 	{
 		printf("send fail\n");
-		LeaveCriticalSection(&cs);
 		return false;
 	}
 
@@ -215,7 +224,6 @@ bool sendPacket_Unicast(SerializationBuffer* packet, USER* user)
 	}
 
 	packet->moveWritePos(size);
-	LeaveCriticalSection(&cs);
 
 	return true;
 }
@@ -231,7 +239,7 @@ bool packetProc(unsigned char type, SerializationBuffer* packet, USER* user)
 		netPacketProc_OtherUser(packet);
 		break;
 	case PACKET_SC_MSG:
-		netPacketProc_MSG(packet);
+		//netPacketProc_MSG(packet);
 		break;
 	}
 
@@ -245,10 +253,10 @@ bool networkLogic(USER* user)
 	FD_ZERO(&rset);
 	FD_ZERO(&wset);
 
-	FD_SET(g_serversock, &rset);
+	FD_SET(user->_sock, &rset);
 	if (user->_sendQ.GetUseSize() > 0)
 	{
-		FD_SET(g_serversock, &wset);
+		FD_SET(user->_sock, &wset);
 	}
 
 	timeval t;
@@ -268,13 +276,13 @@ bool networkLogic(USER* user)
 
 	if (selectRet > 0)
 	{
-		if (FD_ISSET(g_serversock, &rset))
+		if (FD_ISSET(user->_sock, &rset))
 		{
 			selectRet--;
 			netProc_Recv(user);
 		}
 
-		if (FD_ISSET(g_serversock, &wset))
+		if (FD_ISSET(user->_sock, &wset))
 		{
 			selectRet--;
 			netProc_Send(user);
@@ -286,13 +294,27 @@ bool networkLogic(USER* user)
 
 bool Update(USER* user)
 {
-	const char* msg = "안녕하세요!!";
+	if (!user->_ready)
+	{
+		return false;
+	}
+
+	static const char* messages[] = {
+		"안녕하세요!!",
+		"오늘 날씨 좋네요~",
+		"스트레스 테스트 중입니다",
+		"ㅋㅋㅋㅋㅋㅋ",
+		"패킷 잘 도착하나요?"
+	};
+	int messageCount = sizeof(messages) / sizeof(messages[0]);
+
+	char msg[500];
+	strcpy(msg, messages[rand() % messageCount]);
 	unsigned char len = (unsigned char)strlen(msg);
 
 	SerializationBuffer packet;
-	npfMSG(&packet, len, user->_namesize, user->_name, (char*)msg);
+	npfMSG(&packet, len, user->_namesize, user->_name, msg);
 	sendPacket_Unicast(&packet, user);
-
 	return true;
 }
 
@@ -306,6 +328,7 @@ bool netPacketProc_CreateUser(SerializationBuffer* packet, USER* user)
 	user->_id = createUser._id;
 	user->_namesize = createUser._namesize;
 	memcpy(user->_name, createUser._name, createUser._namesize);
+	user->_ready = true;
 
 	return true;
 }
@@ -330,7 +353,10 @@ bool netPacketProc_MSG(SerializationBuffer* packet)
 	*packet >> len;
 	*packet >> namesize;
 	packet->getData(name, namesize);
+	name[namesize] = '\0';
+
 	packet->getData(msg, len);
+	msg[len] = '\0';
 
 	printf("%s:%s\n", name, msg);
 
