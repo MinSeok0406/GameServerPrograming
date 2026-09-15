@@ -6,8 +6,8 @@
 #include "RingBuffer.h"
 #include "SerializationBuffer.h"
 
-#define SENDBUFSIZE     50000000
-#define RECVBUFSIZE     500000
+#define SENDBUFSIZE     50000
+#define RECVBUFSIZE     5000
 
 #pragma pack(1)
 struct HEADER
