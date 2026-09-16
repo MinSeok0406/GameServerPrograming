@@ -79,7 +79,7 @@ int wmain()
         return 0;
     }
 
-    int listenRet = listen(g_listensocket, SOMAXCONN);
+    int listenRet = listen(g_listensocket, SOMAXCONN_HINT(10000));
     if (listenRet == SOCKET_ERROR)
     {
         printf("%d\n", WSAGetLastError());
@@ -334,6 +334,7 @@ bool sendPacket_Unicast(USER* user, SerializationBuffer* packet)
         return false;
     }
 
+    g_metricLogger.OnPacketSend();
     int size = packet->getDataSize();
     int enqueueRet = user->_sendQ.Enqueue(packet->getBufferPtr(), size);
     if (enqueueRet != size)
@@ -353,7 +354,6 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
         if (users._id != user->_id)
         {
             sendPacket_Unicast(&users, packet);
-            g_metricLogger.OnPacketSend();
         }
     }
 

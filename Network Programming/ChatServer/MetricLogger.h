@@ -22,6 +22,7 @@ public:
 		QueryPerformanceCounter(&_startTime);
 		_lastCheckTime = _startTime;
 		_lastSaveTime = _startTime;
+		_lastBufferTime = _startTime;
 
 		time_t t = time(nullptr);
 		tm tmInfo;
@@ -32,16 +33,16 @@ public:
 	}
 
 	// 한 프레임 당 한 틱 증가 -> tps 측정 목적
-	void OnTick() { ++_tickCount; }
+	void OnTick() { ++_tickCount; ++_tickCountMinute; }
 
 	// 완성된 패킷 수신 횟수
-	void OnPacketRecv() { ++_recvCount; }
+	void OnPacketRecv() { ++_recvCount; ++_recvCountMinute; }
 
 	// 완성된 패킷 송신 횟수
-	void OnPacketSend() { ++_sendCount; }
+	void OnPacketSend() { ++_sendCount; ++_sendCountMinute; }
 
 	// 완성되지 않고 패기된 패킷 횟수
-	void OnPacketSendDrop() { ++_sendDropCount; }
+	void OnPacketSendDrop() { ++_sendDropCount; ++_sendDropCountMinute; }
 
 	void Update()
 	{
@@ -55,6 +56,13 @@ public:
 			_lastCheckTime = now;
 		}
 
+		double sinceBufferSec = Elapsed(_lastBufferTime, now);
+		if (sinceBufferSec >= 60.0)
+		{
+			RecordToBuffer(now, sinceBufferSec);   // 1분마다 buffer에 push_back
+			_lastBufferTime = now;
+		}
+
 		double sinceSaveSec = Elapsed(_lastSaveTime, now);
 		if (sinceSaveSec >= _saveSec)
 		{
@@ -66,7 +74,7 @@ public:
 private:
 	struct Metric
 	{
-		double _elapsedSec;		// 총 시간
+		double _elapsedSec;		// 측정 시간
 		double _tps;			// tps 측정
 		double _recvPerSec;		// 1초당 recv 횟수
 		double _sendPerSec;		// 1초당 send 횟수
@@ -89,13 +97,26 @@ private:
 
 		printf("[TPS: %.3f] [Recv/sec: %.3f] [Send/sec: %.3f] [SendDrop/sec : %.3f]\n", tps, recvPerSec, sendPerSec, sendDropPerSec);
 
-		double totalElapsedSec = Elapsed(_startTime, now);
-		_buffer.push_back({ totalElapsedSec, tps, recvPerSec, sendPerSec });
-
 		_tickCount = 0;
 		_recvCount = 0;
 		_sendCount = 0;
 		_sendDropCount = 0;
+	}
+
+	void RecordToBuffer(LARGE_INTEGER now, double intervalSec)
+	{
+		double tps = _tickCountMinute / intervalSec;
+		double recvPerSec = _recvCountMinute / intervalSec;
+		double sendPerSec = _sendCountMinute / intervalSec;
+		double sendDropPerSec = _sendDropCountMinute / intervalSec;
+
+		double totalElapsedSec = Elapsed(_startTime, now);
+		_buffer.push_back({ totalElapsedSec, tps, recvPerSec, sendPerSec, sendDropPerSec });
+
+		_tickCountMinute = 0;
+		_recvCountMinute = 0;
+		_sendCountMinute = 0;
+		_sendDropCountMinute = 0;
 	}
 
 	// 지표가 담긴 파일 생성 후 저장
@@ -138,10 +159,19 @@ private:
 	LARGE_INTEGER _lastCheckTime {};
 	LARGE_INTEGER _lastSaveTime {};
 
+	// 초당 출력 카운트
 	ll _tickCount = 0;
 	ll _recvCount = 0;
 	ll _sendCount = 0;
 	ll _sendDropCount = 0;
+
+	// 분당 저장 카운트
+	ll _tickCountMinute = 0;
+	ll _recvCountMinute = 0;
+	ll _sendCountMinute = 0;
+	ll _sendDropCountMinute = 0;
+
+	LARGE_INTEGER _lastBufferTime{};
 
 	double _saveSec;
 	std::vector<Metric> _buffer;

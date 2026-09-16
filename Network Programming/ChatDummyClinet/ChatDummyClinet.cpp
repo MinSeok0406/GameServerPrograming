@@ -14,7 +14,7 @@ using ll = long long;
 
 const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT 47000
-#define CLIENT 900
+#define CLIENT 10000
 
 bool g_shutdown = false;
 
