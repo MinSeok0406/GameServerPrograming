@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\network programming\\serializationbuffer\\serializationbuffer.cpp",
+        "Source": "c:\\gameserverprograming\\network programming\\serializationbuffer\\serializationbuffer.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\gameprograming\\network programming\\serializationbuffer\\serializationbuffer.h",
+            "c:\\gameserverprograming\\network programming\\serializationbuffer\\serializationbuffer.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\cstdlib",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",

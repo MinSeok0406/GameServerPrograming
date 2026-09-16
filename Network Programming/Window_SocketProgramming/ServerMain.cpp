@@ -20,11 +20,12 @@ SOCKADDR_IN g_clientaddr;
 bool g_bShutdown = false;
 unsigned int tick;
 
-unsigned long g_updateTime = timeGetTime();
+// 시간으로 프레임 관리
+/*unsigned long g_updateTime = timeGetTime();
 const float c_move_speed_X = 150.0f;
 const float c_move_speed_Y = 100.0f;
 const float c_move_speed_DIAG_X = 150.0f * 0.8321f;
-const float c_move_speed_DIAG_Y = 150.0f * 0.8321f;
+const float c_move_speed_DIAG_Y = 150.0f * 0.8321f;*/
 
 static int g_id = 0;
 
@@ -658,8 +659,6 @@ bool netIOProcess()
 
     timeval t;
     int selectRet;
-    int cnt = 0;
-    bool bProcFlag = false;
 
     t.tv_sec = 0;
     t.tv_usec = 0;

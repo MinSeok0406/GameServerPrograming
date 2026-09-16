@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "MMOTCPFi.fd911968\\x64\\Debug\\SerializationBuffer.obj",
+            "outputs": [
+                "MMOTCPFi.fd911968\\x64\\Debug\\SerializationBuffer.cpp.obj.dt.module.json",
+                "MMOTCPFi.fd911968\\x64\\Debug\\SerializationBuffer.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
