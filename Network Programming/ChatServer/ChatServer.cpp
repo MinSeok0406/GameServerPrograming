@@ -175,6 +175,7 @@ bool Update()
 
 bool netProc_Accept()
 {
+    g_metricLogger.OnTickAccept();
     int addrlen = sizeof(clientaddr);
     g_clientsocket = accept(g_listensocket, (SOCKADDR*)&clientaddr, &addrlen);
     if (g_clientsocket == INVALID_SOCKET)
@@ -219,6 +220,7 @@ bool netProc_Accept()
         }
     }
 
+    g_metricLogger.OnTickSuccess();
     return true;
 }
 

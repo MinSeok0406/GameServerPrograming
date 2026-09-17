@@ -389,21 +389,216 @@ bool netPacketProc_MoveStart(st_SESSION* session, SerializationBuffer* packet)
 
 bool netPacketProc_MoveStop(st_SESSION* session, SerializationBuffer* packet)
 {
+	unsigned char direction;
+	short x;
+	short y;
+
+	*packet >> direction >> x >> y;
+
+	if (abs(x - session->_shX) > dfERROR_RANGE || abs(y - session->_shY) > dfERROR_RANGE)
+	{
+		SerializationBuffer sendPacket;
+		npfSync(&sendPacket, session->_dwSessionID, session->_shX, session->_shY);
+		sendPacket_Around(session, &sendPacket);
+	}
+
+	session->_dwAction = dfPACKET_CS_MOVE_STOP;
+	switch (direction)
+	{
+	case dfPACKET_MOVE_DIR_RR:
+	case dfPACKET_MOVE_DIR_RU:
+	case dfPACKET_MOVE_DIR_RD:
+		session->_byDirection = dfPACKET_MOVE_DIR_RR;
+		break;
+	case dfPACKET_MOVE_DIR_LL:
+	case dfPACKET_MOVE_DIR_LU:
+	case dfPACKET_MOVE_DIR_LD:
+		session->_byDirection = dfPACKET_MOVE_DIR_LL;
+		break;
+	}
+
+	SerializationBuffer sendPacket;
+	npfMoveStop(&sendPacket, session->_dwSessionID, session->_byDirection, session->_shX, session->_shY);
+	sendPacket_Around(session, &sendPacket);
+
 	return true;
 }
 
 bool netPacketProc_Attack1(st_SESSION* session, SerializationBuffer* packet)
 {
+	unsigned char direction;
+	short x;
+	short y;
+
+	*packet >> direction >> x >> y;
+
+	// 클라가 가진 정보를 서버는 믿지 않는다.
+	/*if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
+	{
+		session->_byDirection = direction;
+		session->_shX = x;
+		session->_shY = y;
+	}*/
+
+	SerializationBuffer sendPacket;
+	npfAttack1(&sendPacket, session->_dwSessionID, session->_byDirection, session->_shX, session->_shY);
+	sendPacket_Around(session, &sendPacket);
+
+	for (auto& sessions : g_sessionList)
+	{
+		if (sessions._dwSessionID != session->_dwSessionID)
+		{
+			if (direction == dfPACKET_MOVE_DIR_LL)
+			{
+				int minX = x - 80;
+				int maxX = x;
+				int minY = y - 10;
+				int maxY = y + 10;
+				if (sessions._shX >= minX && sessions._shX <= maxX &&
+					sessions._shY >= minY && sessions._shY <= maxY)
+				{
+					SerializationBuffer sendPacket;
+					sessions._chHP -= 1;
+					npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+					sendPacket_Around(session, &sendPacket);
+				}
+			}
+			else if (direction == dfPACKET_MOVE_DIR_RR)
+			{
+				int maxX = x + 80;
+				int minX = x;
+				int minY = y - 10;
+				int maxY = y + 10;
+				if (sessions._shX >= minX && sessions._shX <= maxX &&
+					sessions._shY >= minY && sessions._shY <= maxY)
+				{
+					SerializationBuffer sendPacket;
+					sessions._chHP -= 1;
+					npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+					sendPacket_Around(session, &sendPacket);
+				}
+			}
+		}
+	}
+
 	return true;
 }
 
 bool netPacketProc_Attack2(st_SESSION* session, SerializationBuffer* packet)
 {
+	unsigned char direction;
+	short x;
+	short y;
+
+	*packet >> direction >> x >> y;
+
+	/*if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
+	{
+		session->_byDirection = direction;
+		session->_shX = x;
+		session->_shY = y;
+	}*/
+
+	SerializationBuffer sendPacket;
+	npfAttack2(&sendPacket, session->_dwSessionID, session->_byDirection, session->_shX, session->_shY);
+	sendPacket_Around(session, &sendPacket);
+
+	for (auto& sessions : g_sessionList)
+	{
+		if (sessions._dwSessionID != session->_dwSessionID)
+		{
+			if (direction == dfPACKET_MOVE_DIR_LL)
+			{
+				int minX = x - 90;
+				int maxX = x;
+				int minY = y - 10;
+				int maxY = y + 10;
+				if (sessions._shX >= minX && sessions._shX <= maxX &&
+					sessions._shY >= minY && sessions._shY <= maxY)
+				{
+					SerializationBuffer sendPacket;
+					sessions._chHP -= 1;
+					npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+					sendPacket_Around(session, &sendPacket);
+				}
+			}
+			else if (direction == dfPACKET_MOVE_DIR_RR)
+			{
+				int maxX = x + 90;
+				int minX = x;
+				int minY = y - 10;
+				int maxY = y + 10;
+				if (sessions._shX >= minX && sessions._shX <= maxX &&
+					sessions._shY >= minY && sessions._shY <= maxY)
+				{
+					SerializationBuffer sendPacket;
+					sessions._chHP -= 1;
+					npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+					sendPacket_Around(session, &sendPacket);
+				}
+			}
+		}
+	}
+
 	return true;
 }
 
 bool netPacketProc_Attack3(st_SESSION* session, SerializationBuffer* packet)
 {
+	unsigned char direction;
+	short x;
+	short y;
+
+	*packet >> direction >> x >> y;
+
+	/*if (direction != session->_byDirection || x != session->_shX || y != session->_shY)
+	{
+		session->_byDirection = direction;
+		session->_shX = x;
+		session->_shY = y;
+	}*/
+
+	SerializationBuffer sendPacket;
+	npfAttack3(&sendPacket, session->_dwSessionID, session->_byDirection, session->_shX, session->_shY);
+	sendPacket_Around(session, &sendPacket);
+
+	for (auto& sessions : g_sessionList)
+	{
+		if (sessions._dwSessionID != session->_dwSessionID)
+		{
+			if (direction == dfPACKET_MOVE_DIR_LL)
+			{
+				int minX = x - 100;
+				int maxX = x;
+				int minY = y - 20;
+				int maxY = y + 20;
+				if (sessions._shX >= minX && sessions._shX <= maxX &&
+					sessions._shY >= minY && sessions._shY <= maxY)
+				{
+					SerializationBuffer sendPacket;
+					sessions._chHP -= 1;
+					npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+					sendPacket_Around(session, &sendPacket);
+				}
+			}
+			else if (direction == dfPACKET_MOVE_DIR_RR)
+			{
+				int maxX = x + 100;
+				int minX = x;
+				int minY = y - 20;
+				int maxY = y + 20;
+				if (sessions._shX >= minX && sessions._shX <= maxX &&
+					sessions._shY >= minY && sessions._shY <= maxY)
+				{
+					SerializationBuffer sendPacket;
+					sessions._chHP -= 1;
+					npfDamage(&sendPacket, session->_dwSessionID, sessions._dwSessionID, sessions._chHP);
+					sendPacket_Around(session, &sendPacket);
+				}
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -469,7 +664,87 @@ bool netIOProcess()
 
 bool Update()
 {
+	// 프레임 단위
+	for (auto iter = g_sessionList.begin(); iter != g_sessionList.end();)
+	{
+		if (iter->_chHP <= 0)
+		{
+			fdisconnect(&(*iter));
+			iter = g_sessionList.erase(iter);
+		}
+		else
+		{
+			switch (iter->_dwAction)
+			{
+			case dfPACKET_MOVE_DIR_LL:
+				if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT)
+				{
+					break;
+				}
+				iter->_shX -= 3;
+				break;
+			case dfPACKET_MOVE_DIR_LU:
+				if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT
+					|| iter->_shY - 2 <= dfRANGE_MOVE_TOP)
+				{
+					break;
+				}
+				iter->_shX -= 3;
+				iter->_shY -= 2;
+				break;
+			case dfPACKET_MOVE_DIR_UU:
+				if (iter->_shY - 2 <= dfRANGE_MOVE_TOP)
+				{
+					break;
+				}
+				iter->_shY -= 2;
+				break;
+			case dfPACKET_MOVE_DIR_RU:
+				if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT
+					|| iter->_shY - 2 <= dfRANGE_MOVE_TOP)
+				{
+					break;
+				}
+				iter->_shX += 3;
+				iter->_shY -= 2;
+				break;
+			case dfPACKET_MOVE_DIR_RR:
+				if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT)
+				{
+					break;
+				}
+				iter->_shX += 3;
+				break;
+			case dfPACKET_MOVE_DIR_RD:
+				if (iter->_shX + 3 >= dfRANGE_MOVE_RIGHT
+					|| iter->_shY + 2 >= dfRANGE_MOVE_BOTTOM)
+				{
+					break;
+				}
+				iter->_shX += 3;
+				iter->_shY += 2;
+				break;
+			case dfPACKET_MOVE_DIR_DD:
+				if (iter->_shY + 2 >= dfRANGE_MOVE_BOTTOM)
+				{
+					break;
+				}
+				iter->_shY += 2;
+				break;
+			case dfPACKET_MOVE_DIR_LD:
+				if (iter->_shX - 3 <= dfRANGE_MOVE_LEFT
+					|| iter->_shY + 2 >= dfRANGE_MOVE_BOTTOM)
+				{
+					break;
+				}
+				iter->_shX -= 3;
+				iter->_shY += 2;
+				break;
+			}
 
+			++iter;
+		}
+	}
 
 	return true;
 }

@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="MMOTCPFighter_Server.vcxproj" />
+  <Project Path="MMOTCPFighter_Server.vcxproj" Id="fd911968-2bf3-4a41-8223-b4cf31550a96" />
 </Solution>

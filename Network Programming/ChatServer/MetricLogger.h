@@ -35,6 +35,12 @@ public:
 	// 한 프레임 당 한 틱 증가 -> tps 측정 목적
 	void OnTick() { ++_tickCount; ++_tickCountMinute; }
 
+	// 클라이언트 accept 함수 횟수 측정
+	void OnTickAccept() { ++_tickAcceptCount; ++_tickAcceptCountMinute; }
+
+	// 클라이언트 accept 함수 성공 횟수 측정 
+	void OnTickSuccess() { ++_tickSuccessCount; ++_tickSuccessCountMinute; }
+
 	// 완성된 패킷 수신 횟수
 	void OnPacketRecv() { ++_recvCount; ++_recvCountMinute; }
 
@@ -76,6 +82,8 @@ private:
 	{
 		double _elapsedSec;		// 측정 시간
 		double _tps;			// tps 측정
+		double _tpsAccept;		// accept 횟수(클라 접속 빈도 수) 측정
+		double _tpsSuccess;		// accept 성공 횟수 측정
 		double _recvPerSec;		// 1초당 recv 횟수
 		double _sendPerSec;		// 1초당 send 횟수
 		double _sendDropPerSec;	// 1초당 send Drop 횟수
@@ -91,13 +99,18 @@ private:
 	void Record(LARGE_INTEGER now, double intervalSec)
 	{
 		double tps = _tickCount / intervalSec;
+		double tpsAccept = _tickAcceptCount / intervalSec;
+		double tpsSuccess = _tickSuccessCount / intervalSec;
 		double recvPerSec = _recvCount / intervalSec;
 		double sendPerSec = _sendCount / intervalSec;
 		double sendDropPerSec = _sendDropCount / intervalSec;
 
-		printf("[TPS: %.3f] [Recv/sec: %.3f] [Send/sec: %.3f] [SendDrop/sec : %.3f]\n", tps, recvPerSec, sendPerSec, sendDropPerSec);
+		printf("[TPS: %.3f] [TPS Accept: %.3f] [TPS Success: %.3f] [Recv/sec: %.3f] [Send/sec: %.3f] [SendDrop/sec : %.3f]\n",
+			tps, tpsAccept, tpsSuccess, recvPerSec, sendPerSec, sendDropPerSec);
 
 		_tickCount = 0;
+		_tickAcceptCount = 0;
+		_tickSuccessCount = 0;
 		_recvCount = 0;
 		_sendCount = 0;
 		_sendDropCount = 0;
@@ -106,14 +119,18 @@ private:
 	void RecordToBuffer(LARGE_INTEGER now, double intervalSec)
 	{
 		double tps = _tickCountMinute / intervalSec;
+		double tpsAccept = _tickAcceptCountMinute / intervalSec;
+		double tpsSuccess = _tickSuccessCountMinute / intervalSec;
 		double recvPerSec = _recvCountMinute / intervalSec;
 		double sendPerSec = _sendCountMinute / intervalSec;
 		double sendDropPerSec = _sendDropCountMinute / intervalSec;
 
 		double totalElapsedSec = Elapsed(_startTime, now);
-		_buffer.push_back({ totalElapsedSec, tps, recvPerSec, sendPerSec, sendDropPerSec });
+		_buffer.push_back({ totalElapsedSec, tps, tpsAccept, tpsSuccess, recvPerSec, sendPerSec, sendDropPerSec });
 
 		_tickCountMinute = 0;
+		_tickAcceptCountMinute = 0;
+		_tickSuccessCountMinute = 0;
 		_recvCountMinute = 0;
 		_sendCountMinute = 0;
 		_sendDropCountMinute = 0;
@@ -138,13 +155,13 @@ private:
 		fseek(fp, 0, SEEK_END);
 		if (ftell(fp) == 0)
 		{
-			fprintf(fp, "ElapsedSec,TPS,RecvPerSec,SendPerSec,SendDropSec\n");
+			fprintf(fp, "ElapsedSec,TPS,TPSAccept,TPSSuccess,RecvPerSec,SendPerSec,SendDropSec\n");
 		}
 
 		for (auto& sample : _buffer)
 		{
-			fprintf(fp, "Total Time : %.3f \t TPS : %.3f \t RecvSec : %.3f \t SendSec : %.3f \t SendDropSec : %.3f\n",
-				sample._elapsedSec, sample._tps, sample._recvPerSec, sample._sendPerSec, sample._sendDropPerSec);
+			fprintf(fp, "Total Time : %.3f \t TPS : %.3f \t TPS_Accept : %.3f \t TPS_Success : %.3f \t RecvSec : %.3f \t SendSec : %.3f \t SendDropSec : %.3f\n",
+				sample._elapsedSec, sample._tps, sample._tpsAccept, sample._tpsSuccess, sample._recvPerSec, sample._sendPerSec, sample._sendDropPerSec);
 		}
 
 		fclose(fp);
@@ -161,12 +178,16 @@ private:
 
 	// 초당 출력 카운트
 	ll _tickCount = 0;
+	ll _tickAcceptCount = 0;
+	ll _tickSuccessCount = 0;
 	ll _recvCount = 0;
 	ll _sendCount = 0;
 	ll _sendDropCount = 0;
 
 	// 분당 저장 카운트
 	ll _tickCountMinute = 0;
+	ll _tickAcceptCountMinute = 0;
+	ll _tickSuccessCountMinute = 0;
 	ll _recvCountMinute = 0;
 	ll _sendCountMinute = 0;
 	ll _sendDropCountMinute = 0;

@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameserverprograming\\network programming\\window_socketprogramming\\protocol.h",
+        "Source": "c:\\gameprograming\\network programming\\window_socketprogramming\\protocol.h",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winsock2.h",
@@ -242,8 +242,8 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\ws2ipdef.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\in6addr.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\windowsx.h",
-            "c:\\gameserverprograming\\network programming\\window_socketprogramming\\serializationbuffer.h",
-            "c:\\gameserverprograming\\network programming\\window_socketprogramming\\ringbuffer.h"
+            "c:\\gameprograming\\network programming\\window_socketprogramming\\serializationbuffer.h",
+            "c:\\gameprograming\\network programming\\window_socketprogramming\\ringbuffer.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

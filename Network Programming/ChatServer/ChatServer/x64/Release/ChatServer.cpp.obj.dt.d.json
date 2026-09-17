@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameserverprograming\\network programming\\chatserver\\chatserver.cpp",
+        "Source": "c:\\gameprograming\\network programming\\chatserver\\chatserver.cpp",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
@@ -135,7 +135,7 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_int128.hpp",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_bit_utils.hpp",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_minmax.hpp",
-            "c:\\gameserverprograming\\network programming\\chatserver\\protocol.h",
+            "c:\\gameprograming\\network programming\\chatserver\\protocol.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winsock2.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winpackagefamily.h",
@@ -355,9 +355,9 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\ws2ipdef.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\in6addr.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\windowsx.h",
-            "c:\\gameserverprograming\\network programming\\chatserver\\ringbuffer.h",
-            "c:\\gameserverprograming\\network programming\\chatserver\\serializationbuffer.h",
-            "c:\\gameserverprograming\\network programming\\chatserver\\metriclogger.h",
+            "c:\\gameprograming\\network programming\\chatserver\\ringbuffer.h",
+            "c:\\gameprograming\\network programming\\chatserver\\serializationbuffer.h",
+            "c:\\gameprograming\\network programming\\chatserver\\metriclogger.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector"
         ],
         "ImportedModules": [],
