@@ -27,6 +27,7 @@ struct USER
     unsigned short  _port;
     RingBuffer      _sendQ { SENDBUFSIZE };
     RingBuffer      _recvQ { RECVBUFSIZE };
+    bool            _disconnected;
 };
 
 #define PACKET_SC_CREATE_USER       0

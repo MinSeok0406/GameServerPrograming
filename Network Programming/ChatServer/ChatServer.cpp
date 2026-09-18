@@ -1,5 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define FD_SETSIZE 10000
 #include <iostream>
 #include <time.h>
 #include <list>
@@ -29,6 +30,9 @@ static int s_id = 0;
 
 bool networkLogic();
 bool Update();
+
+// 로그 함수
+void LogUserCount();
 
 // 네트워크 함수 -> accepct, send, recv...
 bool netProc_Accept();
@@ -143,8 +147,10 @@ bool networkLogic()
             netProc_Accept();
         }
 
-        for (auto& user : g_userList)
+        for (auto it = g_userList.begin(); it != g_userList.end();)
         {
+            USER& user = *it;
+
             if (FD_ISSET(user._sock, &rset))
             {
                 selectRet--;
@@ -155,6 +161,16 @@ bool networkLogic()
             {
                 selectRet--;
                 netProc_Send(&user);
+            }
+
+            if (user._disconnected)
+            {
+                closesocket(user._sock);
+                it = g_userList.erase(it);
+            }
+            else
+            {
+                ++it;
             }
         }
     }
@@ -170,7 +186,29 @@ bool Update()
     g_metricLogger.OnTick();
     g_metricLogger.Update();
 
+    LogUserCount();
+
     return true;
+}
+
+void LogUserCount()
+{
+    static uint64_t s_lastLogTick = 0;
+    uint64_t now = GetTickCount64();
+
+    // 60000ms = 1분 안 지났으면 그냥 리턴
+    if (now - s_lastLogTick < 10000)
+    {
+        return;
+    }
+    s_lastLogTick = now;
+
+    time_t nowTime = time(nullptr);
+    tm localTm;
+    localtime_s(&localTm, &nowTime);
+
+    printf("[%02d:%02d:%02d] userList size = %zu\n",
+        localTm.tm_hour, localTm.tm_min, localTm.tm_sec, g_userList.size());
 }
 
 bool netProc_Accept()
@@ -197,6 +235,7 @@ bool netProc_Accept()
     memcpy(createuser._name, name.c_str(), createuser._namesize);
     InetNtop(AF_INET, &clientaddr.sin_addr, createuser._ip, sizeof(createuser._ip));
     createuser._port = ntohs(clientaddr.sin_port);
+    createuser._disconnected = false;
     
     // 신규 유저 정보 전송
     SerializationBuffer packet;
@@ -266,12 +305,14 @@ bool netProc_Recv(USER* user)
         if (WSAGetLastError() != WSAEWOULDBLOCK)
         {
             printf("recv error : %d\n", WSAGetLastError());
+            user->_disconnected = true;
         }
 
         return true;
     }
     else if (recvRet == 0)
     {
+        user->_disconnected = true;
         return true;
     }
 

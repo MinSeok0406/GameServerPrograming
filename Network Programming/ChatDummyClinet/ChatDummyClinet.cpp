@@ -12,9 +12,11 @@ using ll = long long;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
+/*const wchar_t* SERVERIP = L"59.14.69.45";
+#define SERVERPORT 51000*/
 const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT 47000
-#define CLIENT 10000
+#define CLIENT 5000
 
 bool g_shutdown = false;
 

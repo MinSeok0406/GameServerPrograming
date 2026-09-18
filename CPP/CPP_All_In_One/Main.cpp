@@ -3,13 +3,10 @@
 #include <process.h>
 #include <Windows.h>
 #include <time.h>
-#include <unordered_map>
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
-
-
 
 int wmain()
 {
@@ -18,6 +15,8 @@ int wmain()
     cout.tie(NULL);
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
+
+    
 
     return 0;
 }
