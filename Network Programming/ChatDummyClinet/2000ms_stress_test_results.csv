@@ -1,0 +1,2 @@
+timestamp,client_count,min_interval_ms,max_interval_ms,test_duration_sec,connect_fail,total_sent,total_received,lost_estimate,loss_rate_percent,reorder_detected,latency_avg_ms,latency_max_ms,bucket_0_10,bucket_10_50,bucket_50_200,bucket_200_1000,bucket_1000_plus
+2026-09-20 20:14:37,3000,2000,2000,300,0,450000,19946549,0,0.0000,0,159087.93,298375,0,0,0,0,19946549

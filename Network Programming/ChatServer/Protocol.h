@@ -5,9 +5,22 @@
 #include <windowsx.h>
 #include "RingBuffer.h"
 #include "SerializationBuffer.h"
+#include "ObjectFreeList.h"
 
-#define SENDBUFSIZE     50000
 #define RECVBUFSIZE     5000
+
+struct PendingPacket
+{
+    SerializationBuffer* buf;
+    uint32_t refCount;
+};
+
+struct SendItem
+{
+    PendingPacket* packet;
+    int sentOffset;
+    SendItem* next;
+};
 
 #pragma pack(1)
 struct HEADER
@@ -25,7 +38,9 @@ struct USER
     unsigned int    _namesize;
     wchar_t         _ip[INET_ADDRSTRLEN];
     unsigned short  _port;
-    RingBuffer      _sendQ { SENDBUFSIZE };
+    SendItem*       _sendHead = nullptr;
+    SendItem*       _sendTail = nullptr;
+    uint32_t        _sendQueueCount = 0;
     RingBuffer      _recvQ { RECVBUFSIZE };
     bool            _disconnected;
 };

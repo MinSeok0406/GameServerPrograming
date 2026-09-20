@@ -357,8 +357,9 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\windowsx.h",
             "c:\\gameprograming\\network programming\\chatserver\\ringbuffer.h",
             "c:\\gameprograming\\network programming\\chatserver\\serializationbuffer.h",
-            "c:\\gameprograming\\network programming\\chatserver\\metriclogger.h",
-            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector"
+            "c:\\gameprograming\\network programming\\chatserver\\objectfreelist.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
+            "c:\\gameprograming\\network programming\\chatserver\\metriclogger.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

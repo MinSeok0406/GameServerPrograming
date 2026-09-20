@@ -4,10 +4,12 @@
     <ClCompile Include="ChatDummyClinet.cpp" />
     <ClCompile Include="RingBuffer.cpp" />
     <ClCompile Include="SerializationBuffer.cpp" />
+    <ClCompile Include="ObjectFreeList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="SerializationBuffer.h" />
+    <ClInclude Include="ObjectFreeList.h" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 #include <windowsx.h>
 #include "RingBuffer.h"
 #include "SerializationBuffer.h"
+#include "ObjectFreeList.h"
 
 #define SENDBUFSIZE     50000
 #define RECVBUFSIZE     5000
@@ -24,7 +25,8 @@ struct USER
     unsigned int    _id;
     char            _name[20];
     unsigned int    _namesize;
-    bool            _ready = false;
+    bool            _ready;
+    bool            _disconnect;
     RingBuffer      _sendQ { SENDBUFSIZE };
     RingBuffer      _recvQ { RECVBUFSIZE };
 };

@@ -135,6 +135,11 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_int128.hpp",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_bit_utils.hpp",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_minmax.hpp",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\unordered_map",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xhash",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vector",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xbit_ops.h",
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\xnode_handle.h",
             "c:\\gameprograming\\network programming\\chatdummyclinet\\protocol.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\process.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_startup.h",
@@ -360,7 +365,8 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\in6addr.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\windowsx.h",
             "c:\\gameprograming\\network programming\\chatdummyclinet\\ringbuffer.h",
-            "c:\\gameprograming\\network programming\\chatdummyclinet\\serializationbuffer.h"
+            "c:\\gameprograming\\network programming\\chatdummyclinet\\serializationbuffer.h",
+            "c:\\gameprograming\\network programming\\chatdummyclinet\\objectfreelist.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

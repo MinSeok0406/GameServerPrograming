@@ -140,10 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ChatDummyClinet.cpp" />
+    <ClCompile Include="ObjectFreeList.cpp" />
     <ClCompile Include="RingBuffer.cpp" />
     <ClCompile Include="SerializationBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ObjectFreeList.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="SerializationBuffer.h" />

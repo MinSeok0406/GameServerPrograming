@@ -8,7 +8,7 @@ RingBuffer::RingBuffer() : buf(nullptr), size(0), totalSize(0), writePos(nullptr
 
 }
 
-RingBuffer::RingBuffer(int pBufferSize)
+RingBuffer::RingBuffer(uint32_t pBufferSize)
 {
 	buf = (char*)malloc(pBufferSize);
 	totalSize = pBufferSize;
@@ -24,24 +24,24 @@ RingBuffer::~RingBuffer()
 	readPos = nullptr;
 }
 
-int RingBuffer::GetUseSize()
+uint32_t RingBuffer::GetUseSize()
 {
 	return size;
 }
 
-int RingBuffer::GetFreeSize()
+uint32_t RingBuffer::GetFreeSize()
 {
 	return totalSize - size;
 }
 
-int RingBuffer::Enqueue(const char* chpData, int pSize)
+uint32_t RingBuffer::Enqueue(const char* chpData, uint32_t pSize)
 {
 	if (pSize > GetFreeSize())
 	{
 		return 0;
 	}
 
-	int remainSize = DirectEnqueueSize();
+	uint32_t remainSize = DirectEnqueueSize();
 	// readPos 경계면 이동
 	if (pSize <= remainSize)
 	{
@@ -58,14 +58,14 @@ int RingBuffer::Enqueue(const char* chpData, int pSize)
 	return pSize;
 }
 
-int RingBuffer::Dequeue(char* chpDest, int pSize)
+uint32_t RingBuffer::Dequeue(char* chpDest, uint32_t pSize)
 {
 	if (pSize > GetUseSize())
 	{
 		return 0;
 	}
 
-	int remainSize = DirectDequeueSize();
+	uint32_t remainSize = DirectDequeueSize();
 	// writePos 경계면 이동
 	if (pSize <= remainSize)
 	{
@@ -82,14 +82,14 @@ int RingBuffer::Dequeue(char* chpDest, int pSize)
 	return pSize;
 }
 
-int RingBuffer::Peek(char* chpDest, int pSize)
+uint32_t RingBuffer::Peek(char* chpDest, uint32_t pSize)
 {
 	if (pSize > GetUseSize())
 	{
 		return 0;
 	}
 
-	int remainSize = DirectDequeueSize();
+	uint32_t remainSize = DirectDequeueSize();
 	// writePos 경계면 이동
 	if (pSize <= remainSize)
 	{
@@ -114,29 +114,29 @@ void RingBuffer::ClearBuffer()
 
 // 링 버퍼의 경계를 넘어갈 때, 두 값을 더해서 크기 자체는 맞지만 버퍼는 경계를 넘어서
 // 이후의 값도 쓰거나 읽을 수 있다. 이 부분은 오류가 되기 때문에 고쳐야 함
-int RingBuffer::DirectEnqueueSize()
+uint32_t RingBuffer::DirectEnqueueSize()
 {
-	int enqueueSize = (int)(&buf[totalSize] - readPos);
+	uint32_t enqueueSize = (uint32_t)(&buf[totalSize] - readPos);
 	return std::min(GetFreeSize(), enqueueSize);
 }
 
-int RingBuffer::DirectDequeueSize()
+uint32_t RingBuffer::DirectDequeueSize()
 {
-	int dequeueSize = (int)(&buf[totalSize] - writePos);
+	uint32_t dequeueSize = (uint32_t)(&buf[totalSize] - writePos);
 	return std::min(GetUseSize(), dequeueSize);
 }
 
-int RingBuffer::MoveRear(int pSize)
+uint32_t RingBuffer::MoveRear(uint32_t pSize)
 {
 	if (pSize > GetFreeSize())
 	{
 		return 0;
 	}
 
-	int commitSize = pSize;
+	uint32_t commitSize = pSize;
 	size += pSize;
 
-	int moveSize = (int)(&buf[totalSize] - readPos);
+	uint32_t moveSize = (uint32_t)(&buf[totalSize] - readPos);
 	if (pSize >= moveSize)
 	{
 		readPos = &buf[0] + (pSize - moveSize);
@@ -149,17 +149,17 @@ int RingBuffer::MoveRear(int pSize)
 	return commitSize;
 }
 
-int RingBuffer::MoveFront(int pSize)
+uint32_t RingBuffer::MoveFront(uint32_t pSize)
 {
 	if (pSize > GetUseSize())
 	{
 		return 0;
 	}
 
-	int commitSize = pSize;
+	uint32_t commitSize = pSize;
 	size -= pSize;
 
-	int moveSize = (int)(&buf[totalSize] - writePos);
+	uint32_t moveSize = (uint32_t)(&buf[totalSize] - writePos);
 	if (pSize >= moveSize)
 	{
 		writePos = &buf[0] + (pSize - moveSize);

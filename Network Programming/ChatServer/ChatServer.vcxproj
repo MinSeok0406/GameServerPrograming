@@ -143,11 +143,13 @@
   <ItemGroup>
     <ClCompile Include="..\SerializationBuffer\SerializationBuffer.cpp" />
     <ClCompile Include="ChatServer.cpp" />
+    <ClCompile Include="ObjectFreeList.cpp" />
     <ClCompile Include="RingBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SerializationBuffer\SerializationBuffer.h" />
     <ClInclude Include="MetricLogger.h" />
+    <ClInclude Include="ObjectFreeList.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="RingBuffer.h" />
   </ItemGroup>
