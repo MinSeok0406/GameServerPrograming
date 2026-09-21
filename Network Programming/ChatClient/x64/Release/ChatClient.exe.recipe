@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GameServerPrograming\Network Programming\ChatServer\x64\Release\ChatClient.exe</FullPath>
+      <FullPath>C:\GamePrograming\Network Programming\ChatServer\x64\Release\ChatClient.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

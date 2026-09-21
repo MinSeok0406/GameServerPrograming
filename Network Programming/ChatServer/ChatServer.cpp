@@ -23,7 +23,7 @@ using ll = long long;
 MetricLogger g_metricLogger(60.0 * 60.0 * 1);
 
 // 프리리스트 추가
-#define MAX_PENDING_PER_USER 50000
+#define MAX_PENDING_PER_USER 20000
 ObjectFreeList<SerializationBuffer>     g_bufferPool(1000, false);
 ObjectFreeList<PendingPacket>           g_pendingPool(3000, true);
 ObjectFreeList<SendItem>                g_sendItemPool(10000, true);
@@ -126,17 +126,17 @@ int wmain()
 
     while (!g_shutdown)
     {
-        LARGE_INTEGER tickStart, tickEnd;
-        QueryPerformanceCounter(&tickStart);
+        /*LARGE_INTEGER tickStart, tickEnd;
+        QueryPerformanceCounter(&tickStart);*/
 
         networkLogic();
         Update();
 
-        QueryPerformanceCounter(&tickEnd);
+        /*QueryPerformanceCounter(&tickEnd);
         double ms = (double)(tickEnd.QuadPart - tickStart.QuadPart) * 1000.0 / (double)s_qpcFreq.QuadPart;
         s_tickSumMs += ms;
         if (ms > s_tickMaxMs) s_tickMaxMs = ms;
-        s_tickCount++;
+        s_tickCount++;*/
     }
     
     WSACleanup();
@@ -219,10 +219,10 @@ bool Update()
     // 채팅 로그
     // DB 저장
     // 등등
-    g_metricLogger.OnTick();
+    /*g_metricLogger.OnTick();
     g_metricLogger.Update();
 
-    LogStatus();
+    LogStatus();*/
 
     return true;
 }
@@ -298,7 +298,7 @@ void LogStatus()
 
 bool netProc_Accept()
 {
-    g_metricLogger.OnTickAccept();
+    //g_metricLogger.OnTickAccept();
     int addrlen = sizeof(clientaddr);
     g_clientsocket = accept(g_listensocket, (SOCKADDR*)&clientaddr, &addrlen);
     if (g_clientsocket == INVALID_SOCKET)
@@ -321,9 +321,6 @@ bool netProc_Accept()
     InetNtop(AF_INET, &clientaddr.sin_addr, createuser._ip, sizeof(createuser._ip));
     createuser._port = ntohs(clientaddr.sin_port);
     createuser._disconnected = false;
-    createuser._sendHead = nullptr;
-    createuser._sendTail = nullptr;
-    createuser._sendQueueCount = 0;
     
     // 신규 유저 정보 전송
     SerializationBuffer packet;
@@ -347,7 +344,7 @@ bool netProc_Accept()
         }
     }
 
-    g_metricLogger.OnTickSuccess();
+    //g_metricLogger.OnTickSuccess();
     return true;
 }
 
@@ -465,7 +462,7 @@ bool netProc_Recv(USER* user)
 
 bool packetProc(USER* user, unsigned char type, SerializationBuffer* packet)
 {
-    g_metricLogger.OnPacketRecv();
+    //g_metricLogger.OnPacketRecv();
 
     switch (type)
     {
@@ -481,11 +478,11 @@ bool sendPacket_Unicast(USER* user, SerializationBuffer* packet)
 {
     if (user->_sendQueueCount >= MAX_PENDING_PER_USER)
     {
-        g_metricLogger.OnPacketSendDrop();
+        //g_metricLogger.OnPacketSendDrop();
         return false;
     }
 
-    g_metricLogger.OnPacketSend();
+    //g_metricLogger.OnPacketSend();
     SerializationBuffer* pooled = g_bufferPool.Alloc();
     pooled->clear();
     pooled->putData(packet->getBufferPtr(), packet->getDataSize());
@@ -514,7 +511,7 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
         // 수정 필요
         if (u._sendQueueCount >= MAX_PENDING_PER_USER)
         {
-            g_metricLogger.OnPacketSendDrop();
+            //g_metricLogger.OnPacketSendDrop();
             continue;
         }
         recipients.push_back(&u);
@@ -536,7 +533,7 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
     for (USER* u : recipients)
     {
         pushSendItem(u, pp);
-        g_metricLogger.OnPacketSend();
+        //g_metricLogger.OnPacketSend();
     }
 
     return true;
@@ -545,16 +542,16 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
 bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
 {
     // 지표 관련 패킷 메시지(프로토콜와는 관련 없음)
-    unsigned int seq;
-    unsigned long long sendTick;
+    unsigned int seq = 0;
+    unsigned long long sendTick = 0;
 
     unsigned short len;
     unsigned int namesize;
     char name[20];
     char msg[500];
 
-    *packet >> seq;
-    *packet >> sendTick;
+    //*packet >> seq;
+    //*packet >> sendTick;
     *packet >> len;
     *packet >> namesize;
     packet->getData(name, namesize);
@@ -564,7 +561,7 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
     msg[len] = '\0';
 
     // 추가할 예정있다면 작성
-    // printf("%s : %s\n", name, msg);
+    printf("%s : %s\n", name, msg);
     
     SerializationBuffer sendPacket;
     npf_SC_MSG(&sendPacket, user->_id, seq, sendTick, len, namesize, name, msg);
@@ -607,15 +604,16 @@ bool npf_SC_MSG(SerializationBuffer* packet, unsigned int senderID, unsigned int
     unsigned short len, unsigned int namesize, char name[20], char* msg)
 {
     HEADER header;
-    header._packetsize = (unsigned short)(sizeof(senderID) + sizeof(seq) + sizeof(sendTick) +
-        sizeof(len) + sizeof(namesize) + namesize + len);
+    /*header._packetsize = (unsigned short)(sizeof(senderID) + sizeof(seq) + sizeof(sendTick) +
+        sizeof(len) + sizeof(namesize) + namesize + len);*/
+    header._packetsize = (unsigned short)(sizeof(len) + sizeof(namesize) + namesize + len);
     header._type = PACKET_SC_MSG;
 
     packet->putData((char*)&header, sizeof(header));
 
-    *packet << senderID;
-    *packet << seq;
-    *packet << sendTick;
+    //*packet << senderID;
+    //*packet << seq;
+    //*packet << sendTick;
     *packet << len;
     *packet << namesize;
     packet->putData(name, namesize);

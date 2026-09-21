@@ -114,7 +114,7 @@ bool netProc_Recv()
 		g_user._recvQ.DirectEnqueueSize(), 0);
 	if (recvRet == SOCKET_ERROR)
 	{
-		if (WSAGetLastError() == WSAEWOULDBLOCK)
+		if (WSAGetLastError() != WSAEWOULDBLOCK)
 		{
 			printf("%d\n", WSAGetLastError());
 			printf("recv fail\n");

@@ -340,62 +340,64 @@ bool netProc_Recv(ClientContext* ctx)
 {
 	USER* user = &ctx->user;
 
-	if (user->_recvQ.GetFreeSize() < sizeof(HEADER))
-	{
-		return false;
-	}
-
-	int recvRet = recv(user->_sock, user->_recvQ.GetRearBufferPtr(),
-		user->_recvQ.DirectEnqueueSize(), 0);
-	if (recvRet == SOCKET_ERROR)
-	{
-		if (WSAGetLastError() != WSAEWOULDBLOCK)
-		{
-			printf("recv fail: %d\n", WSAGetLastError());
-		}
-
-		return false;
-	}
-	else if (recvRet == 0)
-	{
-		user->_disconnect = true;
-		return true;
-	}
-
-	user->_recvQ.MoveRear(recvRet);
-
 	while (true)
 	{
-		if (user->_recvQ.GetUseSize() <= sizeof(HEADER))
+		if (user->_recvQ.GetFreeSize() < sizeof(HEADER))
 		{
 			return false;
 		}
 
-		char buf[3];
-		uint32_t peekRet = user->_recvQ.Peek(buf, sizeof(HEADER));
-		if (peekRet != sizeof(HEADER))
+		int recvRet = recv(user->_sock, user->_recvQ.GetRearBufferPtr(),
+			user->_recvQ.DirectEnqueueSize(), 0);
+		if (recvRet == SOCKET_ERROR)
 		{
-			__debugbreak();
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			{
+				printf("recv fail: %d\n", WSAGetLastError());
+			}
+			break;
+		}
+		else if (recvRet == 0)
+		{
+			user->_disconnect = true;
+			return true;
 		}
 
-		HEADER* header = (HEADER*)buf;
-		if (user->_recvQ.GetUseSize() < sizeof(HEADER) + header->_packetsize)
+		user->_recvQ.MoveRear(recvRet);
+
+		while (true)
 		{
-			return false;   // 헤더는 아직 큐에서 빼지 않은 상태로 리턴 -> 다음 recv에서 이어서 재확인
+			if (user->_recvQ.GetUseSize() <= sizeof(HEADER))
+			{
+				return false;
+			}
+
+			char buf[3];
+			uint32_t peekRet = user->_recvQ.Peek(buf, sizeof(HEADER));
+			if (peekRet != sizeof(HEADER))
+			{
+				__debugbreak();
+			}
+
+			HEADER* header = (HEADER*)buf;
+			if (user->_recvQ.GetUseSize() < sizeof(HEADER) + header->_packetsize)
+			{
+				return false;   // 헤더는 아직 큐에서 빼지 않은 상태로 리턴 -> 다음 recv에서 이어서 재확인
+			}
+
+			user->_recvQ.MoveFront(sizeof(HEADER));
+
+			SerializationBuffer packet;
+			peekRet = user->_recvQ.Peek(packet.getBufferPtr(), header->_packetsize);
+			if (peekRet != header->_packetsize)
+			{
+				__debugbreak();
+			}
+			user->_recvQ.MoveFront(peekRet);
+			packet.moveReadPos(peekRet);
+
+			packetProc(header->_type, &packet, ctx);
 		}
-
-		user->_recvQ.MoveFront(sizeof(HEADER));
-
-		SerializationBuffer packet;
-		peekRet = user->_recvQ.Peek(packet.getBufferPtr(), header->_packetsize);
-		if (peekRet != header->_packetsize)
-		{
-			__debugbreak();
-		}
-		user->_recvQ.MoveFront(peekRet);
-		packet.moveReadPos(peekRet);
-
-		packetProc(header->_type, &packet, ctx);
 	}
 
 	return true;
