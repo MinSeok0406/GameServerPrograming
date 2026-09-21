@@ -8,6 +8,12 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
+void Test(int a, int b)
+{
+    int c = a + b;
+    c++;
+}
+
 int wmain()
 {
     ios_base::sync_with_stdio(false);
@@ -16,7 +22,7 @@ int wmain()
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    
+    Test(1, 2);
 
     return 0;
 }

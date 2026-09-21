@@ -1,4 +1,4 @@
-﻿/*#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <time.h>
 #include <fcntl.h>
@@ -206,15 +206,12 @@ int network()
     int selectret = select(0, &rset, NULL, NULL, NULL);
     if (selectret == SOCKET_ERROR)
     {
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
-        {
-            return 0;
-        }
-        else
+        if (WSAGetLastError() != WSAEWOULDBLOCK)
         {
             printf("%d\n", WSAGetLastError());
-            return 0;
         }
+
+        return 0;
     }
 
     if (FD_ISSET(listen_sock, &rset))
@@ -286,14 +283,10 @@ int network()
             int recvret = recv(session._sock, buf, sizeof(buf), 0);
             if (recvret == SOCKET_ERROR)
             {
-                if (WSAGetLastError() == WSAEWOULDBLOCK)
-                {
-                    continue;
-                }
-                else
+                if (WSAGetLastError() != WSAEWOULDBLOCK)
                 {
                     printf("%d\n", WSAGetLastError());
-                    DELETESTAR deletestar { 2, session._id, 0, 0 };
+                    DELETESTAR deletestar{ 2, session._id, 0, 0 };
                     sendBroadcast(&session, (char*)&deletestar);
                     g_deletestar.push_back(deletestar);
                 }
@@ -429,4 +422,4 @@ int render()
     Buffer_Flip();
 
     return 1;
-}*/
+}

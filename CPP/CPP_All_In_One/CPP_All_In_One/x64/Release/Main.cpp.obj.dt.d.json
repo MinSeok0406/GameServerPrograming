@@ -1,7 +1,7 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\cpp\\cpp_all_in_one\\main.cpp",
+        "Source": "c:\\gameserverprograming\\cpp\\cpp_all_in_one\\main.cpp",
         "ProvidedModule": "",
         "Includes": [
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\iostream",
