@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿/*#define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
 #include <time.h>
@@ -321,4 +321,4 @@ void gdi_Drawing(HWND hWnd, int startX, int startY, int endX, int endY)
     LineTo(hdc, endX, endY);
     SelectObject(hdc, hPenOld);
     ReleaseDC(hWnd, hdc);
-}
+}*/

@@ -154,17 +154,14 @@
     <ClCompile Include="Practice01_3.cpp" />
     <ClCompile Include="RandomSystem.cpp" />
     <ClCompile Include="StartPrint.cpp" />
-    <ClCompile Include="Temp.cpp" />
     <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="TimingGame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Address.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="overflow_check.h" />
     <ClInclude Include="PQ_STL.h" />
     <ClInclude Include="StartPrint.h" />
-    <ClInclude Include="Temp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

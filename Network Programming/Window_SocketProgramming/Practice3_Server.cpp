@@ -145,7 +145,7 @@ int main(int argc, CHAR* argv[])
     while (true)
     {
         network();
-
+         
         render();
 
         useTime = timeGetTime() - tm;

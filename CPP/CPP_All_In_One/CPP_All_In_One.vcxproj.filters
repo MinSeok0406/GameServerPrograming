@@ -43,9 +43,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Temp.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Practice01_1.cpp">
       <Filter>Practice01</Filter>
     </ClCompile>
@@ -96,13 +93,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Temp.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Date.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Address.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="StartPrint.h">

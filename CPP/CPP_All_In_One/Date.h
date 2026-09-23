@@ -1,9 +1,16 @@
-#pragma once
-class Date
+﻿#pragma once
+#include <cstdint>
+
+enum Color
 {
-public:
+    red,
+    blue,
+    yellow
+};
 
-
-private:
-	
+enum class color: uint64_t
+{
+    red,
+    blue,
+    yellow
 };

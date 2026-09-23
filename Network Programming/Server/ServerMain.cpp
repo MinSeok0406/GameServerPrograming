@@ -1,320 +1,141 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
-#include <conio.h>
 #include <time.h>
-#include <fcntl.h>
-#include <io.h>
+#include <process.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
 #include <string>
-#include "RingBuffer.h"
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-#define SERVERPORT  47000
-#define BUFSIZE     512
-#define SENDSIZE    100
-#define WM_SOCKET   (WM_USER+1)
+#define SERVERPORT 47000
+#define BUFSIZE 512
 
-struct SOCKETINFO
+SOCKET g_listensock;
+
+bool netLogic();
+uint32_t WINAPI procThread(LPVOID param);
+
+int wmain()
 {
-    SOCKET sock;
-    RingBuffer sendQueue { BUFSIZE };
-    RingBuffer recvQueue { BUFSIZE };
-    SOCKETINFO* next;
-};
-
-SOCKETINFO* SocketInfoList;
-
-LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
-void processSocketMessage(HWND, UINT, WPARAM, LPARAM);
-
-bool AddSocketInfo(SOCKET sock);
-SOCKETINFO* GetSocketInfo(SOCKET sock);
-void RemoveSocketInfo(SOCKET sock);
-
-int wmain(int argc, WCHAR* argv[])
-{
-    _setmode(_fileno(stdout), _O_U16TEXT);
-    _setmode(_fileno(stdin), _O_U16TEXT);
     timeBeginPeriod(1);
-    srand(unsigned int(time(nullptr)));
-
-    int retval;
-
-    WNDCLASS wndclass;
-    wndclass.style = CS_HREDRAW | CS_VREDRAW;
-    wndclass.lpfnWndProc = wndProc;
-    wndclass.cbClsExtra = 0;
-    wndclass.cbWndExtra = 0;
-    wndclass.hInstance = NULL;
-    wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-    wndclass.lpszMenuName = NULL;
-    wndclass.lpszClassName = L"MyWndClass";
-    if (!RegisterClass(&wndclass))
-    {
-        return 1;
-    }
-
-    HWND hWnd = CreateWindow(L"MyWndClass", L"TCP 서버", WS_OVERLAPPEDWINDOW, 0, 0, 600, 200, NULL, NULL, NULL, NULL);
-    if (hWnd == NULL)
-    {
-        return 1;
-    }
-    ShowWindow(hWnd, SW_SHOWNORMAL);
-    UpdateWindow(hWnd);
 
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
     {
+        printf("WSADATA error : %d\n", WSAGetLastError());
         return 1;
     }
 
-    SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (listen_sock == INVALID_SOCKET)
+    g_listensock = socket(AF_INET, SOCK_STREAM, 0);
+    if (g_listensock == INVALID_SOCKET)
     {
+        printf("SOCKET error : %d\n", WSAGetLastError());
         return 1;
     }
+
+    LINGER linger{ 1, 0 };
+    setsockopt(g_listensock, SOL_SOCKET, SO_LINGER, (char*)&linger, sizeof(linger));
 
     SOCKADDR_IN serveraddr;
     memset(&serveraddr, 0, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
-    serveraddr.sin_port = htons(SERVERPORT);
     serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    retval = bind(listen_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-    if (retval == SOCKET_ERROR)
+    serveraddr.sin_port = htons(SERVERPORT);
+    auto bindRet = bind(g_listensock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+    if (bindRet == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        printf("bind error : %d\n", WSAGetLastError());
         return 1;
     }
 
-    retval = listen(listen_sock, SOMAXCONN);
-    if (retval == SOCKET_ERROR)
+    /*u_long on = 1;
+    auto ioctRet = ioctlsocket(g_listensock, FIONBIO, &on);
+    if (ioctRet == SOCKET_ERROR)
     {
-        wprintf(L"%d\n", WSAGetLastError());
+        printf("ioct error : %d\n", WSAGetLastError());
+        return 1;
+    }*/
+
+    auto listenRet = listen(g_listensock, SOMAXCONN);
+    if (listenRet == SOCKET_ERROR)
+    {
+        printf("listen error : %d\n", WSAGetLastError());
         return 1;
     }
 
-    retval = WSAAsyncSelect(listen_sock, hWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
-    if (retval == SOCKET_ERROR)
+    while (true)
     {
-        wprintf(L"%d\n", WSAGetLastError());
-        return 1;
+        netLogic();
     }
 
-    MSG msg;
-    while (GetMessage(&msg, 0, 0, 0) > 0)
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
+    closesocket(g_listensock);
     WSACleanup();
 
-    return (int)msg.wParam;
+    return 0;
 }
 
-LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+bool netLogic()
 {
-    switch (uMsg)
-    {
-    case WM_SOCKET:
-        processSocketMessage(hWnd, uMsg, wParam, lParam);
-        return 0;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    }
-
-    return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
-void processSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    char sendbuf[BUFSIZE];
-    char recvbuf[BUFSIZE];
-    int peekRet = 0;
-    int retval;
-    int sendQ;
-    int recvQ;
-    SOCKET client_sock;
+    SOCKET clientSock;
     SOCKADDR_IN clientaddr;
-    int addrlen;
-    SOCKETINFO* ptr;
+    int addrlen = sizeof(clientaddr);
 
-    if (WSAGETSELECTERROR(lParam))
+    auto acceptRet = accept(clientSock, (SOCKADDR*)&clientaddr, &addrlen);
+    if (acceptRet == INVALID_SOCKET)
     {
-        RemoveSocketInfo(wParam);
-        return;
-    }
-
-    switch (WSAGETSELECTEVENT(lParam))
-    {
-    case FD_ACCEPT:
-        addrlen = sizeof(clientaddr);
-        client_sock = accept(wParam, (SOCKADDR*)&clientaddr, &addrlen);
-        if (client_sock == INVALID_SOCKET)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
-            return;
-        }
-
-        wprintf(L"\n[TCP 서버] 클라이언트 접속 : IP 주소=%hs, 포트 번호=%d\n",
-            inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-
-        AddSocketInfo(client_sock);
-        retval = WSAAsyncSelect(client_sock, hWnd, WM_SOCKET, FD_READ | FD_WRITE | FD_CLOSE);
-        if (retval == SOCKET_ERROR)
-        {
-            wprintf(L"%d\n", WSAGetLastError());
-            RemoveSocketInfo(client_sock);
-        }
-        break;
-    case FD_READ:
-        ptr = GetSocketInfo(wParam);
-
-        if (ptr->sendQueue.GetUseSize() > 0)
-        {
-            wprintf(L"sendQueue 중에 접속 종료\n");
-            return;
-        }
-
-        retval = recv(ptr->sock, recvbuf, BUFSIZE, 0);
-        if (retval == SOCKET_ERROR)
-        {
-            if (WSAGetLastError() != WSAEWOULDBLOCK)
-            {
-                wprintf(L"%d\n", WSAGetLastError());
-                RemoveSocketInfo(wParam);
-            }
-            return;
-        }
-        else if (retval == 0)
-        {
-            RemoveSocketInfo(wParam);
-            return;
-        }
-
-        recvbuf[retval] = '\0';
-        recvQ = ptr->recvQueue.Enqueue(recvbuf, retval);
-        if (recvQ == 0)
-        {
-            // 수신 링 버퍼큐가 다 찬 상황
-            wprintf(L"%d\n", WSAGetLastError());
-            return;
-        }
-
-        ptr->recvQueue.Dequeue(sendbuf, retval);
-        ptr->sendQueue.Enqueue(sendbuf, retval);
-        // 받은 데이터 recvQueue에 담아놓기
-        // 일정이상 모이면 한 번에 담기
-
-    case FD_WRITE:
-        ptr = GetSocketInfo(wParam);
-
-        if (ptr->sendQueue.GetUseSize() == 0)
-        {
-            wprintf(L"sendQueue 다 해서 종료\n");
-            return;
-        }
-
-        // Peek 확인 후 보낼 데이터 담기
-        sendQ = ptr->sendQueue.Peek(sendbuf, (int)strlen(sendbuf));
-
-        retval = send(ptr->sock, sendbuf, sendQ, 0);
-        if (retval == SOCKET_ERROR)
-        {
-            if (WSAGetLastError() != WSAEWOULDBLOCK)
-            {
-                wprintf(L"%d\n", WSAGetLastError());
-                RemoveSocketInfo(wParam);
-            }
-            return;
-        }
-
-        // 보낼 데이터 다 보냈으면 정리
-        if (sendQ == retval)
-        {
-            ptr->sendQueue.Dequeue(sendbuf, sendQ);
-            PostMessage(hWnd, WM_SOCKET, wParam, FD_READ);
-        }
-        else
-        {
-            ptr->sendQueue.MoveFront(retval);
-        }
-
-        break;
-    case FD_CLOSE:
-        RemoveSocketInfo(wParam);
-        break;
-    }
-}
-
-bool AddSocketInfo(SOCKET sock)
-{
-    SOCKETINFO* ptr = new SOCKETINFO;
-    if (ptr == NULL)
-    {
-        wprintf(L"[오류] 메모리가 부족합니다.\n");
+        printf("accept error : %d\n", WSAGetLastError());
         return false;
     }
 
-    ptr->sock = sock;
-    ptr->next = SocketInfoList;
-    SocketInfoList = ptr;
+    HANDLE hThread;
+    hThread = (HANDLE)_beginthreadex(0, 0, procThread, (LPVOID)clientSock, 0, 0);
+    if (hThread == NULL)
+    {
+        closesocket(clientSock);
+    }
+    else
+    {
+        CloseHandle(hThread);
+    }
 
     return true;
 }
 
-SOCKETINFO* GetSocketInfo(SOCKET sock)
+uint32_t __stdcall procThread(LPVOID param)
 {
-    SOCKETINFO* ptr = SocketInfoList;
-    while (ptr)
+    SOCKET clientSock = (SOCKET)param;
+    char buf[BUFSIZE + 1];
+
+    while (true)
     {
-        if (ptr->sock == sock)
+        int recvRet = recv(clientSock, buf, BUFSIZE, 0);
+        if (recvRet == SOCKET_ERROR)
         {
-            return ptr;
+            printf("recv error : %d\n", WSAGetLastError());
+            break;
         }
-        ptr = ptr->next;
+        else if (recvRet == 0)
+        {
+            break;
+        }
+
+        buf[recvRet] = '\0';
+
+        int sendRet = send(clientSock, buf, recvRet, 0);
+        if (sendRet == SOCKET_ERROR)
+        {
+            printf("send error : %d\n", WSAGetLastError());
+            break;
+        }
     }
 
-    return nullptr;
-}
+    closesocket(clientSock);
 
-void RemoveSocketInfo(SOCKET sock)
-{
-    SOCKADDR_IN clientaddr;
-    int addrlen = sizeof(clientaddr);
-    getpeername(sock, (SOCKADDR*)&clientaddr, &addrlen);
-    wprintf(L"\n[TCP 서버] 클라이언트 종료 : IP 주소=%hs, 포트 번호=%d\n",
-        inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-
-    SOCKETINFO* curr = SocketInfoList;
-    SOCKETINFO* prev = NULL;
-    while (curr)
-    {
-        if (curr->sock == sock)
-        {
-            if (prev)
-            {
-                prev->next = curr->next;
-            }
-            else
-            {
-                SocketInfoList = curr->next;
-            }
-            closesocket(curr->sock);
-            delete curr;
-            return;
-        }
-        prev = curr;
-        curr = curr->next;
-    }
+    return 0;
 }
