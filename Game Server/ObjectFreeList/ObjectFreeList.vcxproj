@@ -146,8 +146,10 @@
     <ClCompile Include="ObjectPool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FreeListValidator.h" />
     <ClInclude Include="ObjectFreeList.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="TestConfig.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

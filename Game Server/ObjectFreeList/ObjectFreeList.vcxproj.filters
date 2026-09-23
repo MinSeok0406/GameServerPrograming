@@ -8,5 +8,16 @@
   <ItemGroup>
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="ObjectFreeList.h" />
+    <ClInclude Include="TestConfig.h">
+      <Filter>TestFile</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeListValidator.h">
+      <Filter>TestFile</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="TestFile">
+      <UniqueIdentifier>{d4c11738-c0f6-4248-933d-0bda4dd1b570}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

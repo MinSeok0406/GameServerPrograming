@@ -1,6 +1,6 @@
 ﻿#include "ObjectFreeList.h"
 
-unsigned __int64 getObjectSize(unsigned __int64 objectsize)
+uint64_t getObjectSize(unsigned __int64 objectsize)
 {
     if (objectsize <= (unsigned __int64)OBJECTSIZE::B8)
     {

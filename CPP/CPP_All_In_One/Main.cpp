@@ -8,11 +8,6 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-void Test(int a, int b)
-{
-    int c = a + b;
-    c++;
-}
 
 int wmain()
 {
@@ -22,7 +17,14 @@ int wmain()
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    Test(1, 2);
+    short x = 0x1234;
+    long y = 0x12345678;
+
+    short hx = ntohs(x);
+    long hy = ntohl(y);
+
+    short nx = htons(x);
+    long ny = htonl(y);
 
     return 0;
 }

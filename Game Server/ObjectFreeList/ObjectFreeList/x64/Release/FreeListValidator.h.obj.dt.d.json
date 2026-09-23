@@ -1,11 +1,9 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\game server\\objectfreelist\\main.cpp",
+        "Source": "c:\\gameprograming\\game server\\objectfreelist\\freelistvalidator.h",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\gameprograming\\game server\\objectfreelist\\testconfig.h",
-            "c:\\gameprograming\\game server\\objectfreelist\\freelistvalidator.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\windows.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winpackagefamily.h",
@@ -389,9 +387,7 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_startup.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\math.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime_startup.h",
-            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stop_token",
-            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\fstream",
-            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\__msvc_filebuf.hpp"
+            "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stop_token"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []
