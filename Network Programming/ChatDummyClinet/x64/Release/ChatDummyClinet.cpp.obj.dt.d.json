@@ -365,8 +365,7 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\in6addr.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\windowsx.h",
             "c:\\gameprograming\\network programming\\chatdummyclinet\\ringbuffer.h",
-            "c:\\gameprograming\\network programming\\chatdummyclinet\\serializationbuffer.h",
-            "c:\\gameprograming\\network programming\\chatdummyclinet\\objectfreelist.h"
+            "c:\\gameprograming\\network programming\\chatdummyclinet\\serializationbuffer.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

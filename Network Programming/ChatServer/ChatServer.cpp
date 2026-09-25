@@ -16,11 +16,10 @@ using ll = long long;
 
 #define SERVERPORT      47000
 
-// 틱 소요시간 로그를 남길 CSV 경로 - MetricLogger와는 별개로 관리
-#define TICK_LOG_CSV_PATH "server_tick_log.csv"
-
 // 검증 관련 지표
-MetricLogger g_metricLogger(60.0 * 60.0 * 1);
+//  - 1번 인자: min/avg/max를 묶는 구간 (60초 → CSV 한 줄 = 1분)
+//  - 2번 인자: 파일 저장 주기 (1분마다 기록 → 콘솔 창을 닫거나 크래시가 나도 최대 1분치만 손실)
+MetricLogger g_metricLogger(60.0, 60.0);
 
 // 프리리스트 추가
 #define MAX_PENDING_PER_USER 20000
@@ -37,22 +36,8 @@ bool g_shutdown = false;
 
 static int s_id = 0;
 
-// 틱 소요시간 집계용 (QueryPerformanceCounter 기반, 고해상도)
-static LARGE_INTEGER s_qpcFreq;
-static double s_tickSumMs = 0.0;
-static double s_tickMaxMs = 0.0;
-static uint64_t s_tickCount = 0;
-
 bool networkLogic();
 bool Update();
-
-// 로그 함수
-void LogStatus();
-
-// CSV 저장용 헬퍼
-static bool FileExists(const char* path);
-static void AppendTickLogCsv(int hour, int min, int sec, size_t userCount,
-    double avgMs, double maxMs, uint64_t tickCount);
 
 // 네트워크 함수 -> accepct, send, recv...
 bool netProc_Accept();
@@ -81,7 +66,6 @@ int wmain()
     srand((unsigned int)(time(nullptr)));
 
     g_metricLogger.Init();
-    QueryPerformanceFrequency(&s_qpcFreq);
 
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -126,19 +110,13 @@ int wmain()
 
     while (!g_shutdown)
     {
-        /*LARGE_INTEGER tickStart, tickEnd;
-        QueryPerformanceCounter(&tickStart);*/
+        g_metricLogger.BeginFrame();
 
         networkLogic();
         Update();
-
-        /*QueryPerformanceCounter(&tickEnd);
-        double ms = (double)(tickEnd.QuadPart - tickStart.QuadPart) * 1000.0 / (double)s_qpcFreq.QuadPart;
-        s_tickSumMs += ms;
-        if (ms > s_tickMaxMs) s_tickMaxMs = ms;
-        s_tickCount++;*/
     }
     
+    g_metricLogger.Flush();
     WSACleanup();
 
     return 1;
@@ -163,7 +141,9 @@ bool networkLogic()
         }
     }
 
+    g_metricLogger.BeginWait();
     int selectRet = select(0, &rset, &wset, 0, NULL);
+    g_metricLogger.EndWait();
     if (selectRet == SOCKET_ERROR)
     {
         if (WSAGetLastError() != WSAEWOULDBLOCK)
@@ -219,86 +199,15 @@ bool Update()
     // 채팅 로그
     // DB 저장
     // 등등
-    /*g_metricLogger.OnTick();
-    g_metricLogger.Update();
-
-    LogStatus();*/
+    g_metricLogger.EndFrame();
+    g_metricLogger.Update(g_userList.size());
 
     return true;
 }
 
-// CSV 파일이 이미 있는지 확인 (있으면 헤더를 다시 안 씀)
-static bool FileExists(const char* path)
-{
-    FILE* fp;
-    fopen_s(&fp, path, "r");
-    if (fp)
-    {
-        fclose(fp);
-        return true;
-    }
-    return false;
-}
-
-// 틱 소요시간 로그를 CSV에 한 줄 추가
-static void AppendTickLogCsv(int hour, int min, int sec, size_t userCount,
-    double avgMs, double maxMs, uint64_t tickCount)
-{
-    bool needHeader = !FileExists(TICK_LOG_CSV_PATH);
-    FILE* fp;
-    fopen_s(&fp, TICK_LOG_CSV_PATH, "a");
-    if (fp == nullptr)
-    {
-        printf("CSV 저장 실패: %s 파일을 열 수 없습니다\n", TICK_LOG_CSV_PATH);
-        return;
-    }
-
-    if (needHeader)
-    {
-        fprintf(fp, "time,user_count,tick_avg_ms,tick_max_ms,tick_count\n");
-    }
-
-    fprintf(fp, "%02d:%02d:%02d,%zu,%.3f,%.3f,%llu\n",
-        hour, min, sec, userCount, avgMs, maxMs, (unsigned long long)tickCount);
-
-    fclose(fp);
-}
-
-void LogStatus()
-{
-    static uint64_t s_lastLogTick = 0;
-    uint64_t now = GetTickCount64();
-
-    // 60000ms = 1분 안 지났으면 그냥 리턴
-    if (now - s_lastLogTick < 10000)
-    {
-        return;
-    }
-    s_lastLogTick = now;
-
-    time_t nowTime = time(nullptr);
-    tm localTm;
-    localtime_s(&localTm, &nowTime);
-
-    double avgMs = (s_tickCount > 0) ? (s_tickSumMs / (double)s_tickCount) : 0.0;
-
-    printf("[%02d:%02d:%02d] userList size = %zu | tick avg=%.3fms max=%.3fms (n=%llu)\n",
-        localTm.tm_hour, localTm.tm_min, localTm.tm_sec, g_userList.size(),
-        avgMs, s_tickMaxMs, (unsigned long long)s_tickCount);
-
-    // 같은 값을 CSV에도 한 줄 추가 (10초마다 쌓여서 실행 시간 동안의 추이를 그래프로 볼 수 있음)
-    AppendTickLogCsv(localTm.tm_hour, localTm.tm_min, localTm.tm_sec,
-        g_userList.size(), avgMs, s_tickMaxMs, s_tickCount);
-
-    // 다음 10초 구간을 위해 리셋
-    s_tickSumMs = 0.0;
-    s_tickMaxMs = 0.0;
-    s_tickCount = 0;
-}
-
 bool netProc_Accept()
 {
-    //g_metricLogger.OnTickAccept();
+    g_metricLogger.OnTickAccept();
     int addrlen = sizeof(clientaddr);
     g_clientsocket = accept(g_listensocket, (SOCKADDR*)&clientaddr, &addrlen);
     if (g_clientsocket == INVALID_SOCKET)
@@ -344,7 +253,7 @@ bool netProc_Accept()
         }
     }
 
-    //g_metricLogger.OnTickSuccess();
+    g_metricLogger.OnTickSuccess();
     return true;
 }
 
@@ -462,7 +371,7 @@ bool netProc_Recv(USER* user)
 
 bool packetProc(USER* user, unsigned char type, SerializationBuffer* packet)
 {
-    //g_metricLogger.OnPacketRecv();
+    g_metricLogger.OnPacketRecv();
 
     switch (type)
     {
@@ -478,11 +387,11 @@ bool sendPacket_Unicast(USER* user, SerializationBuffer* packet)
 {
     if (user->_sendQueueCount >= MAX_PENDING_PER_USER)
     {
-        //g_metricLogger.OnPacketSendDrop();
+        g_metricLogger.OnPacketSendDrop();
         return false;
     }
 
-    //g_metricLogger.OnPacketSend();
+    g_metricLogger.OnPacketSend();
     SerializationBuffer* pooled = g_bufferPool.Alloc();
     pooled->clear();
     pooled->putData(packet->getBufferPtr(), packet->getDataSize());
@@ -511,7 +420,7 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
         // 수정 필요
         if (u._sendQueueCount >= MAX_PENDING_PER_USER)
         {
-            //g_metricLogger.OnPacketSendDrop();
+            g_metricLogger.OnPacketSendDrop();
             continue;
         }
         recipients.push_back(&u);
@@ -533,7 +442,7 @@ bool sendPacket_Broadcast(USER* user, SerializationBuffer* packet)
     for (USER* u : recipients)
     {
         pushSendItem(u, pp);
-        //g_metricLogger.OnPacketSend();
+        g_metricLogger.OnPacketSend();
     }
 
     return true;
@@ -550,8 +459,8 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
     char name[20];
     char msg[500];
 
-    //*packet >> seq;
-    //*packet >> sendTick;
+    *packet >> seq;
+    *packet >> sendTick;
     *packet >> len;
     *packet >> namesize;
     packet->getData(name, namesize);
@@ -561,7 +470,7 @@ bool netPacketProc_MSG(USER* user, SerializationBuffer* packet)
     msg[len] = '\0';
 
     // 추가할 예정있다면 작성
-    printf("%s : %s\n", name, msg);
+    // printf("%s : %s\n", name, msg);
     
     SerializationBuffer sendPacket;
     npf_SC_MSG(&sendPacket, user->_id, seq, sendTick, len, namesize, name, msg);
@@ -604,16 +513,16 @@ bool npf_SC_MSG(SerializationBuffer* packet, unsigned int senderID, unsigned int
     unsigned short len, unsigned int namesize, char name[20], char* msg)
 {
     HEADER header;
-    /*header._packetsize = (unsigned short)(sizeof(senderID) + sizeof(seq) + sizeof(sendTick) +
-        sizeof(len) + sizeof(namesize) + namesize + len);*/
-    header._packetsize = (unsigned short)(sizeof(len) + sizeof(namesize) + namesize + len);
+    header._packetsize = (unsigned short)(sizeof(senderID) + sizeof(seq) + sizeof(sendTick) +
+        sizeof(len) + sizeof(namesize) + namesize + len);
+    //header._packetsize = (unsigned short)(sizeof(len) + sizeof(namesize) + namesize + len);
     header._type = PACKET_SC_MSG;
 
     packet->putData((char*)&header, sizeof(header));
 
-    //*packet << senderID;
-    //*packet << seq;
-    //*packet << sendTick;
+    *packet << senderID;
+    *packet << seq;
+    *packet << sendTick;
     *packet << len;
     *packet << namesize;
     packet->putData(name, namesize);

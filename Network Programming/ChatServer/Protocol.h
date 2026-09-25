@@ -22,14 +22,13 @@ struct SendItem
     SendItem* next;
 };
 
-#pragma pack(1)
+#pragma pack(push, 1)
 struct HEADER
 {
     unsigned short _packetsize;
     unsigned char _type;
 };
 
-#pragma pack(1)
 struct USER
 {
     SOCKET          _sock;
@@ -44,6 +43,7 @@ struct USER
     RingBuffer      _recvQ { RECVBUFSIZE };
     bool            _disconnected;
 };
+#pragma pack(pop)
 
 #define PACKET_SC_CREATE_USER       0
 struct SC_CREATE_USER
