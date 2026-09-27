@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GameServerPrograming\Network Programming\Window_SocketProgramming\x64\Release\Server.exe</FullPath>
+      <FullPath>C:\GamePrograming\Network Programming\Window_SocketProgramming\x64\Release\Server.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

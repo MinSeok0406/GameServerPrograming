@@ -16,7 +16,7 @@ int wmain()
 {
     timeBeginPeriod(1);
 
-
+    
 
     return 0;
 }

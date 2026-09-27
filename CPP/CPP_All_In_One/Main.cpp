@@ -8,7 +8,23 @@ using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
+class Widget
+{
+public:
+    Widget() { cout << "Widget" << "\n"; }
+    ~Widget() { cout << "~Widget" << "\n"; }
 
+    void Test()
+    {
+        a = 5;
+        b = 7;
+        cout << "Test" << "\n";
+    }
+
+private:
+    int a = 0;
+    int b = 1;
+};
 
 int wmain()
 {
@@ -18,7 +34,10 @@ int wmain()
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    istream
+    Widget* w = new Widget;
+    w->Test();
+
+    delete w;
 
     return 0;
 }

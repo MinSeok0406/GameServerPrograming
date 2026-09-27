@@ -13,16 +13,16 @@ using ll = long long;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-/*const wchar_t* SERVERIP = L"59.14.69.45";
-#define SERVERPORT 51000*/
+//const wchar_t* SERVERIP = L"59.14.69.45";
+//#define SERVERPORT 51000
 const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT 47000
 
 #define CLIENT_COUNT		3000
-#define MIN_INTERVAL_MS		1000					// 클라이언트 1개당 최소 발송 주기(ms)
-#define MAX_INTERVAL_MS		1000					// 클라이언트 1개당 최대 발송 주기(ms)
+#define MIN_INTERVAL_MS		3000					// 클라이언트 1개당 최소 발송 주기(ms)
+#define MAX_INTERVAL_MS		3000					// 클라이언트 1개당 최대 발송 주기(ms)
 #define TEST_DURATION_SEC	300						// 이 시간(초)이 지나면 전체 클라이언트를 정상 종료시키고 요약 출력
-#define RESULT_CSV_PATH		"stress_test_results.csv"
+#define RESULT_CSV_PATH		"3000client_stress_test_results.csv"
 
 static atomic<bool> g_testShutdown { false };
 static atomic<int> g_readyCount { 0 };

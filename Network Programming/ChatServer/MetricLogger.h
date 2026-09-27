@@ -62,7 +62,7 @@ public:
 		time_t t = time(nullptr);
 		tm tmInfo;
 		localtime_s(&tmInfo, &t);
-		sprintf_s(_fileName, _countof(_fileName), "metrics_%04d%02d%02d_%02d%02d%02d.csv",
+		sprintf_s(_fileName, _countof(_fileName), "3000client_metrics_%04d%02d%02d_%02d%02d%02d.csv",
 			tmInfo.tm_year + 1900, tmInfo.tm_mon + 1, tmInfo.tm_mday,
 			tmInfo.tm_hour, tmInfo.tm_min, tmInfo.tm_sec);
 
