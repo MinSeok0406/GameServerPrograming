@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Project1\\x64\\Debug\\Protocol.h.obj",
+            "outputs": [
+                "C:\\Users\\MyDreamComputer\\OneDrive\\바탕 화면\\Project1\\Project1\\x64\\Debug\\vc145.pdb",
+                "Project1\\x64\\Debug\\",
+                "C:\\Users\\MyDreamComputer\\OneDrive\\바탕 화면\\Project1\\Project1\\x64\\Debug\\Protocol.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Protocol.h",
+                    "source-path": "c:\\users\\mydreamcomputer\\onedrive\\바탕 화면\\project1\\protocol.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

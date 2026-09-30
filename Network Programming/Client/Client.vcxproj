@@ -156,6 +156,7 @@
     <ClInclude Include="..\Window_SocketProgramming\Console.h" />
     <ClInclude Include="..\Window_SocketProgramming\RingBuffer.h" />
     <ClInclude Include="PrjClient.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -38,5 +38,6 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="PrjClient.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
 </Project>

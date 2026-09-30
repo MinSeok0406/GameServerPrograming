@@ -1,7 +1,8 @@
-﻿  DummyClient_GDI.cpp
-  코드를 생성하고 있습니다.
-  1 of 30 functions ( 3.3%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  코드를 생성했습니다.
-  Client.vcxproj -> C:\GamePrograming\Network Programming\Window_SocketProgramming\x64\Release\Client.exe
+﻿ClientMain.obj : error LNK2001: 확인할 수 없는 외부 기호 "struct ERASEPIC_MSG g_erasepicmsg" (?g_erasepicmsg@@3UERASEPIC_MSG@@A)
+ClientMain.obj : error LNK2001: 확인할 수 없는 외부 기호 "void * g_hReadEvent" (?g_hReadEvent@@3PEAXEA)
+ClientMain.obj : error LNK2001: 확인할 수 없는 외부 기호 "struct HINSTANCE__ * g_hInstance" (?g_hInstance@@3PEAUHINSTANCE__@@EA)
+ClientMain.obj : error LNK2001: 확인할 수 없는 외부 기호 "struct CHAT_MSG g_chatmsg" (?g_chatmsg@@3UCHAT_MSG@@A)
+ClientMain.obj : error LNK2001: 확인할 수 없는 외부 기호 "void * g_hWriteEvent" (?g_hWriteEvent@@3PEAXEA)
+ClientMain.obj : error LNK2001: 확인할 수 없는 외부 기호 "struct DRAWLINE_MSG g_drawlinemsg" (?g_drawlinemsg@@3UDRAWLINE_MSG@@A)
+MSVCRT.lib(exe_main.obj) : error LNK2001: 확인할 수 없는 외부 기호 main
+C:\GamePrograming\Network Programming\Window_SocketProgramming\x64\Release\Client.exe : fatal error LNK1120: 7개의 확인할 수 없는 외부 참조입니다.
