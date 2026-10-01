@@ -7,6 +7,7 @@
 extern RBTNode* Nil;
 static int s_level = 0;
 
+#pragma region 검증 코드
 bool RBT_VerificationTest(RBTNode** root)
 {
 	if ((*root) == Nil)
@@ -156,6 +157,7 @@ bool RBT_ParentLinks(RBTNode* root, RBTNode* parent)
 
 	return RBT_ParentLinks(root->left, root) && RBT_ParentLinks(root->right, root);
 }
+#pragma endregion 검증 코드
 
 RBTNode* RBT_CreateNode(int newData)
 {
@@ -747,6 +749,7 @@ bool Search(RBTNode** root)
 	return true;
 }
 
+#pragma region 렌더링
 static int getTreeHeight(RBTNode* node)
 {
 	if (node == Nil)
@@ -837,3 +840,4 @@ bool BFS(RBTNode** root, int depth)
 
 	return true;
 }
+#pragma endregion 렌더링

@@ -65,12 +65,14 @@ const int dx[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };
 int g_Best[GRID_HEIGHT][GRID_WIDTH];
 std::priority_queue<Node*, std::vector<Node*>, Comp> openList;
 std::map<std::pair<int, int>, int> closeList;
+std::vector<Node*> g_AllocNodes;
 Node* g_PathEndNode = nullptr;
 bool g_isrun = false;
 bool g_isFindLoad = false;
 
 Node* JPS_CreateNode(Node* parent, int g, int h, int y, int x, unsigned char dir);
 Node* JPS_AllocNode(Node* parent, int g, int h, int y, int x, unsigned char dir);
+void ResetSearch();
 
 // 최대한 직접적으로 갈 수 있는 노드를 발견하고 그 노드를 반환
 Node* JPS_BresenhamLine(Node* node);
@@ -155,6 +157,14 @@ void RenderBresenhamLine(HDC hdc);
 void GenerateRandomMap(double wall = 0.3);
 bool IsPathReachable(int sy, int sx, int ey, int ex);
 void SeedNewRandomTest();
+
+/* 편의성 */
+HFONT  g_hHelpFont;
+HPEN   g_hHelpPen;
+HBRUSH g_hBrushHelp;
+bool   g_bShowHelp = true;
+
+void RenderHelp(HDC hdc);
 //=============================
 
 // 전역 변수:
@@ -166,7 +176,6 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -221,13 +230,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
-
-//
-//  함수: MyRegisterClass()
-//
-//  용도: 창 클래스를 등록합니다.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEXW wcex;
@@ -249,16 +251,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
-//
-//   함수: InitInstance(HINSTANCE, int)
-//
-//   용도: 인스턴스 핸들을 저장하고 주 창을 만듭니다.
-//
-//   주석:
-//
-//        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
-//        주 프로그램 창을 만든 다음 표시합니다.
-//
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
@@ -277,16 +269,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
-//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  용도: 주 창의 메시지를 처리합니다.
-//
-//  WM_COMMAND  - 애플리케이션 메뉴를 처리합니다.
-//  WM_PAINT    - 주 창을 그립니다.
-//  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
-//
-//
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
@@ -297,13 +279,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (!g_bStart)
             {
-                while (openList.empty() == false)
-                {
-                    openList.pop();
-                }
-                closeList.clear();
-
-                g_PathEndNode = nullptr;
                 g_Best[g_StartY][g_StartX] = 0;
                 unsigned char dir = 0;
                 for (auto i = 0; i < 8; ++i)
@@ -332,13 +307,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (!g_bStart)
             {
-                while (openList.empty() == false)
-                {
-                    openList.pop();
-                }
-                closeList.clear();
-
-                g_PathEndNode = nullptr;
                 g_Best[g_StartY][g_StartX] = 0;
                 unsigned char dir = 0;
                 for (auto i = 0; i < 8; ++i)
@@ -366,7 +334,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
             }
         }
-        else if (wParam == 'R') // 맵 리셋
+/*        else if (wParam == 'R') // 맵 리셋
         {
             SeedNewRandomTest();
             InvalidateRect(hWnd, NULL, true);
@@ -384,6 +352,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 KillTimer(hWnd, g_AutoTestTimerId);
                 printf("====== Test Stop (%d of %d fail) ======\n", g_TestCount, g_MismatchCount);
             }
+        }*/
+        else if (wParam == 'H')
+        {
+            g_bShowHelp = !g_bShowHelp;
+            InvalidateRect(hWnd, NULL, true);
         }
         break;
     case WM_LBUTTONDOWN:    // 출발지 및 목적지 생성
@@ -410,6 +383,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     if (g_StartX != -1 || g_StartY != -1)
                     {
                         // 처음 시작 시 노드들 초기화
+                        ResetSearch();
                         memset(g_Tile, 0, sizeof(g_Tile));
                         g_Tile[g_StartY][g_StartX] = (char)TILETYPE::Empty;
                     }
@@ -426,6 +400,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONUP:
         g_bStartDrag = false;
         g_bEndDrag = !g_bEndDrag;
+        InvalidateRect(hWnd, NULL, true);
         break;
     case WM_RBUTTONDOWN:    // 벽 생성
         g_bWallDrag = true;
@@ -487,7 +462,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
     }
     break;
-    case WM_TIMER:
+    /*case WM_TIMER:
         if (wParam == g_AutoTestTimerId)
         {
             auto start = std::chrono::steady_clock::now();
@@ -544,7 +519,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 printf("Find Load!!!\n");
             }
         }
-        break;
+        break;*/
     case WM_CREATE:
         g_hGridPen = CreatePen(PS_SOLID, 1, RGB(200, 200, 200));
         g_hParentPen = CreatePen(PS_SOLID, 1, RGB(150, 150, 200));
@@ -557,6 +532,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         g_hBrushOpenList = CreateSolidBrush(RGB(0, 0, 200));
         g_hBrushCloseList = CreateSolidBrush(RGB(255, 255, 0));
         g_hBrushFindLoad = CreateSolidBrush(RGB(255, 0, 255));
+        g_hHelpFont = CreateFontW(-14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+            HANGUL_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"맑은 고딕");
+        g_hHelpPen = CreatePen(PS_SOLID, 1, RGB(80, 80, 80));
+        g_hBrushHelp = CreateSolidBrush(RGB(245, 245, 245));
         break;
     case WM_PAINT:
     {
@@ -566,7 +546,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         RenderGrid(hdc);
         RenderParentLine(hdc);
         RenderFinalPath(hdc);
-        RenderBresenhamLine(hdc);
+        //RenderBresenhamLine(hdc);
+        RenderHelp(hdc);
         EndPaint(hWnd, &ps);
     }
     break;
@@ -582,6 +563,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DeleteObject(g_hParentPen);
         DeleteObject(g_hPathPen);
         DeleteObject(g_hBresenhamPen);
+        DeleteObject(g_hHelpFont);
+        DeleteObject(g_hHelpPen);
+        DeleteObject(g_hBrushHelp);
         PostQuitMessage(0);
         break;
     default:
@@ -590,26 +574,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-// 정보 대화 상자의 메시지 처리기입니다.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
-}
-
+#pragma region 렌더링
 bool ScreenToTile(int xPos, int yPos, int* outTileX, int* outTileY)
 {
     int tileX = (int)floor(xPos / (double)GRID_SIZE + g_offsetX);
@@ -743,35 +708,9 @@ void RenderObstacle(HDC hdc)
         }
     }
 }
+#pragma endregion 렌더링
 
-void RenderBresenhamLine(HDC hdc)
-{
-    if (g_PathEndNode == nullptr)
-    {
-        return;
-    }
-
-    HPEN hOldPen = (HPEN)SelectObject(hdc, g_hBresenhamPen);
-
-    Node* node = g_PathEndNode;
-    while (node->parent != nullptr)
-    {
-        Node* connectNode = JPS_BresenhamLine(node);
-
-        int mtX = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
-        int mtY = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
-        MoveToEx(hdc, mtX, mtY, NULL);
-
-        int ltX = (int)((connectNode->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
-        int ltY = (int)((connectNode->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
-        LineTo(hdc, ltX, ltY);
-
-        node = connectNode;
-    }
-
-    SelectObject(hdc, hOldPen);
-}
-
+#pragma region 테스트 코드
 void GenerateRandomMap(double wall)
 {
     static std::mt19937 rng(9000);
@@ -874,6 +813,57 @@ void SeedNewRandomTest()
     JPS_CreateNode(nullptr, 0, h, g_StartY, g_StartX, dir);
     g_bStart = true;
 }
+#pragma endregion 테스트 코드
+
+void RenderHelp(HDC hdc)
+{
+    if (!g_bShowHelp)
+    {
+        return;
+    }
+
+    WCHAR text[512];
+    swprintf_s(text,
+        L"[조작키]\n"
+        L"좌클릭 : 출발지/목적지 번갈아 지정 (다음: %s)\n"
+        L"           ※ 출발지 지정 시 맵 전체 초기화\n"
+        L"우클릭 드래그 : 벽 생성 / 삭제\n"
+        L"마우스 휠 : 확대 / 축소\n"
+        L"Space : 한 단계 진행\n"
+        L"Tab : 끝까지 한 번에 진행\n"
+        L"H : 도움말 숨기기 / 보이기",
+        g_bEndDrag ? L"목적지" : L"출발지");
+
+    HFONT hOldFont = (HFONT)SelectObject(hdc, g_hHelpFont);
+
+    // 텍스트 크기 측정
+    RECT rcText = { 0, 0, 0, 0 };
+    DrawTextW(hdc, text, -1, &rcText, DT_CALCRECT | DT_LEFT);
+
+    const int margin = 8;
+    const int pad = 8;
+    RECT box = { margin, margin,
+                 margin + rcText.right + pad * 2,
+                 margin + rcText.bottom + pad * 2 };
+
+    // 배경 박스
+    HPEN   hOldPen = (HPEN)SelectObject(hdc, g_hHelpPen);
+    HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, g_hBrushHelp);
+    Rectangle(hdc, box.left, box.top, box.right, box.bottom);
+
+    // 텍스트
+    RECT rcDraw = { box.left + pad, box.top + pad, box.right - pad, box.bottom - pad };
+    int      oldBkMode = SetBkMode(hdc, TRANSPARENT);
+    COLORREF oldColor = SetTextColor(hdc, RGB(30, 30, 30));
+    DrawTextW(hdc, text, -1, &rcDraw, DT_LEFT);
+
+    // 복구
+    SetTextColor(hdc, oldColor);
+    SetBkMode(hdc, oldBkMode);
+    SelectObject(hdc, hOldBrush);
+    SelectObject(hdc, hOldPen);
+    SelectObject(hdc, hOldFont);
+}
 
 Node* JPS_CreateNode(Node* parent, int g, int h, int y, int x, unsigned char dir)
 {
@@ -892,7 +882,76 @@ Node* JPS_AllocNode(Node* parent, int g, int h, int y, int x, unsigned char dir)
     newNode->x = x;
     newNode->dir = dir;
     newNode->parent = parent;
+    g_AllocNodes.push_back(newNode);
     return newNode;
+}
+
+void ResetSearch()
+{
+    while (!openList.empty())
+    {
+        openList.pop();
+    }
+    closeList.clear();
+
+    // openList를 먼저 비운 뒤에 해제해야 댕글링 포인터가 안 생김
+    for (Node* n : g_AllocNodes)
+    {
+        delete n;
+    }
+    g_AllocNodes.clear();
+
+    g_PathEndNode = nullptr;
+    g_isFindLoad = false;
+
+    for (int y = 0; y < GRID_HEIGHT; ++y)
+    {
+        for (int x = 0; x < GRID_WIDTH; ++x)
+        {
+            g_Best[y][x] = INT_MAX;
+
+            char& t = g_Tile[y][x];
+            if (t == (char)TILETYPE::OpenList ||
+                t == (char)TILETYPE::CloseList ||
+                t == (char)TILETYPE::FindLoad)
+            {
+                t = (char)TILETYPE::Empty;
+            }
+        }
+    }
+
+    // JPS_FindEndNode가 출발지/목적지도 FindLoad로 덮어쓰므로 복구
+    if (g_StartX != -1) g_Tile[g_StartY][g_StartX] = (char)TILETYPE::Start;
+    if (g_EndX != -1)   g_Tile[g_EndY][g_EndX] = (char)TILETYPE::End;
+}
+
+#pragma region 알고리즘 후보정
+void RenderBresenhamLine(HDC hdc)
+{
+    if (g_PathEndNode == nullptr)
+    {
+        return;
+    }
+
+    HPEN hOldPen = (HPEN)SelectObject(hdc, g_hBresenhamPen);
+
+    Node* node = g_PathEndNode;
+    while (node->parent != nullptr)
+    {
+        Node* connectNode = JPS_BresenhamLine(node);
+
+        int mtX = (int)((node->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+        int mtY = (int)((node->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+        MoveToEx(hdc, mtX, mtY, NULL);
+
+        int ltX = (int)((connectNode->x - g_offsetX) * GRID_SIZE + GRID_SIZE / 2);
+        int ltY = (int)((connectNode->y - g_offsetY) * GRID_SIZE + GRID_SIZE / 2);
+        LineTo(hdc, ltX, ltY);
+
+        node = connectNode;
+    }
+
+    SelectObject(hdc, hOldPen);
 }
 
 Node* JPS_BresenhamLine(Node* node)
@@ -962,6 +1021,7 @@ Node* JPS_BresenhamLine(Node* node)
 
     return validNode;
 }
+#pragma endregion 알고리즘 후보정
 
 bool JPS_CommitNode(Node* node)
 {

@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Project1\\x64\\Debug\\Protocol.obj",
+            "outputs": [
+                "Project1\\x64\\Debug\\Protocol.h_90823B2AA236A4B.ifc.dt.module.json",
+                "Project1\\x64\\Debug\\Protocol.h_90823B2AA236A4B.ifc.dt.d.json",
+                "Project1\\x64\\Debug\\Protocol.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\GamePrograming\\Network Programming\\Project1\\Protocol.h",
+                    "source-path": "c:\\gameprograming\\network programming\\project1\\protocol.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
