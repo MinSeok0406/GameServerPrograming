@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="LockObject_Test.vcxproj" Id="646bdc6b-b3a6-4d90-ac4a-41ba05304c86" />
+</Solution>

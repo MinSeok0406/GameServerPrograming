@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "LockObject_Test\\x64\\Debug\\intrin0.inl.obj",
+            "outputs": [
+                "LockObject_Test\\x64\\Debug\\intrin0.inl.h.obj.dt.module.json",
+                "LockObject_Test\\x64\\Debug\\intrin0.inl.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
