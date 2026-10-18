@@ -68,6 +68,96 @@ private:
     T* _ptr;
 };
 
+template<typename T>
+class Shared_ptr
+{
+public:
+    Shared_ptr() : _ptr(nullptr), _refCount(nullptr) { }
+
+    explicit Shared_ptr(T* ptr) : _ptr(ptr), _refCount(nullptr)
+    {
+        if (_ptr == nullptr)
+            return;
+
+        _refCount = new int(1);
+    }
+
+    ~Shared_ptr()
+    {
+        Release();
+    }
+
+    Shared_ptr(const Shared_ptr& other) noexcept
+        : _ptr(other._ptr), _refCount(other._refCount)
+    {
+        if (_refCount != nullptr)
+        {
+            ++(*_refCount);
+        }
+    }
+
+    Shared_ptr(Shared_ptr&& other) noexcept
+        : _ptr(other._ptr), _refCount(other._refCount)
+    {
+        other._ptr = nullptr;
+        other._refCount = nullptr;
+    }
+
+    void Swap(Shared_ptr& other) noexcept
+    {
+        std::swap(_ptr, other._ptr);
+        std::swap(_refCount, other._refCount);
+    }
+
+    Shared_ptr& operator=(const Shared_ptr& other) noexcept
+    {
+        Shared_ptr(other).Swap(*this);
+        return *this;
+    }
+
+    Shared_ptr& operator=(Shared_ptr&& other) noexcept
+    {
+        Shared_ptr(std::move(other)).Swap(*this);
+        return *this;
+    }
+
+    T* Get() const noexcept { return _ptr; }
+
+    T& operator*() const noexcept { return *_ptr; }
+    T* operator->() const noexcept { return _ptr; }
+
+    int32_t UseCount() const noexcept
+    {
+        return _refCount ? *_refCount : 0;
+    }
+
+    explicit operator bool() const noexcept { return _ptr != nullptr; }
+
+    void Reset(T* ptr = nullptr)
+    {
+        Shared_ptr(ptr).Swap(*this);
+    }
+
+private:
+    void Release() noexcept
+    {
+        if (_refCount != nullptr)
+        {
+            if (--(*_refCount) == 0)
+            {
+                delete _ptr;
+                delete _refCount;
+            }
+        }
+
+        _ptr = nullptr;
+        _refCount = nullptr;
+    }
+
+    T* _ptr;
+    int32_t* _refCount;
+};
+
 class Widget
 {
 public:
@@ -98,8 +188,14 @@ int wmain()
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    unique_ptr<Widget> uptr(new Widget);
-    unique_ptr<Widget> uptr2 = move(uptr);
+    Shared_ptr<Widget> sptr(new Widget);
+    Shared_ptr<Widget> sptr2 = sptr;
+
+    cout << "refCount : " << sptr.UseCount() << "\n";
+
+    Shared_ptr<Widget> sptr3 = std::move(sptr2);
+
+    cout << "refCount : " << sptr.UseCount() << "\n";
 
     return 0;
 }

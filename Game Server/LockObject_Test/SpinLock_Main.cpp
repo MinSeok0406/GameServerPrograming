@@ -7,7 +7,7 @@ using ll = long long;
 
 #pragma comment(lib, "winmm.lib")
 
-uint64_t COUNT = 20000000;
+uint64_t COUNT = 10000000;
 
 HANDLE hEvent;
 long isLock = false;
@@ -17,9 +17,16 @@ CRITICAL_SECTION cs;
 
 void spinLock()
 {
-    while (InterlockedExchange(&isLock, 1))
+    while (true)
     {
-        
+        if (isLock == 0)
+        {
+            if (InterlockedExchange(&isLock, 1) == 0)
+            {
+                break;
+            }
+            _mm_pause();
+        }
     }
 }
 
@@ -52,11 +59,11 @@ int wmain()
 
     InitializeCriticalSection(&cs);
 
-    HANDLE hThread[5];
+    HANDLE hThread[10];
 
     hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-    for (auto i = 0; i < 5; ++i)
+    for (auto i = 0; i < 10; ++i)
     {
         hThread[i] = (HANDLE)_beginthreadex(NULL, 0, threadProc, NULL, 0, NULL);
     }
@@ -66,11 +73,11 @@ int wmain()
     SetEvent(hEvent);
 
     auto start = chrono::steady_clock::now();
-    WaitForMultipleObjects(5, hThread, TRUE, INFINITE);
+    WaitForMultipleObjects(10, hThread, TRUE, INFINITE);
     auto end = chrono::steady_clock::now();
     chrono::duration<double, std::milli> duration_ms = end - start;
 
-    for (auto i = 0; i < 5; ++i)
+    for (auto i = 0; i < 10; ++i)
     {
         CloseHandle(hThread[i]);
     }

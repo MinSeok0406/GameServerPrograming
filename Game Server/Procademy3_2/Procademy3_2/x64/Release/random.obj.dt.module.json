@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Procademy3_2\\x64\\Release\\random.obj",
+            "outputs": [
+                "Procademy3_2\\x64\\Release\\random.obj.dt.module.json",
+                "Procademy3_2\\x64\\Release\\random.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
