@@ -24,16 +24,6 @@ RingBuffer::~RingBuffer()
 	readPos = nullptr;
 }
 
-int RingBuffer::GetUseSize()
-{
-	return size;
-}
-
-int RingBuffer::GetFreeSize()
-{
-	return totalSize - size;
-}
-
 int RingBuffer::Enqueue(const char* chpData, int pSize)
 {
 	if (pSize > GetFreeSize())
@@ -112,20 +102,6 @@ void RingBuffer::ClearBuffer()
 	readPos = &buf[0];
 }
 
-// 링 버퍼의 경계를 넘어갈 때, 두 값을 더해서 크기 자체는 맞지만 버퍼는 경계를 넘어서
-// 이후의 값도 쓰거나 읽을 수 있다. 이 부분은 오류가 되기 때문에 고쳐야 함
-int RingBuffer::DirectEnqueueSize()
-{
-	int enqueueSize = (int)(&buf[totalSize] - readPos);
-	return std::min(GetFreeSize(), enqueueSize);
-}
-
-int RingBuffer::DirectDequeueSize()
-{
-	int dequeueSize = (int)(&buf[totalSize] - writePos);
-	return std::min(GetUseSize(), dequeueSize);
-}
-
 int RingBuffer::MoveRear(int pSize)
 {
 	if (pSize > GetFreeSize())
@@ -134,7 +110,7 @@ int RingBuffer::MoveRear(int pSize)
 	}
 
 	int commitSize = pSize;
-	size += pSize;
+	InterlockedExchangeAdd(&size, pSize);
 
 	int moveSize = (int)(&buf[totalSize] - readPos);
 	if (pSize >= moveSize)
@@ -157,7 +133,7 @@ int RingBuffer::MoveFront(int pSize)
 	}
 
 	int commitSize = pSize;
-	size -= pSize;
+	InterlockedExchangeAdd(&size, -pSize);
 
 	int moveSize = (int)(&buf[totalSize] - writePos);
 	if (pSize >= moveSize)
@@ -170,14 +146,4 @@ int RingBuffer::MoveFront(int pSize)
 	}
 
 	return commitSize;
-}
-
-char* RingBuffer::GetFrontBufferPtr()
-{
-	return writePos;
-}
-
-char* RingBuffer::GetRearBufferPtr()
-{
-	return readPos;
 }

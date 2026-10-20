@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Procademy3_3\\x64\\Debug\\RingBuffer.obj",
+            "outputs": [
+                "Procademy3_3\\x64\\Debug\\RingBuffer.cpp.obj.dt.module.json",
+                "Procademy3_3\\x64\\Debug\\RingBuffer.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

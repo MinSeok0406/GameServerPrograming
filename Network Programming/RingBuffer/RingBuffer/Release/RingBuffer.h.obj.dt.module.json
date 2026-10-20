@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "RingBuffer\\Release\\RingBuffer.obj",
+            "outputs": [
+                "RingBuffer\\Release\\RingBuffer.h.obj.dt.module.json",
+                "RingBuffer\\Release\\RingBuffer.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

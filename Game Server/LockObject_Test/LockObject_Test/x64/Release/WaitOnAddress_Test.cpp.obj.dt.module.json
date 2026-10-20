@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "LockObject_Test\\x64\\Release\\WaitOnAddress_Test.obj",
+            "outputs": [
+                "LockObject_Test\\x64\\Release\\WaitOnAddress_Test.cpp.obj.dt.module.json",
+                "LockObject_Test\\x64\\Release\\WaitOnAddress_Test.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
