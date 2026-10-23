@@ -144,6 +144,7 @@
     <ClInclude Include="MetricLogger.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Peterson_Algorithm.cpp" />
     <ClCompile Include="SpinLock_Main.cpp" />
     <ClCompile Include="WaitOnAddress_Test.cpp" />
   </ItemGroup>

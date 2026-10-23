@@ -1,4 +1,4 @@
-﻿#include <iostream>
+﻿/*#include <iostream>
 #include <process.h>
 #include <Windows.h>
 #include <chrono>
@@ -64,4 +64,4 @@ int wmain()
     }
 
     return 0;
-}
+}*/
