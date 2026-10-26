@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <process.h>
 #include <Windows.h>
+#include <chrono>
 using namespace std;
 using ll = long long;
 
@@ -21,17 +22,12 @@ HANDLE g_hEvent;
 
 void Lock_1()
 {
-    bool fl;
-    int t;
-
     flag[0] = true;
     turn = 0;
+    MemoryBarrier();
 
     while (true)
     {
-        fl = flag[0];
-        t = turn;
-
         if (flag[1] == false)
         {
             break;
@@ -42,23 +38,16 @@ void Lock_1()
             break;
         }
     }
-
-    flagTemp[0] = fl;
-    turnTemp = t;
 }
 
 void Lock_2()
 {
-    bool fl;
-    int t;
-
     flag[1] = true;
     turn = 1;
+    MemoryBarrier();
 
     while (true)
     {
-        fl = flag[1];
-        t = turn;
 
         if (flag[0] == false)
         {
@@ -70,9 +59,6 @@ void Lock_2()
             break;
         }
     }
-
-    flagTemp[1] = fl;
-    turnTemp = t;
 }
 
 void Unlock_1()
@@ -87,29 +73,14 @@ void Unlock_2()
 
 void CriticalSection()
 {
-    // 여기에 동시에 들어오는지 확인!
-    if (InterlockedAdd(&g_threadCount, 1) != 1)
-    {
-        cout << flagTemp[0] << " " << flagTemp[1] << "\n";
-        cout << turnTemp << "\n";
-        __debugbreak();
-    }
-
     g_cnt++;
-
-    // 먼저 들어온 스레드 잡아두기
-    if (InterlockedCompareExchange(&g_threadCount, 0, 1) != 1)
-    {
-        while (true)
-        {
-            
-        }
-    }
 }
 
 uint32_t WINAPI threadProc1(LPVOID param)
 {
     WaitForSingleObject(g_hEvent, INFINITE);
+
+    SetThreadAffinityMask(GetCurrentThread(), 1 << 10);
 
     for (auto i = 0; i < COUNT; ++i)
     {
@@ -124,6 +95,8 @@ uint32_t WINAPI threadProc1(LPVOID param)
 uint32_t WINAPI threadProc2(LPVOID param)
 {
     WaitForSingleObject(g_hEvent, INFINITE);
+
+    SetThreadAffinityMask(GetCurrentThread(), 1 << 11);
 
     for (auto i = 0; i < COUNT; ++i)
     {
@@ -150,7 +123,9 @@ int wmain()
 
     SetEvent(g_hEvent);
 
+    auto start = chrono::steady_clock::now();
     WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+    chrono::duration<double, milli> dur = chrono::steady_clock::now() - start;
 
     CloseHandle(hThread[0]);
     CloseHandle(hThread[1]);
@@ -158,6 +133,7 @@ int wmain()
     CloseHandle(g_hEvent);
 
     cout << g_cnt << "\n";
+    cout << dur.count() << "ms" << "\n";
 
     return 0;
 }

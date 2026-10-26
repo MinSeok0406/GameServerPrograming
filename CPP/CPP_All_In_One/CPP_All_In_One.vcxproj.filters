@@ -38,6 +38,9 @@
     <Filter Include="PriorityQueue">
       <UniqueIdentifier>{f2b3317d-9651-4371-a5a7-95d828f18f24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CPP_Study">
+      <UniqueIdentifier>{b2326f38-448e-42b8-9166-49066c3f6109}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -90,6 +93,12 @@
     </ClCompile>
     <ClCompile Include="TestCode.cpp">
       <Filter>PriorityQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="Smart_Pointer.cpp">
+      <Filter>CPP_Study</Filter>
+    </ClCompile>
+    <ClCompile Include="CacheLine_time.cpp">
+      <Filter>CPP_Study</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

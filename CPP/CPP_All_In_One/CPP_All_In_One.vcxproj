@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addshlsub.cpp" />
+    <ClCompile Include="CacheLine_time.cpp" />
     <ClCompile Include="ClassStarPrint.cpp" />
     <ClCompile Include="DFS_BFS_FindRoute.cpp" />
     <ClCompile Include="DFS_Test.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Practice01_2.cpp" />
     <ClCompile Include="Practice01_3.cpp" />
     <ClCompile Include="RandomSystem.cpp" />
+    <ClCompile Include="Smart_Pointer.cpp" />
     <ClCompile Include="StartPrint.cpp" />
     <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="TimingGame.cpp" />

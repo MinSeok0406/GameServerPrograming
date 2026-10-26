@@ -35,18 +35,37 @@ void spinUnlock()
     InterlockedExchange(&isLock, 0);
 }
 
-uint32_t __stdcall threadProc(LPVOID Param)
+void CriticalSection()
+{
+    g_count++;
+}
+
+uint32_t __stdcall threadProc1(LPVOID Param)
 {
     WaitForSingleObject(hEvent, INFINITE);
+
+    SetThreadAffinityMask(GetCurrentThread(), 1ULL << 10);
 
     for (auto i = 0; i < COUNT; ++i)
     {
         spinLock();
-        //EnterCriticalSection(&cs);
+        CriticalSection();
+        spinUnlock();
+    }
 
-        g_count++;
+    return 0;
+}
 
-        //LeaveCriticalSection(&cs);
+uint32_t __stdcall threadProc2(LPVOID Param)
+{
+    WaitForSingleObject(hEvent, INFINITE);
+
+    SetThreadAffinityMask(GetCurrentThread(), 1ULL << 10);
+
+    for (auto i = 0; i < COUNT; ++i)
+    {
+        spinLock();
+        CriticalSection();
         spinUnlock();
     }
 
@@ -57,27 +76,22 @@ int wmain()
 {
     timeBeginPeriod(1);
 
-    InitializeCriticalSection(&cs);
-
-    HANDLE hThread[10];
+    HANDLE hThread[2];
 
     hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-    for (auto i = 0; i < 10; ++i)
-    {
-        hThread[i] = (HANDLE)_beginthreadex(NULL, 0, threadProc, NULL, 0, NULL);
-    }
+    hThread[0] = (HANDLE)_beginthreadex(NULL, 0, threadProc1, NULL, 0, NULL);
+    hThread[1] = (HANDLE)_beginthreadex(NULL, 0, threadProc2, NULL, 0, NULL);
 
     Sleep(1000);
 
     SetEvent(hEvent);
 
     auto start = chrono::steady_clock::now();
-    WaitForMultipleObjects(10, hThread, TRUE, INFINITE);
-    auto end = chrono::steady_clock::now();
-    chrono::duration<double, std::milli> duration_ms = end - start;
+    WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
+    chrono::duration<double, std::milli> duration_ms = chrono::steady_clock::now() - start;
 
-    for (auto i = 0; i < 10; ++i)
+    for (auto i = 0; i < 2; ++i)
     {
         CloseHandle(hThread[i]);
     }
@@ -86,8 +100,6 @@ int wmain()
 
     cout << "Running Time : " << duration_ms.count() << "ms" << "\n";
     cout << g_count << "\n";
-
-    DeleteCriticalSection(&cs);
 
     return 0;
 }*/

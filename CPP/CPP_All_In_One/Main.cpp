@@ -2,200 +2,77 @@
 #include <iostream>
 #include <process.h>
 #include <Windows.h>
-#include <winerror.h>
 #include <time.h>
+#include <chrono>
 #include <vector>
-#include <array>
+#include <algorithm>
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-template<typename T>
-class Unique_ptr
+constexpr int ROUNDS = 10000000;
+
+alignas(128) volatile BYTE g_val = 0;    // 관찰 대상 1바이트 (라인 X)
+alignas(128) volatile LONG g_state = 0;  // 동기화용 (다른 라인)
+
+std::vector<uint64_t> hit(ROUNDS), miss(ROUNDS);
+int g_stale = 0;
+
+unsigned __stdcall ThreadA(void*)
 {
-public:
-    Unique_ptr() noexcept : _ptr(nullptr)
+    SetThreadAffinityMask(GetCurrentThread(), 1 << 9);
+    for (int i = 0; i < ROUNDS; ++i)
     {
-        
+        BYTE v = g_val;                              // 라인 X를 내 캐시로 가져옴
+        uint64_t t1 = __rdtsc();
+        v = g_val;                                   // 캐시 히트
+        uint64_t t2 = __rdtsc();
+        hit[i] = t2 - t1;
+
+        g_state = 1;                                 // B에게 "읽었으니 써라"
+        while (g_state != 2) {}                      // B가 쓸 때까지 대기
+
+        BYTE before = v;
+        t1 = __rdtsc();
+        v = g_val;                                   // 무효화된 라인을 다시 읽음
+        t2 = __rdtsc();
+        miss[i] = t2 - t1;
+
+        if (v == before) ++g_stale;                  // 낡은 값을 읽은 횟수
+        g_state = 0;
     }
+    return 0;
+}
 
-    ~Unique_ptr()
-    {
-        delete _ptr;
-    }
-
-    explicit Unique_ptr(T* p) noexcept : _ptr(p)
-    {
-
-    }
-
-    Unique_ptr(Unique_ptr&& other) noexcept : _ptr(other.release())
-    {
-
-    }
-
-    Unique_ptr& operator=(Unique_ptr&& other) noexcept
-    {
-        reset(other.release());
-        return *this;
-    }
-
-    T& operator*() const { return *_ptr; }
-    T* operator->() const noexcept { return _ptr; }
-    T* get() const noexcept { return _ptr; }
-
-    T* release() noexcept
-    {
-        T* p = _ptr;
-        _ptr = nullptr;
-        return p;
-    }
-
-    void reset(T* p = nullptr) noexcept
-    {
-        T* old = _ptr;
-        _ptr = p;
-        delete old;
-    }
-
-    explicit operator bool() const noexcept { return _ptr != nullptr; }
-
-private:
-    Unique_ptr(const Unique_ptr& other) = delete;
-    Unique_ptr& operator=(const Unique_ptr& other) = delete;
-
-    T* _ptr;
-};
-
-template<typename T>
-class Shared_ptr
+unsigned __stdcall ThreadB(void*)
 {
-public:
-    Shared_ptr() : _ptr(nullptr), _refCount(nullptr) { }
-
-    explicit Shared_ptr(T* ptr) : _ptr(ptr), _refCount(nullptr)
+    SetThreadAffinityMask(GetCurrentThread(), 1 << 11);
+    for (int i = 0; i < ROUNDS; ++i)
     {
-        if (_ptr == nullptr)
-            return;
-
-        _refCount = new int(1);
+        while (g_state != 1) {}
+        BYTE v = g_val;                              // 읽어서 S 상태로 공유
+        g_val = v + 1;                               // 쓰기 → A의 라인 무효화
+        g_state = 2;
     }
-
-    ~Shared_ptr()
-    {
-        Release();
-    }
-
-    Shared_ptr(const Shared_ptr& other) noexcept
-        : _ptr(other._ptr), _refCount(other._refCount)
-    {
-        if (_refCount != nullptr)
-        {
-            ++(*_refCount);
-        }
-    }
-
-    Shared_ptr(Shared_ptr&& other) noexcept
-        : _ptr(other._ptr), _refCount(other._refCount)
-    {
-        other._ptr = nullptr;
-        other._refCount = nullptr;
-    }
-
-    void Swap(Shared_ptr& other) noexcept
-    {
-        std::swap(_ptr, other._ptr);
-        std::swap(_refCount, other._refCount);
-    }
-
-    Shared_ptr& operator=(const Shared_ptr& other) noexcept
-    {
-        Shared_ptr(other).Swap(*this);
-        return *this;
-    }
-
-    Shared_ptr& operator=(Shared_ptr&& other) noexcept
-    {
-        Shared_ptr(std::move(other)).Swap(*this);
-        return *this;
-    }
-
-    T* Get() const noexcept { return _ptr; }
-
-    T& operator*() const noexcept { return *_ptr; }
-    T* operator->() const noexcept { return _ptr; }
-
-    int32_t UseCount() const noexcept
-    {
-        return _refCount ? *_refCount : 0;
-    }
-
-    explicit operator bool() const noexcept { return _ptr != nullptr; }
-
-    void Reset(T* ptr = nullptr)
-    {
-        Shared_ptr(ptr).Swap(*this);
-    }
-
-private:
-    void Release() noexcept
-    {
-        if (_refCount != nullptr)
-        {
-            if (--(*_refCount) == 0)
-            {
-                delete _ptr;
-                delete _refCount;
-            }
-        }
-
-        _ptr = nullptr;
-        _refCount = nullptr;
-    }
-
-    T* _ptr;
-    int32_t* _refCount;
-};
-
-class Widget
-{
-public:
-    Widget()
-    {
-        cout << "Widget" << "\n";
-    }
-
-    ~Widget()
-    {
-        cout << "~Widget" << "\n";
-    }
-
-    Widget(Widget&& other) noexcept = default;
-    Widget& operator=(Widget&& other) noexcept = default;
-    Widget(const Widget& other) = default;
-    Widget& operator=(const Widget& other) = default;
-
-private:
-
-};
+    return 0;
+}
 
 int wmain()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    Shared_ptr<Widget> sptr(new Widget);
-    Shared_ptr<Widget> sptr2 = sptr;
+    HANDLE h[2];
+    h[0] = (HANDLE)_beginthreadex(nullptr, 0, ThreadA, nullptr, 0, nullptr);
+    h[1] = (HANDLE)_beginthreadex(nullptr, 0, ThreadB, nullptr, 0, nullptr);
+    WaitForMultipleObjects(2, h, TRUE, INFINITE);
 
-    cout << "refCount : " << sptr.UseCount() << "\n";
-
-    Shared_ptr<Widget> sptr3 = std::move(sptr2);
-
-    cout << "refCount : " << sptr.UseCount() << "\n";
+    std::sort(hit.begin(), hit.end());
+    std::sort(miss.begin(), miss.end());
+    printf("캐시 히트        (최대값): %llu cycles\n", hit[ROUNDS - 1]);
+    printf("무효화 후 재읽기 (최대값): %llu cycles\n", miss[ROUNDS - 1]);
+    printf("낡은 값을 읽은 횟수      : %d / %d\n", g_stale, ROUNDS);
 
     return 0;
 }
