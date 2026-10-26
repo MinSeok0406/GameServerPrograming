@@ -80,7 +80,7 @@ uint32_t WINAPI threadProc1(LPVOID param)
 {
     WaitForSingleObject(g_hEvent, INFINITE);
 
-    SetThreadAffinityMask(GetCurrentThread(), 1 << 10);
+    SetThreadAffinityMask(GetCurrentThread(), 1 << 1);
 
     for (auto i = 0; i < COUNT; ++i)
     {
@@ -96,7 +96,7 @@ uint32_t WINAPI threadProc2(LPVOID param)
 {
     WaitForSingleObject(g_hEvent, INFINITE);
 
-    SetThreadAffinityMask(GetCurrentThread(), 1 << 11);
+    SetThreadAffinityMask(GetCurrentThread(), 1 << 2);
 
     for (auto i = 0; i < COUNT; ++i)
     {

@@ -12,7 +12,7 @@
             "provides": [
                 {
                     "logical-name": "Employee",
-                    "source-path": "c:\\gameprograming\\cpp\\forprofessionalcpp\\employee.ixx",
+                    "source-path": "c:\\gameserverprograming\\cpp\\forprofessionalcpp\\employee.ixx",
                     "is-interface": true
                 }
             ],

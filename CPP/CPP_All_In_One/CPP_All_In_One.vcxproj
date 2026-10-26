@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="addshlsub.cpp" />
+    <ClCompile Include="CacheHitMiss_Test.cpp" />
     <ClCompile Include="CacheLine_time.cpp" />
     <ClCompile Include="ClassStarPrint.cpp" />
     <ClCompile Include="DFS_BFS_FindRoute.cpp" />

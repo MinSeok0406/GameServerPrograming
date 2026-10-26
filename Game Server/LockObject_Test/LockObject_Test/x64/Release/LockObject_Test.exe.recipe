@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Game Server\LockObject_Test\x64\Release\LockObject_Test.exe</FullPath>
+      <FullPath>C:\GameServerPrograming\Game Server\LockObject_Test\x64\Release\LockObject_Test.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

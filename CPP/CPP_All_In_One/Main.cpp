@@ -4,58 +4,78 @@
 #include <Windows.h>
 #include <time.h>
 #include <chrono>
-#include <vector>
-#include <algorithm>
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 
-constexpr int ROUNDS = 10000000;
+constexpr uint64_t ITER = 50'000'000;
 
-alignas(128) volatile BYTE g_val = 0;    // 관찰 대상 1바이트 (라인 X)
-alignas(128) volatile LONG g_state = 0;  // 동기화용 (다른 라인)
-
-std::vector<uint64_t> hit(ROUNDS), miss(ROUNDS);
-int g_stale = 0;
-
-unsigned __stdcall ThreadA(void*)
+// 1) 같은 64B 라인: 고전적인 false sharing
+struct SameLine
 {
-    SetThreadAffinityMask(GetCurrentThread(), 1 << 9);
-    for (int i = 0; i < ROUNDS; ++i)
-    {
-        BYTE v = g_val;                              // 라인 X를 내 캐시로 가져옴
-        uint64_t t1 = __rdtsc();
-        v = g_val;                                   // 캐시 히트
-        uint64_t t2 = __rdtsc();
-        hit[i] = t2 - t1;
+    alignas(64) uint64_t a;
+    uint64_t b;
+};
 
-        g_state = 1;                                 // B에게 "읽었으니 써라"
-        while (g_state != 2) {}                      // B가 쓸 때까지 대기
+// 2) 다른 64B 라인 (a: 0번 라인, b: 1번 라인)
+struct AdjLine
+{
+    alignas(128) uint64_t a;
+    char pad[56];
+    uint64_t b;
+};
 
-        BYTE before = v;
-        t1 = __rdtsc();
-        v = g_val;                                   // 무효화된 라인을 다시 읽음
-        t2 = __rdtsc();
-        miss[i] = t2 - t1;
+// 3) 아예 다른 128B 쌍
+struct Far
+{
+    alignas(128) uint64_t a;
+    char pad[120];
+    uint64_t b;
+};
 
-        if (v == before) ++g_stale;                  // 낡은 값을 읽은 횟수
-        g_state = 0;
-    }
+struct Param
+{
+    uint64_t* p;
+    int core;
+};
+
+long g_go = false;
+
+unsigned __stdcall Worker(void* arg)
+{
+    Param* pr = (Param*)arg;
+    SetThreadAffinityMask(GetCurrentThread(), 1ull << pr->core);
+    while (!g_go) {}
+    for (uint64_t i = 0; i < ITER; ++i)
+        InterlockedIncrement64((volatile long long*)pr->p);
     return 0;
 }
 
-unsigned __stdcall ThreadB(void*)
+template <typename T>
+void Test(const char* name)
 {
-    SetThreadAffinityMask(GetCurrentThread(), 1 << 11);
-    for (int i = 0; i < ROUNDS; ++i)
-    {
-        while (g_state != 1) {}
-        BYTE v = g_val;                              // 읽어서 S 상태로 공유
-        g_val = v + 1;                               // 쓰기 → A의 라인 무효화
-        g_state = 2;
-    }
-    return 0;
+    alignas(128) static T t;
+    t.a = t.b = 0;
+    g_go = 0;
+
+    Param pa { &t.a, 0 };
+    Param pb { &t.b, 2 };
+
+    HANDLE h[2];
+    h[0] = (HANDLE)_beginthreadex(nullptr, 0, Worker, &pa, 0, nullptr);
+    h[1] = (HANDLE)_beginthreadex(nullptr, 0, Worker, &pb, 0, nullptr);
+
+    auto start = chrono::steady_clock::now();
+    g_go = 1;
+    WaitForMultipleObjects(2, h, TRUE, INFINITE);
+    chrono::duration<double, milli> dur = chrono::steady_clock::now() - start;
+
+    printf("%-9s b-a offset=%3llu  %7.1f ms\n", name,
+        (uint64_t)&t.b - (uint64_t)&t.a, dur.count());
+
+    CloseHandle(h[0]);
+    CloseHandle(h[1]);
 }
 
 int wmain()
@@ -63,16 +83,13 @@ int wmain()
     timeBeginPeriod(1);
     srand((unsigned int)time(nullptr));
 
-    HANDLE h[2];
-    h[0] = (HANDLE)_beginthreadex(nullptr, 0, ThreadA, nullptr, 0, nullptr);
-    h[1] = (HANDLE)_beginthreadex(nullptr, 0, ThreadB, nullptr, 0, nullptr);
-    WaitForMultipleObjects(2, h, TRUE, INFINITE);
-
-    std::sort(hit.begin(), hit.end());
-    std::sort(miss.begin(), miss.end());
-    printf("캐시 히트        (최대값): %llu cycles\n", hit[ROUNDS - 1]);
-    printf("무효화 후 재읽기 (최대값): %llu cycles\n", miss[ROUNDS - 1]);
-    printf("낡은 값을 읽은 횟수      : %d / %d\n", g_stale, ROUNDS);
+    for (int round = 0; round < 3; ++round)
+    {
+        Test<SameLine>("SameLine");
+        Test<AdjLine>("AdjLine");
+        Test<Far>("Far");
+        puts("");
+    }
 
     return 0;
 }

@@ -100,6 +100,9 @@
     <ClCompile Include="CacheLine_time.cpp">
       <Filter>CPP_Study</Filter>
     </ClCompile>
+    <ClCompile Include="CacheHitMiss_Test.cpp">
+      <Filter>CPP_Study</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Date.h">
