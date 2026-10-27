@@ -1,7 +1,7 @@
 ﻿#include "PrjClient.h"
 #include "resource.h"
 
-const wchar_t* SERVERIP = L"127.0.0.1";
+//const wchar_t* SERVERIP = L"127.0.0.1";
 
 static HINSTANCE    g_hInstance;
 static HWND         g_hBtnSendFile;
@@ -64,7 +64,7 @@ long long DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         g_hBtnErasePic = hBtnErasePic;
         hStaticDummy = GetDlgItem(hDlg, IDC_DUMMY);
 
-        SetDlgItemText(hDlg, IDC_IPADDR, SERVERIP);
+        //SetDlgItemText(hDlg, IDC_IPADDR, SERVERIP);
         SetDlgItemInt(hDlg, IDC_PORT, SERVERPORT, FALSE);
         EnableWindow(g_hBtnSendFile, FALSE);
         EnableWindow(g_hBtnSendMsg, FALSE);
@@ -105,7 +105,7 @@ long long DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             g_isIPv6 = SendMessage(hChkIsIPv6, BM_GETCHECK, 0, 0);
             if (g_isIPv6 == false)
             {
-                SetDlgItemText(hDlg, IDC_IPADDR, SERVERIP);
+                //SetDlgItemText(hDlg, IDC_IPADDR, SERVERIP);
             }
             return TRUE;
         case IDC_CONNECT:

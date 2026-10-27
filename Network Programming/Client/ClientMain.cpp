@@ -1,59 +1,93 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <time.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h>
-#include "resource.h"
-#include "PrjClient.h"
 using namespace std;
 using ll = long long;
 
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-extern  HINSTANCE    g_hInstance;
-extern  HWND         g_hBtnSendFile;
-extern  HWND         g_hBtnSendMsg;
-extern  HWND         g_hEditStatus;
-extern  HWND         g_hBtnErasePic;
-extern  HWND         g_hDrawWnd;
+const wchar_t* SERVERIP = L"127.0.0.1";
+#define SERVERPORT  47000
+#define BUFSIZE     512
 
-extern  volatile bool        g_isIPv6;
-extern  wchar_t              g_ipaddr[64];
-extern  int                  g_port;
-extern  volatile bool        g_isUDP;
-extern  HANDLE               g_hClientThread;
-extern  volatile bool        g_bCommStarted;
-extern  SOCKET               g_sock;
-extern  HANDLE               g_hReadEvent;
-extern  HANDLE               g_hWriteEvent;
-extern  CHAT_MSG             g_chatmsg;
-extern  DRAWLINE_MSG         g_drawlinemsg;
-extern  int                  g_drawcolor;
-extern  ERASEPIC_MSG         g_erasepicmsg;
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
+
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
     {
         return 1;
     }
-    
-    g_hReadEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-    g_hWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-    g_chatmsg.type = TYPE_CHAT;
-    g_drawlinemsg.type = TYPE_DRAWLINE;
-    g_drawlinemsg.color = RGB(255, 0, 0);
-    g_erasepicmsg.type = TYPE_ERASEPIC;
+    SOCKET sock;
+    int retval;
 
-    g_hInstance = hInstance;
-    DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET)
+    {
+        return 1;
+    }
 
-    CloseHandle(g_hReadEvent);
-    CloseHandle(g_hWriteEvent);
+    sockaddr_in serveraddr;
+    memset(&serveraddr, 0, sizeof(serveraddr));
+    serveraddr.sin_family = AF_INET;
+    InetPton(AF_INET, SERVERIP, &serveraddr.sin_addr);
+    serveraddr.sin_port = htons(SERVERPORT);
+
+    retval = connect(sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
+    if (retval == SOCKET_ERROR)
+    {
+        return 1;
+    }
+
+    char buf[BUFSIZE + 1];
+    int len;
+
+    while (1)
+    {
+        printf("[보낼 데이터] ");
+        if (fgets(buf, BUFSIZE + 1, stdin) == NULL)
+        {
+            break;
+        }
+
+        len = (int)strlen(buf);
+        if (buf[len - 1] == '\n')
+        {
+            buf[len - 1] = '\0';
+        }
+        
+        if (strlen(buf) == 0)
+        {
+            break;
+        }
+
+        int sendRet = send(sock, buf, (int)strlen(buf), 0);
+        if (sendRet == SOCKET_ERROR)
+        {
+            break;
+        }
+
+        int recvRet = recv(sock, buf, sendRet, MSG_WAITALL);
+        if (recvRet == SOCKET_ERROR)
+        {
+            break;
+        }
+        else if (recvRet == 0)
+        {
+            break;
+        }
+
+        buf[recvRet] = '\0';
+        printf("[받은 데이터] %s\n", buf);
+    }
+
+    closesocket(sock);
 
     WSACleanup();
 
