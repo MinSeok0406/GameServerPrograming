@@ -2,6 +2,7 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <iostream>
 #include <time.h>
+#include <chrono>
 #include <process.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -23,6 +24,10 @@ struct SOCKETINFO
     int recvbytes;
     int sendbytes;
     WSABUF wsabuf;
+
+    double connectTime;   // 접속 시각 (ms)
+    double lastRecvTime;   // 마지막 recv 완료 시각 (ms)
+    double lastSendTime;   // 마지막 echo send 완료 시각 (ms)
 };
 
 int nTotalSockets = 0;
@@ -33,6 +38,14 @@ CRITICAL_SECTION cs;
 uint32_t WINAPI workerthread(LPVOID arg);
 int32_t addSocketInfo(SOCKET sock);
 void removeSocketInfo(int nIndex);
+
+inline double NowUs()
+{
+    static LARGE_INTEGER freq = [] { LARGE_INTEGER f; QueryPerformanceFrequency(&f); return f; }();
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    return (double)now.QuadPart * 1000LL / freq.QuadPart;
+}
 
 int wmain()
 {
@@ -77,6 +90,9 @@ int wmain()
         return 1;
     }
 
+    //u_long on = 1;
+    //auto ioctRet = ioctlsocket(listen_sock, FIONBIO, &on);
+
     WSAEVENT hEvent = WSACreateEvent();
     eventArray[nTotalSockets++] = hEvent;
 
@@ -115,7 +131,7 @@ int wmain()
             }
             else if (WSAGetLastError() == WSA_IO_PENDING)
             {
-                printf("recv IO PENDING\n");
+                //printf("recv IO PENDING\n");
             }
         }
 
@@ -155,12 +171,22 @@ uint32_t __stdcall workerthread(LPVOID arg)
         int olRet = WSAGetOverlappedResult(ptr->sock, &(ptr->overlapped), &cbTransferred, FALSE, &flags);
         if (olRet == FALSE || cbTransferred == 0)
         {
+            double now = NowUs();
+            double lastMsg = max(ptr->lastRecvTime, ptr->lastSendTime);
+
+            printf("client exit: 총 접속 시간 %.4f ms | 마지막 메시지 이후 %.4f ms (recv %.4f ms 전, send %.4f ms 전)\n",
+                now - ptr->connectTime,
+                now - lastMsg,
+                now - ptr->lastRecvTime,
+                now - ptr->lastSendTime);
+
             removeSocketInfo(index);
             continue;
         }
 
         if (ptr->recvbytes == 0)
         {
+            ptr->lastRecvTime = NowUs();
             ptr->recvbytes = cbTransferred;
             ptr->sendbytes = 0;
             ptr->buf[ptr->recvbytes] = '\0';
@@ -191,6 +217,7 @@ uint32_t __stdcall workerthread(LPVOID arg)
         }
         else
         {
+            ptr->lastSendTime = NowUs();
             ptr->recvbytes = 0;
 
             memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
@@ -212,6 +239,8 @@ uint32_t __stdcall workerthread(LPVOID arg)
             }
         }
     }
+
+    
 
     return 0;
 }
@@ -245,6 +274,8 @@ int32_t addSocketInfo(SOCKET sock)
     ptr->recvbytes = ptr->sendbytes = 0;
     ptr->wsabuf.buf = ptr->buf;
     ptr->wsabuf.len = BUFSIZE;
+    ptr->connectTime = NowUs();
+    ptr->lastRecvTime = ptr->lastSendTime = NowUs();
     socketInfoArray[nTotalSockets] = ptr;
     eventArray[nTotalSockets] = hEvent;
     ++nTotalSockets;

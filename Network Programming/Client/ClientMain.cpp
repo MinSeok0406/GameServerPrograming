@@ -14,9 +14,17 @@ const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT  47000
 #define BUFSIZE     512
 
+uint64_t g_count = 1000000;
+
+SOCKET sock;
+const char* buf[4] = { "Hello", "MyName", "IsMinseok", "Bye~" };
+
+bool update();
+
 int wmain(int argc, WCHAR* argv[])
 {
     timeBeginPeriod(1);
+    srand((uint32_t)time(nullptr));
 
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -24,7 +32,6 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    SOCKET sock;
     int retval;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,46 +52,12 @@ int wmain(int argc, WCHAR* argv[])
         return 1;
     }
 
-    char buf[BUFSIZE + 1];
-    int len;
-
-    while (1)
+    while (g_count--)
     {
-        printf("[보낼 데이터] ");
-        if (fgets(buf, BUFSIZE + 1, stdin) == NULL)
+        if (!update())
         {
             break;
         }
-
-        len = (int)strlen(buf);
-        if (buf[len - 1] == '\n')
-        {
-            buf[len - 1] = '\0';
-        }
-        
-        if (strlen(buf) == 0)
-        {
-            break;
-        }
-
-        int sendRet = send(sock, buf, (int)strlen(buf), 0);
-        if (sendRet == SOCKET_ERROR)
-        {
-            break;
-        }
-
-        int recvRet = recv(sock, buf, sendRet, MSG_WAITALL);
-        if (recvRet == SOCKET_ERROR)
-        {
-            break;
-        }
-        else if (recvRet == 0)
-        {
-            break;
-        }
-
-        buf[recvRet] = '\0';
-        printf("[받은 데이터] %s\n", buf);
     }
 
     closesocket(sock);
@@ -92,4 +65,32 @@ int wmain(int argc, WCHAR* argv[])
     WSACleanup();
 
     return 0;
+}
+
+bool update()
+{
+    int index = rand() % 4;
+    const char* bbuf = buf[index];
+    int len = strlen(buf[index]);
+
+    auto sendRet = send(sock, bbuf, len, 0);
+    if (sendRet == SOCKET_ERROR)
+    {
+        printf("send : %d", WSAGetLastError());
+        return false;
+    }
+
+    char rbuf[BUFSIZE];
+    auto recvRet = recv(sock, rbuf, sendRet, 0);
+    if (recvRet == SOCKET_ERROR)
+    {
+        printf("send : %d", WSAGetLastError());
+        return false;
+    }
+    else if (recvRet == 0)
+    {
+        return false;
+    }
+
+    return true;
 }
