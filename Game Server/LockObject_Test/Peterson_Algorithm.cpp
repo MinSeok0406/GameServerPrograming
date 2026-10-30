@@ -1,4 +1,4 @@
-﻿#include <iostream>
+﻿/*#include <iostream>
 #include <process.h>
 #include <Windows.h>
 #include <chrono>
@@ -136,4 +136,4 @@ int wmain()
     cout << dur.count() << "ms" << "\n";
 
     return 0;
-}
+}*/

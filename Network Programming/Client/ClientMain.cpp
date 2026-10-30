@@ -14,7 +14,7 @@ const wchar_t* SERVERIP = L"127.0.0.1";
 #define SERVERPORT  47000
 #define BUFSIZE     512
 
-uint64_t g_count = 1000000;
+uint64_t g_count = 100000;
 
 SOCKET sock;
 const char* buf[4] = { "Hello", "MyName", "IsMinseok", "Bye~" };

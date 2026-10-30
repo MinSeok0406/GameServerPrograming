@@ -1,4 +1,4 @@
-﻿/*#include <iostream>
+﻿#include <iostream>
 #include <process.h>
 #include <Windows.h>
 #include <chrono>
@@ -17,16 +17,9 @@ CRITICAL_SECTION cs;
 
 void spinLock()
 {
-    while (true)
+    while (InterlockedExchange(&isLock, 1) != 0)
     {
-        if (isLock == 0)
-        {
-            if (InterlockedExchange(&isLock, 1) == 0)
-            {
-                break;
-            }
-            _mm_pause();
-        }
+        //_mm_pause();
     }
 }
 
@@ -44,7 +37,7 @@ uint32_t __stdcall threadProc1(LPVOID Param)
 {
     WaitForSingleObject(hEvent, INFINITE);
 
-    SetThreadAffinityMask(GetCurrentThread(), 1ULL << 10);
+    SetThreadAffinityMask(GetCurrentThread(), 1ULL << 0);
 
     for (auto i = 0; i < COUNT; ++i)
     {
@@ -60,7 +53,7 @@ uint32_t __stdcall threadProc2(LPVOID Param)
 {
     WaitForSingleObject(hEvent, INFINITE);
 
-    SetThreadAffinityMask(GetCurrentThread(), 1ULL << 10);
+    SetThreadAffinityMask(GetCurrentThread(), 1ULL << 2);
 
     for (auto i = 0; i < COUNT; ++i)
     {
@@ -102,4 +95,4 @@ int wmain()
     cout << g_count << "\n";
 
     return 0;
-}*/
+}
