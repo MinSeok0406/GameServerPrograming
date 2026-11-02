@@ -18,23 +18,41 @@ using ll = long long;
 #define SERVERPORT 47000
 #define BUFSIZE 512
 
-struct SOCKETINFO
+enum class TYPE
 {
-    WSAOVERLAPPED overlapped;
-    SOCKET sock;
-    char buf[BUFSIZE + 1];
-    int recvbytes;
-    int sendbytes;
-    WSABUF wsabuf;
+    SEND,
+    RECV
 };
 
-SOCKET client_sock;
-HANDLE hReadEvent;
-HANDLE hWriteEvent;
+struct SendOverlapped
+{
+    WSAOVERLAPPED overlapped;
+    uint32_t sessionID;
+    char buf[BUFSIZE + 1];
+    int sendbytes;
+    WSABUF wsabuf;
+    TYPE type;
+};
 
-uint32_t WINAPI workerthread(LPVOID arg);
-void CALLBACK completionRoutine(DWORD dwError, DWORD cbTransferred,
-    LPWSAOVERLAPPED lpOverlapped, DWORD dwFlags);
+struct RecvOverlapped
+{
+    WSAOVERLAPPED overlapped;
+    uint32_t sessionID;
+    char buf[BUFSIZE + 1];
+    int recvbytes;
+    WSABUF wsabuf;
+    TYPE type;
+};
+
+struct SOCKETINFO
+{
+    SendOverlapped* sendOL;
+    RecvOverlapped* recvOL;
+    SOCKET sock;
+};
+
+uint32_t WINAPI sendworkerthread(LPVOID arg);
+uint32_t WINAPI recvworkerthread(LPVOID arg);
 
 int wmain()
 {
@@ -45,6 +63,36 @@ int wmain()
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
     {
         return 1;
+    }
+
+    HANDLE hcp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 3);
+    if (hcp == NULL)
+    {
+        return 1;
+    }
+
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+
+    HANDLE hThread;
+    for (auto i = 0; i < (int)si.dwNumberOfProcessors; ++i)
+    {
+        hThread = (HANDLE)_beginthreadex(NULL, 0, sendworkerthread, hcp, 0, NULL);
+        if (hThread == NULL)
+        {
+            return 1;
+        }
+        CloseHandle(hThread);
+    }
+
+    for (auto i = 0; i < (int)si.dwNumberOfProcessors; ++i)
+    {
+        hThread = (HANDLE)_beginthreadex(NULL, 0, recvworkerthread, hcp, 0, NULL);
+        if (hThread == NULL)
+        {
+            return 1;
+        }
+        CloseHandle(hThread);
     }
 
     SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -77,26 +125,49 @@ int wmain()
         return 1;
     }
 
-    //u_long on = 1;
-    //auto ioctRet = ioctlsocket(listen_sock, FIONBIO, &on);
-
-    hReadEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-    hWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-
-    HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, workerthread, NULL, 0, NULL);
-    CloseHandle(hThread);
+    SOCKET client_sock;
+    SOCKADDR_IN clientaddr;
+    int addrlen;
+    unsigned long recvbytes;
+    unsigned long flags;
 
     while (true)
     {
-        WaitForSingleObject(hReadEvent, INFINITE);
-        client_sock = accept(listen_sock, NULL, NULL);
+        addrlen = sizeof(clientaddr);
+        client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
         if (client_sock == INVALID_SOCKET)
         {
-            printf("accept : %d\n", WSAGetLastError());
             break;
         }
 
-        SetEvent(hWriteEvent);
+        CreateIoCompletionPort((HANDLE)client_sock, hcp, client_sock, 0);
+
+        SOCKETINFO* ptr = new SOCKETINFO;
+        if (ptr == NULL)
+        {
+            break;
+        }
+
+        ptr->sendOL = new SendOverlapped;
+        ptr->recvOL = new RecvOverlapped;
+        memset(&(ptr->sendOL->overlapped), 0, sizeof(ptr->sendOL->overlapped));
+        memset(&(ptr->recvOL->overlapped), 0, sizeof(ptr->recvOL->overlapped));
+        ptr->sock = client_sock;
+        ptr->sendOL->sendbytes = 0;
+        ptr->recvOL->recvbytes = 0;
+        ptr->recvOL->wsabuf.buf = ptr->recvOL->buf;
+        ptr->recvOL->wsabuf.len = BUFSIZE;
+
+        flags = 0;
+        auto recvRet = WSARecv(client_sock, &(ptr->recvOL->wsabuf), 1, &recvbytes, &flags, &(ptr->recvOL->overlapped), NULL);
+        if (recvRet == SOCKET_ERROR)
+        {
+            if (WSAGetLastError() != ERROR_IO_PENDING)
+            {
+
+            }
+            continue;
+        }
     }
     
     closesocket(listen_sock);
@@ -105,46 +176,76 @@ int wmain()
     return 0;
 }
 
-uint32_t __stdcall workerthread(LPVOID arg)
+// 읽기용 스레드
+uint32_t __stdcall recvworkerthread(LPVOID arg)
 {
+    HANDLE hcp = (HANDLE)arg;
     while (true)
     {
-        while (true)
+        unsigned long cbTransferred;
+        SOCKET client_sock;
+        SOCKETINFO* ptr;
+        auto GQCSret = GetQueuedCompletionStatus(hcp, &cbTransferred, &client_sock, (LPOVERLAPPED*)&ptr, INFINITE);
+
+        if (GQCSret == 0 || cbTransferred == 0)
         {
-            unsigned long waitRet = WaitForSingleObjectEx(hWriteEvent, INFINITE, TRUE);
-
-            if (waitRet == WAIT_OBJECT_0)
+            if (GQCSret == 0)
             {
-                break;
+                unsigned long temp1;
+                unsigned long temp2;
+                WSAGetOverlappedResult(ptr->sock, &(ptr->overlapped), &temp1, FALSE, &temp2);
             }
-
-            if (waitRet != WAIT_IO_COMPLETION)
-            {
-                return 1;
-            }
+            closesocket(ptr->sock);
+            delete ptr;
+            continue;
         }
 
-        SOCKADDR_IN clientaddr;
-        int addrlen = sizeof(clientaddr);
-        getpeername(client_sock, (SOCKADDR*)&clientaddr, &addrlen);
-
-        SOCKETINFO* ptr = new SOCKETINFO;
-        memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
-        ptr->sock = client_sock;
-        SetEvent(hReadEvent);
-        ptr->recvbytes = 0;
-        ptr->sendbytes = 0;
-        ptr->wsabuf.buf = ptr->buf;
-        ptr->wsabuf.len = BUFSIZE;
-
-        unsigned long recvbytes;
-        unsigned long flags = 0;
-        auto recvRet = WSARecv(ptr->sock, &(ptr->wsabuf), 1, &recvbytes, &flags, &(ptr->overlapped), completionRoutine);
-        if (recvRet == SOCKET_ERROR)
+        if (ptr->recvbytes == 0)
         {
-            if (WSAGetLastError() != WSA_IO_PENDING)
+            ptr->recvbytes = cbTransferred;
+            ptr->sendbytes = 0;
+            ptr->buf[ptr->recvbytes] = '\0';
+        }
+        else
+        {
+            ptr->sendbytes += cbTransferred;
+        }
+
+        if (ptr->recvbytes > ptr->sendbytes)
+        {
+            memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
+            ptr->wsabuf.buf = ptr->buf + ptr->sendbytes;
+            ptr->wsabuf.len = ptr->recvbytes - ptr->sendbytes;
+
+            unsigned long sendbytes;
+            auto sendRet = WSASend(ptr->sock, &(ptr->wsabuf), 1, &sendbytes, 0, &(ptr->overlapped), NULL);
+            if (sendRet == SOCKET_ERROR)
             {
-                return 1;
+                if (WSAGetLastError() != WSA_IO_PENDING)
+                {
+
+                }
+                continue;
+            }
+        }
+        else
+        {
+            ptr->recvbytes = 0;
+
+            memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
+            ptr->wsabuf.buf = ptr->buf;
+            ptr->wsabuf.len = BUFSIZE;
+
+            unsigned long recvbytes;
+            unsigned long flags = 0;
+            auto recvRet = WSARecv(ptr->sock, &(ptr->wsabuf), 1, &recvbytes, &flags, &(ptr->overlapped), NULL);
+            if (recvRet == SOCKET_ERROR)
+            {
+                if (WSAGetLastError() != WSA_IO_PENDING)
+                {
+
+                }
+                continue;
             }
         }
     }
@@ -152,65 +253,79 @@ uint32_t __stdcall workerthread(LPVOID arg)
     return 0;
 }
 
-void completionRoutine(DWORD dwError, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped, DWORD dwFlags)
+// 쓰기용 스레드
+uint32_t __stdcall sendworkerthread(LPVOID arg)
 {
-    SOCKETINFO* ptr = (SOCKETINFO*)lpOverlapped;
-    SOCKADDR_IN clientaddr;
-    int addrlen = sizeof(clientaddr);
-    getpeername(ptr->sock, (SOCKADDR*)&clientaddr, &addrlen);
-
-    if (dwError != 0 || cbTransferred == 0)
+    HANDLE hcp = (HANDLE)arg;
+    while (true)
     {
-        closesocket(ptr->sock);
-        delete ptr;
-        return;
-    }
+        unsigned long cbTransferred;
+        SOCKET client_sock;
+        SOCKETINFO* ptr;
+        auto GQCSret = GetQueuedCompletionStatus(hcp, &cbTransferred, &client_sock, (LPOVERLAPPED*)&ptr, INFINITE);
 
-    if (ptr->recvbytes == 0)
-    {
-        ptr->recvbytes = cbTransferred;
-        ptr->sendbytes = 0;
-
-        ptr->buf[ptr->recvbytes] = '\0';
-    }
-    else
-    {
-        ptr->sendbytes += cbTransferred;
-    }
-
-    if (ptr->recvbytes > ptr->sendbytes)
-    {
-        memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
-        ptr->wsabuf.buf = ptr->buf + ptr->sendbytes;
-        ptr->wsabuf.len = ptr->recvbytes - ptr->sendbytes;
-
-        unsigned long sendbytes;
-        auto sendRet = WSASend(ptr->sock, &(ptr->wsabuf), 1, &sendbytes, 0, &(ptr->overlapped), completionRoutine);
-        if (sendRet == SOCKET_ERROR)
+        if (GQCSret == 0 || cbTransferred == 0)
         {
-            if (WSAGetLastError() != WSA_IO_PENDING)
+            if (GQCSret == 0)
             {
-                return;
+                unsigned long temp1;
+                unsigned long temp2;
+                WSAGetOverlappedResult(ptr->sock, &(ptr->overlapped), &temp1, FALSE, &temp2);
+            }
+            closesocket(ptr->sock);
+            delete ptr;
+            continue;
+        }
+
+        if (ptr->recvbytes == 0)
+        {
+            ptr->recvbytes = cbTransferred;
+            ptr->sendbytes = 0;
+            ptr->buf[ptr->recvbytes] = '\0';
+        }
+        else
+        {
+            ptr->sendbytes += cbTransferred;
+        }
+
+        if (ptr->recvbytes > ptr->sendbytes)
+        {
+            memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
+            ptr->wsabuf.buf = ptr->buf + ptr->sendbytes;
+            ptr->wsabuf.len = ptr->recvbytes - ptr->sendbytes;
+
+            unsigned long sendbytes;
+            auto sendRet = WSASend(ptr->sock, &(ptr->wsabuf), 1, &sendbytes, 0, &(ptr->overlapped), NULL);
+            if (sendRet == SOCKET_ERROR)
+            {
+                if (WSAGetLastError() != WSA_IO_PENDING)
+                {
+
+                }
+                continue;
+            }
+        }
+        else
+        {
+            ptr->recvbytes = 0;
+
+            memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
+            ptr->wsabuf.buf = ptr->buf;
+            ptr->wsabuf.len = BUFSIZE;
+
+            unsigned long recvbytes;
+            unsigned long flags = 0;
+            auto recvRet = WSARecv(ptr->sock, &(ptr->wsabuf), 1, &recvbytes, &flags, &(ptr->overlapped), NULL);
+            if (recvRet == SOCKET_ERROR)
+            {
+                if (WSAGetLastError() != WSA_IO_PENDING)
+                {
+
+                }
+                continue;
             }
         }
     }
-    else
-    {
-        ptr->recvbytes = 0;
 
-        memset(&(ptr->overlapped), 0, sizeof(ptr->overlapped));
-        ptr->wsabuf.buf = ptr->buf;
-        ptr->wsabuf.len = BUFSIZE;
-
-        unsigned long recvbytes;
-        unsigned long flags = 0;
-        auto recvRet = WSARecv(ptr->sock, &(ptr->wsabuf), 1, &recvbytes, &flags, &(ptr->overlapped), completionRoutine);
-        if (recvRet == SOCKET_ERROR)
-        {
-            if (WSAGetLastError() != WSA_IO_PENDING)
-            {
-                return;
-            }
-        }
-    }
+    return 0;
 }
