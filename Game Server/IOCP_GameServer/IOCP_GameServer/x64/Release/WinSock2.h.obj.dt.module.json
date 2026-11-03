@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "IOCP_GameServer\\x64\\Release\\WinSock2.obj",
+            "outputs": [
+                "IOCP_GameServer\\x64\\Release\\WinSock2.h.obj.dt.module.json",
+                "IOCP_GameServer\\x64\\Release\\WinSock2.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

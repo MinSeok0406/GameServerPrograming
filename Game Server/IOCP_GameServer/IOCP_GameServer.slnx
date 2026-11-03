@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../IOCP_GameClient/IOCP_GameClient.vcxproj" Id="68830a6a-e730-463c-8957-e100342172e2" />
+  <Project Path="IOCP_GameServer.vcxproj" Id="4e1842a3-d237-44bc-872b-b93e01022259" />
+</Solution>
