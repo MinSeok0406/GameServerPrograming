@@ -21,6 +21,11 @@ HANDLE hThreads[8];
 uint32_t WINAPI acceptWorkerThread(LPVOID arg);
 uint32_t WINAPI IOCPworkerThread(LPVOID arg);
 
+bool releaseSession(Session* session);
+bool sendPost(Session* session, int transferred);
+bool recvPost(Session* session, int transferred);
+bool sendPacket(Session* session, int transferred);
+
 int wmain()
 {
     timeBeginPeriod(1);
@@ -113,18 +118,20 @@ int wmain()
         Sleep(20);
     }
 
+    closesocket(listen_sock);
     WaitForMultipleObjects(8, hThreads, TRUE, INFINITE);
 
     for (auto it = g_session.begin(); it != g_session.end();)
     {
         Session* session = it->second;
+        closesocket(session->socket);
+        DeleteCriticalSection(&(session->cs));
         delete session->recvOL;
         delete session->sendOL;
         delete session;
         it = g_session.erase(it);
     }
 
-    closesocket(listen_sock);
     WSACleanup();
 
     return 0;
@@ -146,13 +153,17 @@ uint32_t __stdcall acceptWorkerThread(LPVOID arg)
         if (client_sock == INVALID_SOCKET)
         {
             printf("accept : %d\n", WSAGetLastError());
-            continue;
+            break;
         }
 
         Session* session = new Session;
         session->socket = client_sock;
         InetNtop(AF_INET, &clientaddr.sin_addr, session->ip, sizeof(session->ip));
         session->port = ntohs(clientaddr.sin_port);
+        session->count = 0;
+        session->sendflag = false;
+
+        InitializeCriticalSection(&(session->cs));
 
         session->sendOL = new SendOverlapped;
         memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
@@ -172,16 +183,7 @@ uint32_t __stdcall acceptWorkerThread(LPVOID arg)
         g_session[(uint64_t)session + 1] = session;
         ReleaseSRWLockExclusive(&srw_session);
         
-        unsigned long recvbytes = 0;
-        unsigned long flags = 0;
-        auto recvRet = WSARecv(client_sock, &wsabuf, 1, &recvbytes, &flags, &(session->recvOL->overlapped), NULL);
-        if (recvRet == SOCKET_ERROR)
-        {
-            if (WSAGetLastError() != ERROR_IO_PENDING)
-            {
-                continue;
-            }
-        }
+        recvPost(session, 0);
     }
 
     return 0;
@@ -200,75 +202,133 @@ uint32_t __stdcall IOCPworkerThread(LPVOID arg)
         if (GQCSret == TRUE && overlapped == NULL)
         {
             // 스레드 종료
-            //closesocket(session->socket);
+            printf("WorkerThread Exit\n");
             break;
         }
 
-        if (GQCSret == FALSE && overlapped != NULL)
+        if (GQCSret == FALSE || transferred == 0)
         {
             // 클라가 RST 보냄 -> 소켓 정리
-            closesocket(session->socket);
-            break;
-        }
-
-        if (GQCSret == TRUE && transferred == 0)
-        {
             // 클라 정상 종료
-            closesocket(session->socket);
-            delete session->recvOL;
-            delete session->sendOL;
-            delete session;
-
-            AcquireSRWLockExclusive(&srw_session);
-            g_session.erase((uint64_t)session + 1);
-            ReleaseSRWLockExclusive(&srw_session);
-            continue;
+            printf("Client Exit\n");
+        }
+        else
+        {
+            EnterCriticalSection(&(session->cs));
+            if (&(session->recvOL->overlapped) == overlapped)
+            {
+                session->recvQ.MoveRear(transferred);
+                sendPacket(session, transferred);
+                recvPost(session, transferred);
+            }
+            else if (&(session->sendOL->overlapped) == overlapped)
+            {
+                session->sendQ.MoveFront(transferred);
+                session->sendflag = false;
+                sendPost(session, transferred);
+            }
+            LeaveCriticalSection(&(session->cs));
         }
 
-        if (&(session->recvOL->overlapped) == overlapped)
+        if (InterlockedDecrement(&(session->count)) == 0)
         {
-            session->recvQ.MoveRear(transferred);
-            session->recvQ.Dequeue(session->recvQ.GetRearBufferPtr(), transferred);
-            session->sendQ.Enqueue(session->sendQ.GetFrontBufferPtr(), transferred);
-
-            memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
-            WSABUF sendWsaBuf;
-            sendWsaBuf.buf = session->sendQ.GetFrontBufferPtr();
-            sendWsaBuf.len = session->sendQ.DirectDequeueSize();
-            unsigned long sendbytes = 0;
-            auto sendRet = WSASend(session->socket, &sendWsaBuf, 1, &sendbytes, 0, &(session->sendOL->overlapped), NULL);
-            if (sendRet == SOCKET_ERROR)
-            {
-                if (WSAGetLastError() != WSA_IO_PENDING)
-                {
-                    continue;
-                }
-                
-            }
-
-            memset(&(session->recvOL->overlapped), 0, sizeof(session->recvOL->overlapped));
-            WSABUF recvWsaBuf;
-            recvWsaBuf.buf = session->recvQ.GetRearBufferPtr();
-            recvWsaBuf.len = session->recvQ.DirectEnqueueSize();
-
-            unsigned long recvbytes = 0;
-            unsigned long flags = 0;
-            auto recvRet = WSARecv(session->socket, &recvWsaBuf, 1, &recvbytes, &flags, &(session->recvOL->overlapped), NULL);
-            if (recvRet == SOCKET_ERROR)
-            {
-                if (WSAGetLastError() != WSA_IO_PENDING)
-                {
-                    continue;
-                }
-                
-            }
-        }
-
-        if (&(session->sendOL->overlapped) == overlapped)
-        {
-            session->sendQ.MoveFront(transferred);
+            printf("Delete session\n");
+            releaseSession(session);
         }
     }
 
     return 0;
+}
+
+bool releaseSession(Session* session)
+{
+    AcquireSRWLockExclusive(&srw_session);
+    g_session.erase((uint64_t)session + 1);
+    ReleaseSRWLockExclusive(&srw_session);
+
+    closesocket(session->socket);
+    delete session->recvOL;
+    delete session->sendOL;
+    DeleteCriticalSection(&(session->cs));
+
+    delete session;
+
+    return true;
+}
+
+bool sendPost(Session* session, int transferred)
+{
+    if (session->sendflag == true)
+    {
+        return false;
+    }
+
+    if (session->sendQ.GetUseSize() == 0)
+    {
+        return false;
+    }
+
+    session->sendflag = true;
+
+    memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
+    WSABUF sendWsaBuf;
+    sendWsaBuf.buf = session->sendQ.GetFrontBufferPtr();
+    sendWsaBuf.len = session->sendQ.DirectDequeueSize();
+
+    InterlockedIncrement(&(session->count));
+
+    auto sendRet = WSASend(session->socket, &sendWsaBuf, 1, NULL, 0, &(session->sendOL->overlapped), NULL);
+    if (sendRet == SOCKET_ERROR)
+    {
+        if (WSAGetLastError() != WSA_IO_PENDING)
+        {
+            session->sendflag = false;
+            if (InterlockedDecrement(&(session->count)) == 0)
+            {
+                releaseSession(session);
+            }
+            return false;
+        }
+    }
+    printf("sendbyte : %d \t transferred : %d\n", sendRet, transferred);
+
+    return true;
+}
+
+bool recvPost(Session* session, int transferred)
+{
+    memset(&(session->recvOL->overlapped), 0, sizeof(session->recvOL->overlapped));
+    WSABUF recvWsaBuf;
+    recvWsaBuf.buf = session->recvQ.GetRearBufferPtr();
+    recvWsaBuf.len = session->recvQ.DirectEnqueueSize();
+
+    InterlockedIncrement(&(session->count));
+
+    unsigned long flags = 0;
+    auto recvRet = WSARecv(session->socket, &recvWsaBuf, 1, NULL, &flags, &(session->recvOL->overlapped), NULL);
+    if (recvRet == SOCKET_ERROR)
+    {
+        if (WSAGetLastError() != WSA_IO_PENDING)
+        {
+            if (InterlockedDecrement(&(session->count)) == 0)
+            {
+                releaseSession(session);
+            }
+            return false;
+        }
+    }
+    printf("recvbyte : %d \t transferred : %d\n", recvRet, transferred);
+
+    return true;
+}
+
+bool sendPacket(Session* session, int transferred)
+{
+    char temp[100];
+    session->recvQ.Dequeue(temp, transferred);
+    session->sendQ.Enqueue(temp, transferred);
+
+    sendPost(session, transferred);
+
+    return true;
 }

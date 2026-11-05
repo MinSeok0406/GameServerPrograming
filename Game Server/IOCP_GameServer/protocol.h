@@ -31,4 +31,7 @@ struct Session
     RingBuffer recvQ { 5000 };
     SendOverlapped* sendOL;
     RecvOverlapped* recvOL;
+    uint64_t count;
+    CRITICAL_SECTION cs;
+    bool sendflag;
 };
