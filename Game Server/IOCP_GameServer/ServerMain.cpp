@@ -233,6 +233,7 @@ uint32_t __stdcall IOCPworkerThread(LPVOID arg)
         if (InterlockedDecrement(&(session->count)) == 0)
         {
             printf("Delete session\n");
+            printf("count : %d\n", session->count);
             releaseSession(session);
         }
     }
@@ -290,6 +291,7 @@ bool sendPost(Session* session, int transferred)
             return false;
         }
     }
+    printf("count : %d\n", session->count);
     printf("sendbyte : %d \t transferred : %d\n", sendRet, transferred);
 
     return true;
@@ -317,6 +319,7 @@ bool recvPost(Session* session, int transferred)
             return false;
         }
     }
+    printf("count : %d\n", session->count);
     printf("recvbyte : %d \t transferred : %d\n", recvRet, transferred);
 
     return true;

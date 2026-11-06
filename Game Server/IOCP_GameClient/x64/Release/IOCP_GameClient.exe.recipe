@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\GamePrograming\Game Server\IOCP_GameServer\x64\Release\IOCP_GameClient.exe</FullPath>
+      <FullPath>C:\GameServerPrograming\Game Server\IOCP_GameServer\x64\Release\IOCP_GameClient.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
