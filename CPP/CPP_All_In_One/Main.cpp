@@ -42,11 +42,17 @@ void logAndAdd(T&& name)
     logAndAddImpl(std::forward<T>(name), std::is_integral<std::remove_reference_t<T>>());
 }
 
+template<typename... Ts>
+void f(Ts&&... t)
+{
+
+}
+
 int wmain()
 {
     timeBeginPeriod(1);
 
-    
+
 
     return 0;
 }

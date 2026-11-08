@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "MultiThr.7ac3a1ac\\x64\\Debug\\Profile.obj",
+            "outputs": [
+                "MultiThr.7ac3a1ac\\x64\\Debug\\Profile.cpp.obj.dt.module.json",
+                "MultiThr.7ac3a1ac\\x64\\Debug\\Profile.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

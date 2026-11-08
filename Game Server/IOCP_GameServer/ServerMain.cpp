@@ -9,7 +9,7 @@ using namespace std;
 #pragma comment(lib, "Winmm.lib")
 #pragma comment(lib, "Ws2_32.lib")
 
-#define SERVERPORT 47000
+#define SERVERPORT 6000
 
 SOCKET listen_sock;
 map<uint64_t, Session*> g_session;
@@ -107,6 +107,7 @@ int wmain()
 
             if (ch == 'q' || ch == 'Q')
             {
+                closesocket(listen_sock);
                 for (auto i = 0; i < 8; ++i)
                 {
                     PostQueuedCompletionStatus(hcp, 0, 0, NULL);
@@ -118,7 +119,6 @@ int wmain()
         Sleep(20);
     }
 
-    closesocket(listen_sock);
     WaitForMultipleObjects(8, hThreads, TRUE, INFINITE);
 
     for (auto it = g_session.begin(); it != g_session.end();)
@@ -233,7 +233,7 @@ uint32_t __stdcall IOCPworkerThread(LPVOID arg)
         if (InterlockedDecrement(&(session->count)) == 0)
         {
             printf("Delete session\n");
-            printf("count : %d\n", session->count);
+            printf("count : %lld\n", session->count);
             releaseSession(session);
         }
     }
@@ -291,8 +291,8 @@ bool sendPost(Session* session, int transferred)
             return false;
         }
     }
-    printf("count : %d\n", session->count);
-    printf("sendbyte : %d \t transferred : %d\n", sendRet, transferred);
+    //printf("count : %lld\n", session->count);
+    //printf("sendbyte : %d \t transferred : %d\n", sendRet, transferred);
 
     return true;
 }
@@ -319,15 +319,15 @@ bool recvPost(Session* session, int transferred)
             return false;
         }
     }
-    printf("count : %d\n", session->count);
-    printf("recvbyte : %d \t transferred : %d\n", recvRet, transferred);
+    //printf("count : %lld\n", session->count);
+    //printf("recvbyte : %d \t transferred : %d\n", recvRet, transferred);
 
     return true;
 }
 
 bool sendPacket(Session* session, int transferred)
 {
-    char temp[100];
+    char temp[65535];
     session->recvQ.Dequeue(temp, transferred);
     session->sendQ.Enqueue(temp, transferred);
 
