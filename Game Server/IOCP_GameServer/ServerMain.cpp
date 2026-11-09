@@ -10,13 +10,14 @@ using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT 6000
+#define CLIENT 2
 
 SOCKET listen_sock;
 map<uint64_t, Session*> g_session;
 
 SRWLOCK srw_session;
 HANDLE event_accept;
-HANDLE hThreads[8];
+HANDLE hThreads[CLIENT];
 
 uint32_t WINAPI acceptWorkerThread(LPVOID arg);
 uint32_t WINAPI IOCPworkerThread(LPVOID arg);
@@ -54,7 +55,7 @@ int wmain()
     }
     CloseHandle(hThread);
 
-    for (auto i = 0; i < 8; ++i)
+    for (auto i = 0; i < CLIENT; ++i)
     {
         hThreads[i] = (HANDLE)_beginthreadex(NULL, 0, IOCPworkerThread, hcp, 0, NULL);
         if (hThreads[i] == NULL)
@@ -108,7 +109,7 @@ int wmain()
             if (ch == 'q' || ch == 'Q')
             {
                 closesocket(listen_sock);
-                for (auto i = 0; i < 8; ++i)
+                for (auto i = 0; i < CLIENT; ++i)
                 {
                     PostQueuedCompletionStatus(hcp, 0, 0, NULL);
                 }
@@ -119,7 +120,7 @@ int wmain()
         Sleep(20);
     }
 
-    WaitForMultipleObjects(8, hThreads, TRUE, INFINITE);
+    WaitForMultipleObjects(CLIENT, hThreads, TRUE, INFINITE);
 
     for (auto it = g_session.begin(); it != g_session.end();)
     {
@@ -132,6 +133,7 @@ int wmain()
         it = g_session.erase(it);
     }
 
+    CloseHandle(hcp);
     WSACleanup();
 
     return 0;
