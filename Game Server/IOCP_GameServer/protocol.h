@@ -3,6 +3,7 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 #include "RingBuffer.h"
+#include "SerializationBuffer.h"
 
 enum class TYPE
 {

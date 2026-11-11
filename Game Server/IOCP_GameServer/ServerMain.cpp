@@ -10,7 +10,7 @@ using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
 
 #define SERVERPORT 6000
-#define CLIENT 2
+#define CLIENT 6
 
 SOCKET listen_sock;
 map<uint64_t, Session*> g_session;

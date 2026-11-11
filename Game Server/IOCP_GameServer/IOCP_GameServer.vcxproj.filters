@@ -3,9 +3,22 @@
   <ItemGroup>
     <ClCompile Include="ServerMain.cpp" />
     <ClCompile Include="RingBuffer.cpp" />
+    <ClCompile Include="LanServer.cpp">
+      <Filter>IOCPCore</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializationBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="protocol.h" />
+    <ClInclude Include="LanServer.h">
+      <Filter>IOCPCore</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializationBuffer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="IOCPCore">
+      <UniqueIdentifier>{4f9360ea-a259-41bd-931c-b256f17e43fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
