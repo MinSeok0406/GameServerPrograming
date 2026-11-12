@@ -25,6 +25,7 @@ struct RecvOverlapped
 
 struct Session
 {
+    uint64_t sessionID;
     SOCKET socket;
     wchar_t ip[INET_ADDRSTRLEN];
     uint16_t port;
@@ -32,7 +33,6 @@ struct Session
     RingBuffer recvQ { 5000 };
     SendOverlapped* sendOL;
     RecvOverlapped* recvOL;
-    uint64_t count;
-    CRITICAL_SECTION cs;
-    bool sendflag;
+    long count;
+    long sendflag;
 };

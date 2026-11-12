@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <map>
+#include <array>
+#include <stack>
 #include "protocol.h"
 #include "SerializationBuffer.h"
 
@@ -8,7 +10,7 @@
 class LanServer
 {
 public:
-    LanServer() : event_accept(NULL), listen_sock(NULL), hcp(NULL)
+    LanServer() : listen_sock(NULL), hcp(NULL)
     {
         InitializeSRWLock(&srw_session);
 
@@ -18,9 +20,8 @@ public:
         }
     }
 
-    ~LanServer()
+    virtual ~LanServer()
     {
-        Stop();
     }
 
     LanServer(const LanServer&) = delete;
@@ -41,18 +42,23 @@ public:
     virtual void OnRecv(uint64_t sessionID, SerializationBuffer* packet) = 0;
 
 private:
-    static uint32_t WINAPI IOCPworkerThread(LPVOID arg);
+    static uint32_t WINAPI IOCPThreadProc(LPVOID arg);
     static uint32_t WINAPI acceptThreadProc(LPVOID param);
+    void IOCPThread();
     void acceptThread();
 
     bool sendPost(Session* session);
     bool recvPost(Session* session);
 
+    bool releaseSession(Session* session);
+
     SOCKET listen_sock;
     std::map<uint64_t, Session*> map_session;
 
+    std::array<Session*, 64 * 1024> sessions;
+    std::stack<uint64_t> sessionIDs;
+
     SRWLOCK srw_session;
     HANDLE hcp;
-    HANDLE event_accept;
     HANDLE hThreads[CLIENT];
 };

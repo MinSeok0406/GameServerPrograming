@@ -1,8 +1,7 @@
 ﻿  LanServer.cpp
-C:\GamePrograming\Game Server\IOCP_GameServer\LanServer.cpp(27,24): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   코드를 생성하고 있습니다.
-  83 of 184 functions (45.1%) were compiled, the rest were copied from previous compilation.
+  0 of 205 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    27 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   IOCP_GameServer.vcxproj -> C:\GamePrograming\Game Server\IOCP_GameServer\x64\Release\IOCP_GameServer.exe

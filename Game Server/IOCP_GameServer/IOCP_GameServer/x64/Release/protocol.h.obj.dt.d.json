@@ -241,7 +241,8 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ws2tcpip.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\ws2ipdef.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\in6addr.h",
-            "c:\\gameprograming\\game server\\iocp_gameserver\\ringbuffer.h"
+            "c:\\gameprograming\\game server\\iocp_gameserver\\ringbuffer.h",
+            "c:\\gameprograming\\game server\\iocp_gameserver\\serializationbuffer.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

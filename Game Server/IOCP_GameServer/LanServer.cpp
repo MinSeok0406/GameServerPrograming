@@ -7,43 +7,29 @@ bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, u
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
     {
-        return 1;
+        return false;
     }
 
     hcp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, NumberOfConcurrentThreads - 2);
     if (hcp == NULL)
     {
-        return 1;
+        return false;
     }
 
-    HANDLE hThread;
-    hThread = (HANDLE)_beginthreadex(NULL, 0, acceptThreadProc, hcp, 0, NULL);
-    if (hThread == NULL)
+    for (uint32_t i = 0; i < workerThread; ++i)
     {
-        return 1;
-    }
-    CloseHandle(hThread);
-
-    for (auto i = 0; i < workerThread; ++i)
-    {
-        hThreads[i] = (HANDLE)_beginthreadex(NULL, 0, IOCPworkerThread, hcp, 0, NULL);
+        hThreads[i] = (HANDLE)_beginthreadex(NULL, 0, IOCPThreadProc, this, 0, NULL);
         if (hThreads[i] == NULL)
         {
-            return 1;
+            return false;
         }
-    }
-
-    event_accept = CreateEvent(NULL, FALSE, FALSE, NULL);
-    if (event_accept == NULL)
-    {
-        return 1;
     }
 
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET)
     {
         printf("socket : %d\n", WSAGetLastError());
-        return 1;
+        return false;
     }
 
     if (!isNagle)
@@ -62,17 +48,23 @@ bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, u
     if (bindRet == SOCKET_ERROR)
     {
         printf("bind : %d\n", WSAGetLastError());
-        return 1;
+        return false;
     }
 
     int listenRet = listen(listen_sock, SOMAXCONN);
     if (listenRet == SOCKET_ERROR)
     {
         printf("listen : %d\n", WSAGetLastError());
-        return 1;
+        return false;
     }
 
-    SetEvent(event_accept);
+    HANDLE hThread;
+    hThread = (HANDLE)_beginthreadex(NULL, 0, acceptThreadProc, this, 0, NULL);
+    if (hThread == NULL)
+    {
+        return false;
+    }
+    CloseHandle(hThread);
 
     return true;
 }
@@ -85,7 +77,6 @@ void LanServer::Stop()
     {
         Session* session = it->second;
         closesocket(session->socket);
-        DeleteCriticalSection(&(session->cs));
         delete session->recvOL;
         delete session->sendOL;
         delete session;
@@ -122,19 +113,16 @@ void LanServer::Update()
 bool LanServer::disconnect(uint64_t sessionID)
 {
     AcquireSRWLockExclusive(&srw_session);
-    Session* session = map_session[sessionID];
-    map_session.erase(sessionID);
+    auto it = map_session.find(sessionID);
+    if (it == map_session.end())
+    {
+        ReleaseSRWLockExclusive(&srw_session);
+        return false;
+    }
+    Session* session = it->second;
     ReleaseSRWLockExclusive(&srw_session);
 
-    closesocket(session->socket);
-    delete session->recvOL;
-    delete session->sendOL;
-
-    EnterCriticalSection(&(session->cs));
-    LeaveCriticalSection(&(session->cs));
-    DeleteCriticalSection(&(session->cs));
-
-    delete session;
+    CancelIoEx((HANDLE)session->socket, NULL);
 
     return true;
 }
@@ -142,50 +130,179 @@ bool LanServer::disconnect(uint64_t sessionID)
 bool LanServer::sendPacket(uint64_t sessionID, SerializationBuffer* packet)
 {
     AcquireSRWLockExclusive(&srw_session);
-    Session* session = map_session[sessionID];
-    map_session.erase(sessionID);
-    EnterCriticalSection(&(session->cs));
+    auto it = map_session.find(sessionID);
+    if (it == map_session.end())
+    {
+        ReleaseSRWLockExclusive(&srw_session);
+        return false;
+    }
+    Session* session = it->second;
     ReleaseSRWLockExclusive(&srw_session);
 
     // 수정 필요
-    packet->clear();
-    auto ret = session->recvQ.Dequeue(packet->getBufferPtr(), session->recvQ.GetUseSize());
-    packet->moveWritePos(ret);
-    session->sendQ.Enqueue(packet->getBufferPtr(), packet->getDataSize());
-
+    int size = packet->getDataSize();
+    int enqRet = session->sendQ.Enqueue(packet->getBufferPtr(), size);
+    //printf("[send] dataSize:%d enqueueRet:%d sendQ use:%d\n", size, enqRet, session->sendQ.GetUseSize());
     sendPost(session);
-
-    LeaveCriticalSection(&(session->cs));
 
     return true;
 }
 
-uint32_t __stdcall LanServer::IOCPworkerThread(LPVOID arg)
+uint32_t __stdcall LanServer::IOCPThreadProc(LPVOID arg)
 {
+    auto thread = static_cast<LanServer*>(arg);
+    thread->IOCPThread();
+
     return 0;
 }
 
 uint32_t __stdcall LanServer::acceptThreadProc(LPVOID param)
 {
+    auto thread = static_cast<LanServer*>(param);
+    thread->acceptThread();
+
     return 0;
 }
 
+void LanServer::IOCPThread()
+{
+    Session* session;
+
+    while (true)
+    {
+        unsigned long transferred;
+        LPOVERLAPPED overlapped;
+        auto GQCSret = GetQueuedCompletionStatus(hcp, &transferred, (uint64_t*)&session, &overlapped, INFINITE);
+        //printf("GQCS ret:%d transferred:%lu ol:%p\n", GQCSret, transferred, overlapped);
+
+        if (GQCSret == TRUE && overlapped == NULL)
+        {
+            // 스레드 종료
+            printf("WorkerThread Exit\n");
+            break;
+        }
+
+        if (GQCSret == FALSE || transferred == 0)
+        {
+            // 클라가 RST 보냄 -> 소켓 정리
+            // 클라 정상 종료
+            disconnect(session->sessionID);
+            printf("Client Exit\n");
+        }
+        else
+        {
+            if (&(session->recvOL->overlapped) == overlapped)
+            {
+                session->recvQ.MoveRear(transferred);
+                //printf("[recv] transferred:%lu recvQ use:%d\n", transferred, session->recvQ.GetUseSize());
+
+                SerializationBuffer packet;
+                packet.clear();
+                auto dequeueRet = session->recvQ.Dequeue(packet.getBufferPtr(), session->recvQ.GetUseSize());
+                packet.moveReadPos(dequeueRet);
+                //printf("[recv] dequeueRet:%d packet size:%d\n", dequeueRet, packet.getDataSize());
+
+                OnRecv(session->sessionID, &packet);
+
+                recvPost(session);
+            }
+            else if (&(session->sendOL->overlapped) == overlapped)
+            {
+                session->sendQ.MoveFront(transferred);
+                InterlockedExchange(&(session->sendflag), 0);
+                sendPost(session);
+            }
+        }
+
+        if (InterlockedDecrement(&(session->count)) == 0)
+        {
+            printf("Delete session\n");
+            printf("count : %d\n", session->count);
+            releaseSession(session);
+        }
+    }
+}
+
 void LanServer::acceptThread()
-{}
+{
+    SOCKET client_sock;
+
+    while (true)
+    {
+        SOCKADDR_IN clientaddr;
+        int addrlen = sizeof(clientaddr);
+
+        client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
+        if (client_sock == INVALID_SOCKET)
+        {
+            printf("accept : %d\n", WSAGetLastError());
+            break;
+        }
+
+        wchar_t ip[INET_ADDRSTRLEN];
+        InetNtop(AF_INET, &clientaddr.sin_addr, ip, INET_ADDRSTRLEN);
+        uint16_t port = ntohs(clientaddr.sin_port);
+
+        if (!OnConnectionRequest(ip, port))
+        {
+            closesocket(client_sock);
+            continue;
+        }
+
+        Session* session = new Session;
+        session->sessionID = (uint64_t)session + 1;
+        session->socket = client_sock;
+        memcpy(session->ip, ip, sizeof(ip));
+        session->port = port;
+        session->count = 0;
+        session->sendflag = 0;
+
+        session->sendOL = new SendOverlapped;
+        memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
+        session->sendOL->sessionID = (uint32_t)TYPE::SEND;
+
+        session->recvOL = new RecvOverlapped;
+        memset(&(session->recvOL->overlapped), 0, sizeof(session->recvOL->overlapped));
+        session->recvOL->sessionID = (uint32_t)TYPE::RECV;
+
+        WSABUF wsabuf;
+        wsabuf.buf = session->recvQ.GetRearBufferPtr();
+        wsabuf.len = session->recvQ.DirectEnqueueSize();
+
+        CreateIoCompletionPort((HANDLE)session->socket, hcp, (uint64_t)session, 0);
+
+        AcquireSRWLockExclusive(&srw_session);
+        map_session[session->sessionID] = session;
+        ReleaseSRWLockExclusive(&srw_session);
+
+        OnAccept(session->sessionID, session->ip, session->port);
+
+        recvPost(session);
+    }
+}
 
 bool LanServer::sendPost(Session* session)
 {
-    if (session->sendflag == true)
+    while (true)
     {
-        return false;
+        if (InterlockedExchange(&(session->sendflag), 1) == 1)
+            return false;   // 이미 누가 보내는 중
+
+        if (session->sendQ.GetUseSize() == 0)
+        {
+            InterlockedExchange(&(session->sendflag), 0);
+
+            // 깃발 내리는 사이에 다른 스레드가 Enqueue하고
+            // sendPost에서 튕겼을 수 있으니 한 번 더 확인
+            if (session->sendQ.GetUseSize() > 0)
+                continue;
+
+            return false;
+        }
+        break;
     }
 
-    if (session->sendQ.GetUseSize() == 0)
-    {
-        return false;
-    }
-
-    session->sendflag = true;
+    InterlockedExchange(&(session->sendflag), 1);
 
     memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
     WSABUF sendWsaBuf;
@@ -199,16 +316,17 @@ bool LanServer::sendPost(Session* session)
     {
         if (WSAGetLastError() != WSA_IO_PENDING)
         {
-            session->sendflag = false;
+            InterlockedExchange(&(session->sendflag), 0);
+            disconnect(session->sessionID);
             if (InterlockedDecrement(&(session->count)) == 0)
             {
-                disconnect((uint64_t)session + 1);
+                releaseSession(session);
             }
             return false;
         }
     }
-    //printf("count : %lld\n", session->count);
-    //printf("sendbyte : %d \t transferred : %d\n", sendRet, transferred);
+    //printf("count : %d\n", session->count);
+    //printf("sendRet : %d\n", sendRet);
 
     return true;
 }
@@ -228,15 +346,32 @@ bool LanServer::recvPost(Session* session)
     {
         if (WSAGetLastError() != WSA_IO_PENDING)
         {
+            disconnect(session->sessionID);
             if (InterlockedDecrement(&(session->count)) == 0)
             {
-                disconnect((uint64_t)session + 1);
+                releaseSession(session);
             }
             return false;
         }
     }
-    //printf("count : %lld\n", session->count);
-    //printf("recvbyte : %d \t transferred : %d\n", recvRet, transferred);
+    //printf("count : %d\n", session->count);
+    //printf("recvRet : %d\n", recvRet);
+
+    return true;
+}
+
+bool LanServer::releaseSession(Session* session)
+{
+    AcquireSRWLockExclusive(&srw_session);
+    map_session.erase(session->sessionID);
+    ReleaseSRWLockExclusive(&srw_session);
+
+    closesocket(session->socket);
+    OnRelease(session->sessionID);
+
+    delete session->recvOL;
+    delete session->sendOL;
+    delete session;
 
     return true;
 }

@@ -4,7 +4,7 @@ class SerializationBuffer
 public:
 	enum class PACKET
 	{
-		BUFFER_DEFAULT = 1400									// 패킷의 기본 버퍼 사이즈.
+		BUFFER_DEFAULT = 5000									// 패킷의 기본 버퍼 사이즈.
 	};
 
 	SerializationBuffer();
@@ -58,6 +58,9 @@ public:
 	SerializationBuffer& operator>>(double& value);
 
 private:
+	SerializationBuffer(const SerializationBuffer&) = delete;
+	SerializationBuffer& operator=(const SerializationBuffer&) = delete;
+
 	unsigned int	_buffersize;
 	unsigned int	_usesize;
 	unsigned int	_readpos;
