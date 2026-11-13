@@ -30,7 +30,7 @@ public:
     bool Start(uint16_t port, unsigned long workerThread, bool isNagle, unsigned long NumberOfConcurrentThreads);
     void Stop();
     void Update();
-    int GetSessionCount() { return (int)sessions.size(); }
+    int GetSessionCount() { return (int)map_session.size(); }
 
     bool disconnect(uint64_t sessionID);
     bool sendPacket(uint64_t sessionID, SerializationBuffer* packet);
@@ -53,8 +53,10 @@ private:
     bool releaseSession(Session* session);
 
     SOCKET listen_sock;
-    std::array<Session*, 64 * 1024> sessions;
-    std::stack<uint64_t> sessionIDs;
+    std::map<uint64_t, Session*> map_session;
+
+    //std::array<Session*, 64 * 1024> sessions;
+    //std::stack<uint64_t> sessionIDs;
 
     SRWLOCK srw_session;
     HANDLE hcp;

@@ -2,6 +2,9 @@
 #include <process.h>
 #include <conio.h>
 
+long disconnectCount = 0;
+long releaseCount = 0;
+
 bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, unsigned long NumberOfConcurrentThreads)
 {
     WSADATA wsa;
@@ -31,6 +34,11 @@ bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, u
         printf("socket : %d\n", WSAGetLastError());
         return false;
     }
+
+    linger optval;
+    optval.l_onoff = 1;
+    optval.l_linger = 0;
+    setsockopt(listen_sock, SOL_SOCKET, SO_LINGER, (const char*)&optval, sizeof(optval));
 
     if (!isNagle)
     {
@@ -72,6 +80,11 @@ bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, u
 void LanServer::Stop()
 {
     WaitForMultipleObjects(CLIENT, hThreads, TRUE, INFINITE);
+
+    for (auto i = 0; i < CLIENT; ++i)
+    {
+        CloseHandle(hThreads[i]);
+    }
 
     for (auto it = map_session.begin(); it != map_session.end();)
     {
@@ -123,6 +136,8 @@ bool LanServer::disconnect(uint64_t sessionID)
     ReleaseSRWLockExclusive(&srw_session);
 
     CancelIoEx((HANDLE)session->socket, NULL);
+
+    InterlockedAdd(&disconnectCount, 1);
 
     return true;
 }
@@ -220,6 +235,8 @@ void LanServer::IOCPThread()
             printf("count : %d\n", session->count);
             releaseSession(session);
         }
+
+        printf("Accept : %d \t Disconnect : %d \t Release : %d\n", GetSessionCount(), disconnectCount, releaseCount);
     }
 }
 
@@ -292,7 +309,7 @@ bool LanServer::sendPost(Session* session)
         {
             InterlockedExchange(&(session->sendflag), 0);
 
-            // 깃발 내리는 사이에 다른 스레드가 Enqueue하고
+            // 다른 스레드가 Enqueue하고
             // sendPost에서 튕겼을 수 있으니 한 번 더 확인
             if (session->sendQ.GetUseSize() > 0)
                 continue;
@@ -372,6 +389,8 @@ bool LanServer::releaseSession(Session* session)
     delete session->recvOL;
     delete session->sendOL;
     delete session;
+
+    InterlockedAdd(&releaseCount, 1);
 
     return true;
 }

@@ -1,4 +1,4 @@
-C:\GamePrograming\Game Server\IOCP_GameServer\LanServer.cpp;C:\GamePrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\LanServer.obj
-C:\GamePrograming\Game Server\IOCP_GameServer\RingBuffer.cpp;C:\GamePrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\RingBuffer.obj
-C:\GamePrograming\Game Server\IOCP_GameServer\SerializationBuffer.cpp;C:\GamePrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\SerializationBuffer.obj
-C:\GamePrograming\Game Server\IOCP_GameServer\ServerMain.cpp;C:\GamePrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\ServerMain.obj
+C:\GameServerPrograming\Game Server\IOCP_GameServer\LanServer.cpp;C:\GameServerPrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\LanServer.obj
+C:\GameServerPrograming\Game Server\IOCP_GameServer\RingBuffer.cpp;C:\GameServerPrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\RingBuffer.obj
+C:\GameServerPrograming\Game Server\IOCP_GameServer\SerializationBuffer.cpp;C:\GameServerPrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\SerializationBuffer.obj
+C:\GameServerPrograming\Game Server\IOCP_GameServer\ServerMain.cpp;C:\GameServerPrograming\Game Server\IOCP_GameServer\IOCP_GameServer\x64\Release\ServerMain.obj
