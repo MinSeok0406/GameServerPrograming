@@ -1,10 +1,10 @@
 {
     "Version": "1.2",
     "Data": {
-        "Source": "c:\\gameprograming\\game server\\iocp_gameserver\\lanserver.cpp",
+        "Source": "c:\\gameserverprograming\\game server\\iocp_gameserver\\lanserver.cpp",
         "ProvidedModule": "",
         "Includes": [
-            "c:\\gameprograming\\game server\\iocp_gameserver\\lanserver.h",
+            "c:\\gameserverprograming\\game server\\iocp_gameserver\\lanserver.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\map",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\yvals_core.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime.h",
@@ -96,7 +96,7 @@
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\array",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\stack",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\deque",
-            "c:\\gameprograming\\game server\\iocp_gameserver\\protocol.h",
+            "c:\\gameserverprograming\\game server\\iocp_gameserver\\protocol.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\winsock2.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winapifamily.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\winpackagefamily.h",
@@ -316,8 +316,8 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\um\\ws2tcpip.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\ws2ipdef.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\shared\\in6addr.h",
-            "c:\\gameprograming\\game server\\iocp_gameserver\\ringbuffer.h",
-            "c:\\gameprograming\\game server\\iocp_gameserver\\serializationbuffer.h",
+            "c:\\gameserverprograming\\game server\\iocp_gameserver\\ringbuffer.h",
+            "c:\\gameserverprograming\\game server\\iocp_gameserver\\serializationbuffer.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\process.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_startup.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\math.h",

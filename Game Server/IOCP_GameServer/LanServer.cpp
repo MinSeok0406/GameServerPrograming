@@ -28,13 +28,6 @@ bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, u
         }
     }
 
-    // 세션 배열 초기화
-    sessions.fill(nullptr);
-    for (int i = MAX_SESSION - 1; i >= 0; --i)
-    {
-        sessionIndex.push(static_cast<uint16_t>(i));
-    }
-
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET)
     {
@@ -268,7 +261,7 @@ void LanServer::acceptThread()
             continue;
         }
 
-        if (sessions.empty())
+        if (sessionIndex.empty())
         {
             closesocket(client_sock);
             continue;
@@ -286,11 +279,11 @@ void LanServer::acceptThread()
 
         session->sendOL = new SendOverlapped;
         memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
-        session->sendOL->sessionID = (uint32_t)TYPE::SEND;
+        session->sendOL->overlappedType = (uint32_t)TYPE::SEND;
 
         session->recvOL = new RecvOverlapped;
         memset(&(session->recvOL->overlapped), 0, sizeof(session->recvOL->overlapped));
-        session->recvOL->sessionID = (uint32_t)TYPE::RECV;
+        session->recvOL->overlappedType = (uint32_t)TYPE::RECV;
 
         WSABUF wsabuf;
         wsabuf.buf = session->recvQ.GetRearBufferPtr();

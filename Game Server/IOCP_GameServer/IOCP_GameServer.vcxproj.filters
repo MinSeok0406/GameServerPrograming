@@ -11,6 +11,9 @@
     <ClCompile Include="SerializationBuffer.cpp">
       <Filter>Buffer</Filter>
     </ClCompile>
+    <ClCompile Include="CrashDump.cpp">
+      <Filter>CrashDump</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="protocol.h" />
@@ -23,6 +26,9 @@
     <ClInclude Include="SerializationBuffer.h">
       <Filter>Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="CrashDump.h">
+      <Filter>CrashDump</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="IOCPCore">
@@ -30,6 +36,9 @@
     </Filter>
     <Filter Include="Buffer">
       <UniqueIdentifier>{0aed193e-4f2b-46fb-aaad-4229ba121dd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CrashDump">
+      <UniqueIdentifier>{1fe2c607-fa42-459c-bdc0-ea29fdd907be}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

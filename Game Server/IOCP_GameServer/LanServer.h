@@ -15,6 +15,13 @@ class LanServer
 public:
     LanServer() : listen_sock(NULL), hcp(NULL)
     {
+        // 세션 배열 초기화
+        sessions.fill(nullptr);
+        for (int i = MAX_SESSION - 1; i >= 0; --i)
+        {
+            sessionIndex.push(static_cast<uint16_t>(i));
+        }
+
         for (auto i = 0; i < CLIENT; ++i)
         {
             hThreads[i] = NULL;
@@ -56,8 +63,10 @@ private:
     SOCKET listen_sock;
     //std::map<uint64_t, Session*> map_session;
 
+    // 동기화 필요 -> 락을 사용하든 락프리를 사용하든 해결해야 함
     std::array<Session*, MAX_SESSION> sessions;
     std::stack<uint16_t> sessionIndex;
+
     uint64_t idCounter = 0;
     long sessionCount = 0;
 

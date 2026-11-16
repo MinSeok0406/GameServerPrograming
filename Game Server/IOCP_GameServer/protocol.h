@@ -14,13 +14,13 @@ enum class TYPE
 struct SendOverlapped
 {
     WSAOVERLAPPED overlapped;
-    uint32_t sessionID;
+    uint32_t overlappedType;
 };
 
 struct RecvOverlapped
 {
     WSAOVERLAPPED overlapped;
-    uint32_t sessionID;
+    uint32_t overlappedType;
 };
 
 struct Session
