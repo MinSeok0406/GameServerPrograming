@@ -28,6 +28,13 @@ bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, u
         }
     }
 
+    // 세션 배열 초기화
+    sessions.fill(nullptr);
+    for (int i = MAX_SESSION - 1; i >= 0; --i)
+    {
+        sessionIndex.push(static_cast<uint16_t>(i));
+    }
+
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET)
     {
@@ -86,14 +93,18 @@ void LanServer::Stop()
         CloseHandle(hThreads[i]);
     }
 
-    for (auto it = map_session.begin(); it != map_session.end();)
+    for (auto& session : sessions)
     {
-        Session* session = it->second;
+        if (session == nullptr)
+        {
+            continue;
+        }
+
         closesocket(session->socket);
         delete session->recvOL;
         delete session->sendOL;
         delete session;
-        it = map_session.erase(it);
+        session = nullptr;
     }
 
     CloseHandle(hcp);
@@ -125,34 +136,25 @@ void LanServer::Update()
 
 bool LanServer::disconnect(uint64_t sessionID)
 {
-    AcquireSRWLockExclusive(&srw_session);
-    auto it = map_session.find(sessionID);
-    if (it == map_session.end())
+    Session* session = sessions[sessionID & INDEX_MASK];
+    if (session == nullptr || session->sessionID != sessionID)
     {
-        ReleaseSRWLockExclusive(&srw_session);
         return false;
     }
-    Session* session = it->second;
-    ReleaseSRWLockExclusive(&srw_session);
 
     CancelIoEx((HANDLE)session->socket, NULL);
-
-    InterlockedAdd(&disconnectCount, 1);
+    InterlockedIncrement(&disconnectCount);
 
     return true;
 }
 
 bool LanServer::sendPacket(uint64_t sessionID, SerializationBuffer* packet)
 {
-    AcquireSRWLockExclusive(&srw_session);
-    auto it = map_session.find(sessionID);
-    if (it == map_session.end())
+    Session* session = sessions[sessionID & INDEX_MASK];
+    if (session == nullptr || session->sessionID != sessionID)
     {
-        ReleaseSRWLockExclusive(&srw_session);
         return false;
     }
-    Session* session = it->second;
-    ReleaseSRWLockExclusive(&srw_session);
 
     // 수정 필요
     int size = packet->getDataSize();
@@ -236,7 +238,7 @@ void LanServer::IOCPThread()
             releaseSession(session);
         }
 
-        printf("Accept : %d \t Disconnect : %d \t Release : %d\n", GetSessionCount(), disconnectCount, releaseCount);
+        printf("Accept : %d \t Disconnect : %d \t Release : %d\n", sessionCount, disconnectCount, releaseCount);
     }
 }
 
@@ -266,8 +268,16 @@ void LanServer::acceptThread()
             continue;
         }
 
+        if (sessions.empty())
+        {
+            closesocket(client_sock);
+            continue;
+        }
+        uint16_t index = sessionIndex.top();
+        sessionIndex.pop();
+
         Session* session = new Session;
-        session->sessionID = (uint64_t)session + 1;
+        session->sessionID = (++idCounter << 16) | index;
         session->socket = client_sock;
         memcpy(session->ip, ip, sizeof(ip));
         session->port = port;
@@ -288,9 +298,8 @@ void LanServer::acceptThread()
 
         CreateIoCompletionPort((HANDLE)session->socket, hcp, (uint64_t)session, 0);
 
-        AcquireSRWLockExclusive(&srw_session);
-        map_session[session->sessionID] = session;
-        ReleaseSRWLockExclusive(&srw_session);
+        sessions[index] = session;
+        InterlockedIncrement(&sessionCount);
 
         OnAccept(session->sessionID, session->ip, session->port);
 
@@ -379,10 +388,10 @@ bool LanServer::recvPost(Session* session)
 
 bool LanServer::releaseSession(Session* session)
 {
-    AcquireSRWLockExclusive(&srw_session);
-    map_session.erase(session->sessionID);
-    ReleaseSRWLockExclusive(&srw_session);
+    uint64_t sessionID = session->sessionID;
+    uint16_t index = static_cast<uint16_t>(sessionID & INDEX_MASK);
 
+    sessions[index] = nullptr;
     closesocket(session->socket);
     OnRelease(session->sessionID);
 
@@ -390,7 +399,9 @@ bool LanServer::releaseSession(Session* session)
     delete session->sendOL;
     delete session;
 
-    InterlockedAdd(&releaseCount, 1);
+    InterlockedDecrement(&sessionCount);
+    InterlockedIncrement(&releaseCount);
 
+    sessionIndex.push(index);
     return true;
 }

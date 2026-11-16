@@ -7,13 +7,14 @@
 
 #define CLIENT 6
 
+constexpr uint64_t MAX_SESSION = 64 * 1024;
+constexpr uint64_t INDEX_MASK = MAX_SESSION - 1;
+
 class LanServer
 {
 public:
     LanServer() : listen_sock(NULL), hcp(NULL)
     {
-        InitializeSRWLock(&srw_session);
-
         for (auto i = 0; i < CLIENT; ++i)
         {
             hThreads[i] = NULL;
@@ -30,7 +31,7 @@ public:
     bool Start(uint16_t port, unsigned long workerThread, bool isNagle, unsigned long NumberOfConcurrentThreads);
     void Stop();
     void Update();
-    int GetSessionCount() { return (int)map_session.size(); }
+    //int GetSessionCount() { return (int)map_session.size(); }
 
     bool disconnect(uint64_t sessionID);
     bool sendPacket(uint64_t sessionID, SerializationBuffer* packet);
@@ -53,12 +54,13 @@ private:
     bool releaseSession(Session* session);
 
     SOCKET listen_sock;
-    std::map<uint64_t, Session*> map_session;
+    //std::map<uint64_t, Session*> map_session;
 
-    //std::array<Session*, 64 * 1024> sessions;
-    //std::stack<uint64_t> sessionIDs;
+    std::array<Session*, MAX_SESSION> sessions;
+    std::stack<uint16_t> sessionIndex;
+    uint64_t idCounter = 0;
+    long sessionCount = 0;
 
-    SRWLOCK srw_session;
     HANDLE hcp;
     HANDLE hThreads[CLIENT];
 };
