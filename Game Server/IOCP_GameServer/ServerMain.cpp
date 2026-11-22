@@ -26,7 +26,16 @@ public:
 
     void OnAccept(uint64_t sessionID, const wchar_t* ip, uint16_t port) override
     {
+        SerializationBuffer packet;
+        packet.clear();
 
+        short header = sizeof(int64_t);
+        int64_t data = 0x7fffffffffffffff;
+
+        packet << header;
+        packet << data;
+
+        sendPacket(sessionID, &packet);
     }
 
     void OnRelease(uint64_t sessionID) override

@@ -40,6 +40,10 @@ bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, u
     optval.l_linger = 0;
     setsockopt(listen_sock, SOL_SOCKET, SO_LINGER, (const char*)&optval, sizeof(optval));
 
+    int newSize = 0;
+    setsockopt(listen_sock, SOL_SOCKET, SO_SNDBUF, (const char*)&newSize, sizeof(newSize));
+    setsockopt(listen_sock, SOL_SOCKET, SO_RCVBUF, (const char*)&newSize, sizeof(newSize));
+
     if (!isNagle)
     {
         int flag = 1;
@@ -274,7 +278,7 @@ void LanServer::acceptThread()
         session->socket = client_sock;
         memcpy(session->ip, ip, sizeof(ip));
         session->port = port;
-        session->count = 0;
+        session->count = 1;
         session->sendflag = 0;
 
         session->sendOL = new SendOverlapped;
@@ -285,10 +289,6 @@ void LanServer::acceptThread()
         memset(&(session->recvOL->overlapped), 0, sizeof(session->recvOL->overlapped));
         session->recvOL->overlappedType = (uint32_t)TYPE::RECV;
 
-        WSABUF wsabuf;
-        wsabuf.buf = session->recvQ.GetRearBufferPtr();
-        wsabuf.len = session->recvQ.DirectEnqueueSize();
-
         CreateIoCompletionPort((HANDLE)session->socket, hcp, (uint64_t)session, 0);
 
         sessions[index] = session;
@@ -297,6 +297,13 @@ void LanServer::acceptThread()
         OnAccept(session->sessionID, session->ip, session->port);
 
         recvPost(session);
+
+        if (InterlockedDecrement(&(session->count)) == 0)
+        {
+            printf("Delete session\n");
+            printf("count : %d\n", session->count);
+            releaseSession(session);
+        }
     }
 }
 
