@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "LockFree_Text\\x64\\Release\\CrashDump.obj",
+            "outputs": [
+                "LockFree_Text\\x64\\Release\\CrashDump.cpp.obj.dt.module.json",
+                "LockFree_Text\\x64\\Release\\CrashDump.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

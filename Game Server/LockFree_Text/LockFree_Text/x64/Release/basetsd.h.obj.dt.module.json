@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "LockFree_Text\\x64\\Release\\basetsd.obj",
+            "outputs": [
+                "LockFree_Text\\x64\\Release\\basetsd.h.obj.dt.module.json",
+                "LockFree_Text\\x64\\Release\\basetsd.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

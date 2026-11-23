@@ -38,7 +38,6 @@ public:
     bool Start(uint16_t port, unsigned long workerThread, bool isNagle, unsigned long NumberOfConcurrentThreads);
     void Stop();
     void Update();
-    //int GetSessionCount() { return (int)map_session.size(); }
 
     bool disconnect(uint64_t sessionID);
     bool sendPacket(uint64_t sessionID, SerializationBuffer* packet);
@@ -61,7 +60,6 @@ private:
     bool releaseSession(Session* session);
 
     SOCKET listen_sock;
-    //std::map<uint64_t, Session*> map_session;
 
     // 동기화 필요 -> 락을 사용하든 락프리를 사용하든 해결해야 함
     std::array<Session*, MAX_SESSION> sessions;
