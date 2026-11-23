@@ -336,7 +336,7 @@ bool LanServer::sendPost(Session* session)
     sendWsaBuf.len = session->sendQ.DirectDequeueSize();
 
     InterlockedIncrement(&(session->count));
-
+    
     auto sendRet = WSASend(session->socket, &sendWsaBuf, 1, NULL, 0, &(session->sendOL->overlapped), NULL);
     if (sendRet == SOCKET_ERROR)
     {

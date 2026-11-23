@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="LockFree_Text.vcxproj" />
+  <Project Path="LockFree_Text.vcxproj" Id="59e78d63-0c03-423a-b62a-f116c828e448" />
 </Solution>

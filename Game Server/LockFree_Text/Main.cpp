@@ -25,7 +25,7 @@ struct StackLog
     void* newTop;
 };
 
-constexpr uint64_t ce_logSize = 1 << 4;
+constexpr uint64_t ce_logSize = 1 << 5;
 StackLog g_log[ce_logSize];
 int64_t g_logIndex = -1;
 long g_stopLog = 0;
@@ -70,10 +70,10 @@ int wmain()
     timeBeginPeriod(1);
     srand((uint32_t)time(nullptr));
 
-    for (auto i = 0; i < CLIENT * 10000; ++i)
+/*    for (auto i = 0; i < CLIENT * 10000; ++i)
     {
         g_stack.push(rand() % 100);
-    }
+    }*/
 
     hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
@@ -170,7 +170,7 @@ void writeLog(LogType type, void* oldTop, void* newTop)
     log.newTop = newTop;
 }
 
-uint32_t __stdcall threadProc(LPVOID param)
+/*uint32_t __stdcall threadProc(LPVOID param)
 {
     WaitForSingleObject(hEvent, INFINITE);
 
@@ -185,9 +185,9 @@ uint32_t __stdcall threadProc(LPVOID param)
     }
 
     return 0;
-}
+}*/
 
-/*uint32_t __stdcall threadProc(LPVOID param)
+uint32_t __stdcall threadProc(LPVOID param)
 {
     WaitForSingleObject(hEvent, INFINITE);
 
@@ -207,4 +207,4 @@ uint32_t __stdcall threadProc(LPVOID param)
     }
 
     return 0;
-}*/
+}
