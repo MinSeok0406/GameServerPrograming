@@ -150,15 +150,22 @@ bool LanServer::sendPacket(uint64_t sessionID, SerializationBuffer* packet)
     Session* session = sessions[sessionID & INDEX_MASK];
     if (session == nullptr || session->sessionID != sessionID)
     {
+        delete packet;
         return false;
     }
 
-    // 수정 필요
-    int size = packet->getDataSize();
-    int enqRet = session->sendQ.Enqueue(packet->getBufferPtr(), size);
-    //printf("[send] dataSize:%d enqueueRet:%d sendQ use:%d\n", size, enqRet, session->sendQ.GetUseSize());
-    sendPost(session);
+    if (session->sendArrayCount >= ce_SendArraySize)
+    {
+        delete packet;
+        disconnect(sessionID);
+        return false;
+    }
 
+    session->sendArray[session->sendRear] = packet;
+    session->sendRear = (session->sendRear + 1) & ce_SendArrayMask;
+    InterlockedIncrement(&session->sendArrayCount);
+
+    sendPost(session);
     return true;
 }
 
@@ -201,7 +208,7 @@ void LanServer::IOCPThread()
             // 클라가 RST 보냄 -> 소켓 정리
             // 클라 정상 종료
             disconnect(session->sessionID);
-            printf("Client Exit\n");
+            //printf("Client Exit\n");
         }
         else
         {
@@ -217,12 +224,17 @@ void LanServer::IOCPThread()
                 //printf("[recv] dequeueRet:%d packet size:%d\n", dequeueRet, packet.getDataSize());
 
                 OnRecv(session->sessionID, &packet);
-
                 recvPost(session);
             }
             else if (&(session->sendOL->overlapped) == overlapped)
             {
-                session->sendQ.MoveFront(transferred);
+                for (long i = 0; i < session->sendingCount; ++i)
+                {
+                    delete session->sendingPackets[i];
+                    session->sendingPackets[i] = nullptr;
+                }
+                session->sendingCount = 0;
+
                 InterlockedExchange(&(session->sendflag), 0);
                 sendPost(session);
             }
@@ -230,12 +242,12 @@ void LanServer::IOCPThread()
 
         if (InterlockedDecrement(&(session->count)) == 0)
         {
-            printf("Delete session\n");
-            printf("count : %d\n", session->count);
+            //printf("Delete session\n");
+            //printf("count : %d\n", session->count);
             releaseSession(session);
         }
 
-        printf("Accept : %d \t Disconnect : %d \t Release : %d\n", sessionCount, disconnectCount, releaseCount);
+        //printf("Accept : %d \t Disconnect : %d \t Release : %d\n", sessionCount, disconnectCount, releaseCount);
     }
 }
 
@@ -278,6 +290,21 @@ void LanServer::acceptThread()
         session->socket = client_sock;
         memcpy(session->ip, ip, sizeof(ip));
         session->port = port;
+        session->sendRear = 0;
+        session->sendFront = 0;
+        session->sendArrayCount = 0;
+        session->sendingCount = 0;
+        
+        for (auto i = 0; i < ce_SendArraySize; ++i)
+        {
+            session->sendArray[i] = nullptr;
+        }
+
+        for (auto i = 0; i < ce_MaxWsaBuf; ++i)
+        {
+            session->sendingPackets[i] = nullptr;
+        }
+
         session->count = 1;
         session->sendflag = 0;
 
@@ -300,8 +327,8 @@ void LanServer::acceptThread()
 
         if (InterlockedDecrement(&(session->count)) == 0)
         {
-            printf("Delete session\n");
-            printf("count : %d\n", session->count);
+            //printf("Delete session\n");
+            //printf("count : %d\n", session->count);
             releaseSession(session);
         }
     }
@@ -314,13 +341,13 @@ bool LanServer::sendPost(Session* session)
         if (InterlockedExchange(&(session->sendflag), 1) == 1)
             return false;   // 이미 누가 보내는 중
 
-        if (session->sendQ.GetUseSize() == 0)
+        if (session->sendArrayCount == 0)
         {
             InterlockedExchange(&(session->sendflag), 0);
 
             // 다른 스레드가 Enqueue하고
             // sendPost에서 튕겼을 수 있으니 한 번 더 확인
-            if (session->sendQ.GetUseSize() > 0)
+            if (session->sendArrayCount > 0)
                 continue;
 
             return false;
@@ -328,21 +355,30 @@ bool LanServer::sendPost(Session* session)
         break;
     }
 
-    InterlockedExchange(&(session->sendflag), 1);
+    long cnt = min((int)session->sendArrayCount, ce_MaxWsaBuf);
+
+    WSABUF wsabufs[ce_MaxWsaBuf];
+    for (long i = 0; i < cnt; ++i)
+    {
+        SerializationBuffer* packet = session->sendArray[session->sendFront];
+        session->sendArray[session->sendFront] = nullptr;
+        session->sendFront = (session->sendFront + 1) & ce_SendArrayMask;
+
+        session->sendingPackets[i] = packet;
+        wsabufs[i].buf = packet->getBufferPtr();
+        wsabufs[i].len = packet->getDataSize();
+    }
+    session->sendingCount = cnt;
+    InterlockedExchangeAdd(&session->sendArrayCount, -cnt);
 
     memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
-    WSABUF sendWsaBuf;
-    sendWsaBuf.buf = session->sendQ.GetFrontBufferPtr();
-    sendWsaBuf.len = session->sendQ.DirectDequeueSize();
-
     InterlockedIncrement(&(session->count));
     
-    auto sendRet = WSASend(session->socket, &sendWsaBuf, 1, NULL, 0, &(session->sendOL->overlapped), NULL);
+    auto sendRet = WSASend(session->socket, wsabufs, cnt, NULL, 0, &(session->sendOL->overlapped), NULL);
     if (sendRet == SOCKET_ERROR)
     {
         if (WSAGetLastError() != WSA_IO_PENDING)
         {
-            InterlockedExchange(&(session->sendflag), 0);
             disconnect(session->sessionID);
             if (InterlockedDecrement(&(session->count)) == 0)
             {
@@ -390,6 +426,18 @@ bool LanServer::releaseSession(Session* session)
 {
     uint64_t sessionID = session->sessionID;
     uint16_t index = static_cast<uint16_t>(sessionID & INDEX_MASK);
+
+    for (long i = 0; i < session->sendingCount; ++i)
+    {
+        delete session->sendingPackets[i];
+    }
+
+    while (session->sendArrayCount > 0)
+    {
+        delete session->sendArray[session->sendFront];
+        session->sendFront = (session->sendFront + 1) & ce_SendArrayMask;
+        --session->sendArrayCount;
+    }
 
     sessions[index] = nullptr;
     closesocket(session->socket);

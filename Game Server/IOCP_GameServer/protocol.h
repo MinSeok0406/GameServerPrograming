@@ -5,6 +5,10 @@
 #include "RingBuffer.h"
 #include "SerializationBuffer.h"
 
+constexpr int ce_SendArraySize = (1 << 9);
+constexpr int ce_SendArrayMask = ce_SendArraySize - 1;
+constexpr int ce_MaxWsaBuf = 100;
+
 enum class TYPE
 {
     SEND,
@@ -29,8 +33,18 @@ struct Session
     SOCKET socket;
     wchar_t ip[INET_ADDRSTRLEN];
     uint16_t port;
-    RingBuffer sendQ { 50000 };
     RingBuffer recvQ { 5000 };
+
+    // 링 버퍼를 대체하는 배열
+    SerializationBuffer* sendArray[ce_SendArraySize];
+    long sendRear;
+    long sendFront;
+    long sendArrayCount;
+
+    // WSASend에 걸려있는 패킷
+    SerializationBuffer* sendingPackets[ce_MaxWsaBuf];
+    long sendingCount;
+
     SendOverlapped* sendOL;
     RecvOverlapped* recvOL;
     long count;

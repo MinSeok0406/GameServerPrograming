@@ -14,6 +14,9 @@
     <ClCompile Include="CrashDump.cpp">
       <Filter>CrashDump</Filter>
     </ClCompile>
+    <ClCompile Include="CpuUsage.cpp">
+      <Filter>CPU_Using</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="protocol.h" />
@@ -29,6 +32,9 @@
     <ClInclude Include="CrashDump.h">
       <Filter>CrashDump</Filter>
     </ClInclude>
+    <ClInclude Include="CpuUsage.h">
+      <Filter>CPU_Using</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="IOCPCore">
@@ -39,6 +45,9 @@
     </Filter>
     <Filter Include="CrashDump">
       <UniqueIdentifier>{1fe2c607-fa42-459c-bdc0-ea29fdd907be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPU_Using">
+      <UniqueIdentifier>{a13c55e6-38ef-440c-be6c-83eeac8c261e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
