@@ -16,6 +16,7 @@ public:
     LanServer() : listen_sock(NULL), hcp(NULL)
     {
         // 세션 배열 초기화
+        InitializeSRWLock(&indexLock);
         sessions.fill(nullptr);
         for (int i = MAX_SESSION - 1; i >= 0; --i)
         {
@@ -60,6 +61,7 @@ private:
     bool releaseSession(Session* session);
 
     SOCKET listen_sock;
+    SRWLOCK indexLock;
 
     // 동기화 필요 -> 락을 사용하든 락프리를 사용하든 해결해야 함
     std::array<Session*, MAX_SESSION> sessions;

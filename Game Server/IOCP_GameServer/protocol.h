@@ -7,7 +7,7 @@
 
 constexpr int ce_SendArraySize = (1 << 15);
 constexpr int ce_SendArrayMask = ce_SendArraySize - 1;
-constexpr int ce_MaxWsaBuf = 1000;
+constexpr int ce_MaxWsaBuf = 300;
 
 enum class TYPE
 {
@@ -44,7 +44,6 @@ struct Session
     // WSASend에 걸려있는 패킷
     SerializationBuffer* sendingPackets[ce_MaxWsaBuf];
     long sendingCount;
-    long sendingBytes;
 
     SendOverlapped* sendOL;
     RecvOverlapped* recvOL;

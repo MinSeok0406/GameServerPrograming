@@ -5,9 +5,6 @@
 
 CrashDump g_crashDump;
 
-long disconnectCount = 0;
-long releaseCount = 0;
-
 bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, unsigned long NumberOfConcurrentThreads)
 {
     WSADATA wsa;
@@ -143,7 +140,6 @@ bool LanServer::disconnect(uint64_t sessionID)
     }
 
     CancelIoEx((HANDLE)session->socket, NULL);
-    InterlockedIncrement(&disconnectCount);
 
     return true;
 }
@@ -153,15 +149,22 @@ bool LanServer::sendPacket(uint64_t sessionID, SerializationBuffer* packet)
     Session* session = sessions[sessionID & INDEX_MASK];
     if (session == nullptr || session->sessionID != sessionID)
     {
+        g_crashDump.Crash();
         delete packet;
         return false;
     }
 
     if (session->sendArrayCount >= ce_SendArraySize)
     {
+        g_crashDump.Crash();
         delete packet;
         disconnect(sessionID);
         return false;
+    }
+
+    if (session->sendArray[session->sendRear] != nullptr)
+    {
+        g_crashDump.Crash();
     }
 
     session->sendArray[session->sendRear] = packet;
@@ -231,6 +234,11 @@ void LanServer::IOCPThread()
             }
             else if (&(session->sendOL->overlapped) == overlapped)
             {
+                if (session->sendingCount == 0)
+                {
+                    g_crashDump.Crash();
+                }
+
                 for (long i = 0; i < session->sendingCount; ++i)
                 {
                     delete session->sendingPackets[i];
@@ -238,16 +246,8 @@ void LanServer::IOCPThread()
                 }
                 session->sendingCount = 0;
 
-                if (transferred != (unsigned long)session->sendingBytes)
-                {
-                    g_crashDump.Crash();
-                    disconnect(session->sessionID);
-                }
-                else
-                {
-                    InterlockedExchange(&(session->sendflag), 0);
-                    sendPost(session);
-                }
+                InterlockedExchange(&(session->sendflag), 0);
+                sendPost(session);
             }
         }
 
@@ -288,13 +288,16 @@ void LanServer::acceptThread()
             continue;
         }
 
+        AcquireSRWLockExclusive(&indexLock);
         if (sessionIndex.empty())
         {
+            ReleaseSRWLockExclusive(&indexLock);
             closesocket(client_sock);
             continue;
         }
         uint16_t index = sessionIndex.top();
         sessionIndex.pop();
+        ReleaseSRWLockExclusive(&indexLock);
 
         Session* session = new Session;
         session->sessionID = (++idCounter << 16) | index;
@@ -305,7 +308,6 @@ void LanServer::acceptThread()
         session->sendFront = 0;
         session->sendArrayCount = 0;
         session->sendingCount = 0;
-        session->sendingBytes = 0;
         
         for (auto i = 0; i < ce_SendArraySize; ++i)
         {
@@ -370,20 +372,22 @@ bool LanServer::sendPost(Session* session)
     long cnt = min((int)session->sendArrayCount, ce_MaxWsaBuf);
 
     WSABUF wsabufs[ce_MaxWsaBuf];
-    long totalBytes = 0;
     for (long i = 0; i < cnt; ++i)
     {
         SerializationBuffer* packet = session->sendArray[session->sendFront];
+        if (packet == nullptr)
+        {
+            g_crashDump.Crash();
+        }
+
         session->sendArray[session->sendFront] = nullptr;
         session->sendFront = (session->sendFront + 1) & ce_SendArrayMask;
 
         session->sendingPackets[i] = packet;
         wsabufs[i].buf = packet->getBufferPtr();
         wsabufs[i].len = packet->getDataSize();
-        totalBytes += wsabufs[i].len;
     }
     session->sendingCount = cnt;
-    session->sendingBytes = totalBytes;
     InterlockedExchangeAdd(&session->sendArrayCount, -cnt);
 
     memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));
@@ -414,6 +418,11 @@ bool LanServer::recvPost(Session* session)
     WSABUF recvWsaBuf;
     recvWsaBuf.buf = session->recvQ.GetRearBufferPtr();
     recvWsaBuf.len = session->recvQ.DirectEnqueueSize();
+
+    if (recvWsaBuf.len == 0)
+    {
+        g_crashDump.Crash();
+    }
 
     InterlockedIncrement(&(session->count));
 
@@ -463,8 +472,9 @@ bool LanServer::releaseSession(Session* session)
     delete session;
 
     InterlockedDecrement(&sessionCount);
-    InterlockedIncrement(&releaseCount);
 
+    AcquireSRWLockExclusive(&indexLock);
     sessionIndex.push(index);
+    ReleaseSRWLockExclusive(&indexLock);
     return true;
 }
