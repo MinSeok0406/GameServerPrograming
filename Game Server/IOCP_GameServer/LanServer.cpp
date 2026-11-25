@@ -1,6 +1,9 @@
 ﻿#include "LanServer.h"
 #include <process.h>
 #include <conio.h>
+#include "CrashDump.h"
+
+CrashDump g_crashDump;
 
 long disconnectCount = 0;
 long releaseCount = 0;
@@ -235,8 +238,16 @@ void LanServer::IOCPThread()
                 }
                 session->sendingCount = 0;
 
-                InterlockedExchange(&(session->sendflag), 0);
-                sendPost(session);
+                if (transferred != (unsigned long)session->sendingBytes)
+                {
+                    g_crashDump.Crash();
+                    disconnect(session->sessionID);
+                }
+                else
+                {
+                    InterlockedExchange(&(session->sendflag), 0);
+                    sendPost(session);
+                }
             }
         }
 
@@ -294,6 +305,7 @@ void LanServer::acceptThread()
         session->sendFront = 0;
         session->sendArrayCount = 0;
         session->sendingCount = 0;
+        session->sendingBytes = 0;
         
         for (auto i = 0; i < ce_SendArraySize; ++i)
         {
@@ -358,6 +370,7 @@ bool LanServer::sendPost(Session* session)
     long cnt = min((int)session->sendArrayCount, ce_MaxWsaBuf);
 
     WSABUF wsabufs[ce_MaxWsaBuf];
+    long totalBytes = 0;
     for (long i = 0; i < cnt; ++i)
     {
         SerializationBuffer* packet = session->sendArray[session->sendFront];
@@ -367,8 +380,10 @@ bool LanServer::sendPost(Session* session)
         session->sendingPackets[i] = packet;
         wsabufs[i].buf = packet->getBufferPtr();
         wsabufs[i].len = packet->getDataSize();
+        totalBytes += wsabufs[i].len;
     }
     session->sendingCount = cnt;
+    session->sendingBytes = totalBytes;
     InterlockedExchangeAdd(&session->sendArrayCount, -cnt);
 
     memset(&(session->sendOL->overlapped), 0, sizeof(session->sendOL->overlapped));

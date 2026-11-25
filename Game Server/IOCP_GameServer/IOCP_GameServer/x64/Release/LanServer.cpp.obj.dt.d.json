@@ -322,7 +322,8 @@
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\corecrt_startup.h",
             "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\math.h",
             "c:\\program files\\microsoft visual studio\\18\\community\\vc\\tools\\msvc\\14.51.36231\\include\\vcruntime_startup.h",
-            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\conio.h"
+            "c:\\program files (x86)\\windows kits\\10\\include\\10.0.26100.0\\ucrt\\conio.h",
+            "c:\\gameprograming\\game server\\iocp_gameserver\\crashdump.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []
