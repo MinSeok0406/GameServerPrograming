@@ -5,9 +5,9 @@
 #include "RingBuffer.h"
 #include "SerializationBuffer.h"
 
-constexpr int ce_SendArraySize = (1 << 9);
+constexpr int ce_SendArraySize = (1 << 12);
 constexpr int ce_SendArrayMask = ce_SendArraySize - 1;
-constexpr int ce_MaxWsaBuf = 100;
+constexpr int ce_MaxWsaBuf = 500;
 
 enum class TYPE
 {
