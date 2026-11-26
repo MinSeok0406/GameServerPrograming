@@ -4,6 +4,7 @@
 #include "CrashDump.h"
 
 CrashDump g_crashDump;
+OVERLAPPED g_sendPostOL;
 
 bool LanServer::Start(uint16_t port, unsigned long workerThread, bool isNagle, unsigned long NumberOfConcurrentThreads)
 {
@@ -171,7 +172,12 @@ bool LanServer::sendPacket(uint64_t sessionID, SerializationBuffer* packet)
     session->sendRear = (session->sendRear + 1) & ce_SendArrayMask;
     InterlockedIncrement(&session->sendArrayCount);
 
-    sendPost(session);
+    if (session->sendflag == 0)
+    {
+        InterlockedIncrement(&session->count);
+        PostQueuedCompletionStatus(hcp, 0, (uint64_t)session, &g_sendPostOL);
+    }
+
     return true;
 }
 
@@ -221,47 +227,48 @@ void LanServer::IOCPThread()
             break;
         }
 
-        if (GQCSret == FALSE || transferred == 0)
+        if (overlapped == &g_sendPostOL)
+        {
+            sendPost(session);
+        }
+        else if (GQCSret == FALSE || transferred == 0)
         {
             // 클라가 RST 보냄 -> 소켓 정리
             // 클라 정상 종료
             disconnect(session->sessionID);
             //printf("Client Exit\n");
         }
-        else
+        else if (&(session->recvOL->overlapped) == overlapped)
         {
-            if (&(session->recvOL->overlapped) == overlapped)
+            session->recvQ.MoveRear(transferred);
+            //printf("[recv] transferred:%lu recvQ use:%d\n", transferred, session->recvQ.GetUseSize());
+
+            SerializationBuffer packet;
+            packet.clear();
+            auto dequeueRet = session->recvQ.Dequeue(packet.getBufferPtr(), session->recvQ.GetUseSize());
+            packet.moveReadPos(dequeueRet);
+            //printf("[recv] dequeueRet:%d packet size:%d\n", dequeueRet, packet.getDataSize());
+
+            OnRecv(session->sessionID, &packet);
+            recvPost(session);
+        }
+        else if (&(session->sendOL->overlapped) == overlapped)
+        {
+            // WSABUF에 걸려있는 버퍼가 없는데, send 완료 통지가 오는게 말이 안됨
+            if (session->sendingCount == 0)
             {
-                session->recvQ.MoveRear(transferred);
-                //printf("[recv] transferred:%lu recvQ use:%d\n", transferred, session->recvQ.GetUseSize());
-
-                SerializationBuffer packet;
-                packet.clear();
-                auto dequeueRet = session->recvQ.Dequeue(packet.getBufferPtr(), session->recvQ.GetUseSize());
-                packet.moveReadPos(dequeueRet);
-                //printf("[recv] dequeueRet:%d packet size:%d\n", dequeueRet, packet.getDataSize());
-
-                OnRecv(session->sessionID, &packet);
-                recvPost(session);
+                g_crashDump.Crash();
             }
-            else if (&(session->sendOL->overlapped) == overlapped)
+
+            for (long i = 0; i < session->sendingCount; ++i)
             {
-                // WSABUF에 걸려있는 버퍼가 없는데, send 완료 통지가 오는게 말이 안됨
-                if (session->sendingCount == 0)
-                {
-                    g_crashDump.Crash();
-                }
-
-                for (long i = 0; i < session->sendingCount; ++i)
-                {
-                    freePacket(session->sendingPackets[i]);
-                    session->sendingPackets[i] = nullptr;
-                }
-                session->sendingCount = 0;
-
-                InterlockedExchange(&(session->sendflag), 0);
-                sendPost(session);
+                freePacket(session->sendingPackets[i]);
+                session->sendingPackets[i] = nullptr;
             }
+            session->sendingCount = 0;
+
+            InterlockedExchange(&(session->sendflag), 0);
+            sendPost(session);
         }
 
         if (InterlockedDecrement(&(session->count)) == 0)
