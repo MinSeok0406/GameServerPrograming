@@ -24,8 +24,7 @@ public:
 
     void OnAccept(uint64_t sessionID, const wchar_t* ip, uint16_t port) override
     {
-        SerializationBuffer* packet = new SerializationBuffer;
-        packet->clear();
+        SerializationBuffer* packet = allocPacket();
 
         short header = sizeof(int64_t);
         int64_t data = 0x7fffffffffffffff;
@@ -43,8 +42,7 @@ public:
 
     void OnRecv(uint64_t sessionID, SerializationBuffer* packet) override
     {
-        SerializationBuffer* echo = new SerializationBuffer;
-        echo->clear();
+        SerializationBuffer* echo = allocPacket();
         echo->putData(packet->getBufferPtr(), packet->getDataSize());
         sendPacket(sessionID, echo);
     }

@@ -150,14 +150,14 @@ bool LanServer::sendPacket(uint64_t sessionID, SerializationBuffer* packet)
     if (session == nullptr || session->sessionID != sessionID)
     {
         g_crashDump.Crash();
-        delete packet;
+        freePacket(packet);
         return false;
     }
 
     if (session->sendArrayCount >= ce_SendArraySize)
     {
         g_crashDump.Crash();
-        delete packet;
+        freePacket(packet);
         disconnect(sessionID);
         return false;
     }
@@ -173,6 +173,18 @@ bool LanServer::sendPacket(uint64_t sessionID, SerializationBuffer* packet)
 
     sendPost(session);
     return true;
+}
+
+SerializationBuffer* LanServer::allocPacket()
+{
+    SerializationBuffer* packet = new SerializationBuffer;
+    packet->clear();
+    return packet;
+}
+
+void LanServer::freePacket(SerializationBuffer* packet)
+{
+    delete packet;
 }
 
 uint32_t __stdcall LanServer::IOCPThreadProc(LPVOID arg)
@@ -234,6 +246,7 @@ void LanServer::IOCPThread()
             }
             else if (&(session->sendOL->overlapped) == overlapped)
             {
+                // WSABUF에 걸려있는 버퍼가 없는데, send 완료 통지가 오는게 말이 안됨
                 if (session->sendingCount == 0)
                 {
                     g_crashDump.Crash();
@@ -241,7 +254,7 @@ void LanServer::IOCPThread()
 
                 for (long i = 0; i < session->sendingCount; ++i)
                 {
-                    delete session->sendingPackets[i];
+                    freePacket(session->sendingPackets[i]);
                     session->sendingPackets[i] = nullptr;
                 }
                 session->sendingCount = 0;
@@ -453,12 +466,12 @@ bool LanServer::releaseSession(Session* session)
 
     for (long i = 0; i < session->sendingCount; ++i)
     {
-        delete session->sendingPackets[i];
+        freePacket(session->sendingPackets[i]);
     }
 
     while (session->sendArrayCount > 0)
     {
-        delete session->sendArray[session->sendFront];
+        freePacket(session->sendArray[session->sendFront]);
         session->sendFront = (session->sendFront + 1) & ce_SendArrayMask;
         --session->sendArrayCount;
     }

@@ -43,6 +43,10 @@ public:
     bool disconnect(uint64_t sessionID);
     bool sendPacket(uint64_t sessionID, SerializationBuffer* packet);
 
+    // 직렬화 버퍼 패킷 할당 및 해제
+    SerializationBuffer* allocPacket();
+    void freePacket(SerializationBuffer* packet);
+
     // 컨텐츠에서 재정의하는 함수
     virtual bool OnConnectionRequest(const wchar_t* ip, uint16_t port) = 0;
     virtual void OnAccept(uint64_t sessionID, const wchar_t* ip, uint16_t port) = 0;
